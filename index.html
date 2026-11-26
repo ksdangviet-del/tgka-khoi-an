@@ -318,6 +318,41 @@
     body.edge-to-edge-bottom-v148 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) .ios-scroll {
       padding-bottom: calc(28px + env(safe-area-inset-bottom, 34px)) !important;
     }
+    /* Chế độ v1.49: Cân đối nút Báo cáo LSGD & phóng to 3 nút nhập liệu ở thanh điều hướng đáy */
+    body.main-polish-v149 #btn-history-header-action {
+      height: 36px !important;
+      padding-left: 14px !important;
+      padding-right: 14px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      border: 1.5px solid #FED7AA !important;
+      background: #FFFBF5 !important;
+      color: #C2410C !important;
+      box-shadow: 0 2px 8px rgba(234, 88, 12, 0.08) !important;
+    }
+    body.main-polish-v149 .bottom-dock {
+      padding: 8px 18px !important;
+      gap: 20px !important;
+      border-width: 1.5px !important;
+      border-color: #CBD5E1 !important;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18) !important;
+    }
+    body.main-polish-v149 .bottom-dock .dock-side-btn {
+      width: 48px !important;
+      height: 48px !important;
+    }
+    body.main-polish-v149 .bottom-dock .dock-side-btn svg {
+      width: 21px !important;
+      height: 21px !important;
+    }
+    body.main-polish-v149 .bottom-dock .dock-main-btn {
+      width: 58px !important;
+      height: 58px !important;
+    }
+    body.main-polish-v149 .bottom-dock .dock-main-btn svg {
+      width: 26px !important;
+      height: 26px !important;
+    }
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
@@ -436,7 +471,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.48</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.49</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -600,9 +635,9 @@
           </div>
 
           <!-- Thanh Lọc Dạng Viên Thuốc Nổi Khối 1 Hàng Ngang Dễ Chạm -->
-          <div class="bg-white rounded-full p-1.5 border border-slate-200/90 shadow-2xs flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+          <div id="dashboard-filter-pill-bar" class="bg-white rounded-full p-1.5 border border-slate-200/90 shadow-2xs flex items-center gap-1.5 overflow-x-auto no-scrollbar">
             <button id="pill-filter-reset" onclick="resetDashboardFilters()" class="pill-touch-v138 h-9 px-4 rounded-full bg-[#EA580C] text-white text-[12px] font-bold flex-shrink-0">Tất cả</button>
-            <div class="relative flex-1 min-w-[105px]">
+            <div id="search-input-wrap" class="relative flex-1 min-w-[105px]">
               <svg class="svg-duo absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" width="13.5" height="13.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -614,6 +649,9 @@
               <option value="Thu">Thu (+)</option>
               <option value="Chi">Chi (-)</option>
               <option value="ChuyenQuy">Ứng NV (⇄)</option>
+            </select>
+            <select id="filter-staff" onchange="renderDashboard()" class="hidden pill-touch-v138 h-9 px-2.5 rounded-full bg-white border border-slate-200 text-[11.5px] font-semibold text-slate-700 outline-none truncate">
+              <option value="">Nhân viên ▾</option>
             </select>
             <select id="filter-project" onchange="renderDashboard()" class="pill-touch-v138 h-9 px-3 rounded-full bg-white border border-slate-200 text-[12px] font-semibold text-slate-700 outline-none max-w-[120px] truncate flex-shrink-0">
               <option value="">Công trình ▾</option>
@@ -630,7 +668,7 @@
 
     <!-- ==================== THANH ĐIỀU HƯỚNG ĐÁY NỔI 3 NÚT TRÒN NGUYÊN BẢN ==================== -->
     <nav class="bottom-dock border-slate-200/90">
-      <button onclick="handleDockLeftAction()" title="Thêm Mới Danh Mục" class="w-10 h-10 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#EA580C] flex items-center justify-center active:scale-95 transition">
+      <button onclick="handleDockLeftAction()" title="Thêm Mới Danh Mục" class="dock-side-btn w-10 h-10 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#EA580C] flex items-center justify-center active:scale-95 transition">
         <svg class="svg-duo" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" stroke="#334155" fill="#FDBA74" fill-opacity="0.35"/>
           <line x1="12" y1="11" x2="12" y2="17" stroke="#EA580C"/>
@@ -638,14 +676,14 @@
         </svg>
       </button>
 
-      <button onclick="openEntryModal()" title="Ghi Thu Chi" class="w-12 h-12 rounded-full bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white flex items-center justify-center shadow-[0_6px_18px_rgba(234,88,12,0.42)] border-2 border-white active:scale-95 transition">
+      <button onclick="openEntryModal()" title="Ghi Thu Chi" class="dock-main-btn w-12 h-12 rounded-full bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white flex items-center justify-center shadow-[0_6px_18px_rgba(234,88,12,0.42)] border-2 border-white active:scale-95 transition">
         <svg class="svg-duo" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <line x1="12" y1="5" x2="12" y2="19"/>
           <line x1="5" y1="12" x2="19" y2="12"/>
         </svg>
       </button>
 
-      <button onclick="openSiteLogModal('create')" title="Nhật Ký Công Trình" class="w-10 h-10 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#EA580C] flex items-center justify-center active:scale-95 transition">
+      <button onclick="openSiteLogModal('create')" title="Nhật Ký Công Trình" class="dock-side-btn w-10 h-10 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#EA580C] flex items-center justify-center active:scale-95 transition">
         <svg class="svg-duo" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
           <path d="M12 20h9" stroke="#334155"/>
           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#EA580C" fill="#FDBA74" fill-opacity="0.35"/>
@@ -1555,12 +1593,22 @@
         features: {
           edgeToEdgeBottomSafeAreaV148: true
         }
+      },
+      'v1.49': {
+        version: 'v1.49',
+        extends: 'v1.48',
+        date: '26/11/2026',
+        title: 'Cân Đối Nút Báo Cáo LSGD, Lọc Nhân Viên Trực Tiếp & Phóng To 3 Nút Nhập Liệu Đáy',
+        summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.48; mở rộng khung viền nút Báo cáo LSGD cân đối với giao diện chính, thay ô tìm kiếm kính lúp bằng bộ lọc 4 nút viên thuốc (Tất cả | Loại | Nhân viên | Công trình) và phóng to 3 nút nhập liệu ở thanh điều hướng đáy để chạm 1 lần ăn ngay.',
+        features: {
+          mainScreenPolishV149: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.48';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.49';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1571,12 +1619,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.48';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.48';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.48') {
-      ACTIVE_VERSION = 'v1.48';
-      localStorage.setItem('tgka_active_version', 'v1.48');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.48');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.49';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.49';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.49') {
+      ACTIVE_VERSION = 'v1.49';
+      localStorage.setItem('tgka_active_version', 'v1.49');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.49');
     }
 
     // =========================================================================
@@ -2140,9 +2188,11 @@
     function resetDashboardFilters() {
       const sInp = document.getElementById('search-input');
       const fType = document.getElementById('filter-type');
+      const fStaff = document.getElementById('filter-staff');
       const fProj = document.getElementById('filter-project');
       if (sInp) sInp.value = '';
       if (fType) fType.value = '';
+      if (fStaff) fStaff.value = '';
       if (fProj) fProj.value = '';
       renderDashboard();
     }
@@ -2181,6 +2231,33 @@
       document.body.classList.toggle('full-report-sheets-v140', !!cfg.features.fullHeightDockedReportSheets);
       document.body.classList.toggle('fixed-entry-top-v141', !!cfg.features.fixedTopEdgeOnEntrySheets);
       document.body.classList.toggle('edge-to-edge-bottom-v148', !!cfg.features.edgeToEdgeBottomSafeAreaV148);
+      document.body.classList.toggle('main-polish-v149', !!cfg.features.mainScreenPolishV149);
+
+      const hasV149 = !!cfg.features.mainScreenPolishV149;
+      const filterBarEl = document.getElementById('dashboard-filter-pill-bar');
+      const searchWrapEl = document.getElementById('search-input-wrap');
+      const filterStaffEl = document.getElementById('filter-staff');
+      const filterTypeEl = document.getElementById('filter-type');
+      const filterProjEl = document.getElementById('filter-project');
+      const resetPillEl = document.getElementById('pill-filter-reset');
+      if (filterBarEl && searchWrapEl && filterStaffEl && filterTypeEl && filterProjEl && resetPillEl) {
+        if (hasV149) {
+          filterBarEl.className = 'bg-white rounded-full p-1.5 border border-slate-200/90 shadow-2xs grid grid-cols-4 gap-1.5 items-center';
+          searchWrapEl.classList.add('hidden');
+          filterStaffEl.classList.remove('hidden');
+          resetPillEl.className = 'pill-touch-v138 w-full h-9 px-2 rounded-full bg-[#EA580C] text-white text-[11.5px] font-bold truncate';
+          filterTypeEl.className = 'pill-touch-v138 w-full h-9 px-2 rounded-full bg-white border border-slate-200 text-[11.5px] font-semibold text-slate-700 outline-none truncate';
+          filterStaffEl.className = 'pill-touch-v138 w-full h-9 px-2 rounded-full bg-white border border-slate-200 text-[11.5px] font-semibold text-slate-700 outline-none truncate';
+          filterProjEl.className = 'pill-touch-v138 w-full h-9 px-2 rounded-full bg-white border border-slate-200 text-[11.5px] font-semibold text-slate-700 outline-none truncate';
+        } else {
+          filterBarEl.className = 'bg-white rounded-full p-1.5 border border-slate-200/90 shadow-2xs flex items-center gap-1.5 overflow-x-auto no-scrollbar';
+          searchWrapEl.classList.remove('hidden');
+          filterStaffEl.classList.add('hidden');
+          resetPillEl.className = 'pill-touch-v138 h-9 px-4 rounded-full bg-[#EA580C] text-white text-[12px] font-bold flex-shrink-0';
+          filterTypeEl.className = 'pill-touch-v138 h-9 px-3 rounded-full bg-white border border-slate-200 text-[12px] font-semibold text-slate-700 outline-none flex-shrink-0';
+          filterProjEl.className = 'pill-touch-v138 h-9 px-3 rounded-full bg-white border border-slate-200 text-[12px] font-semibold text-slate-700 outline-none max-w-[120px] truncate flex-shrink-0';
+        }
+      }
       const hasV139 = !!cfg.features.syncBackupAndQuickGitHubUpdate;
       const btnQuickGh = document.getElementById('btn-version-quick-github-update');
       const btnLegacyCopy = document.getElementById('btn-version-legacy-copy');
@@ -2263,6 +2340,7 @@
 
     function populateSelects() {
       const fProj = document.getElementById('filter-project');
+      const fStaff = document.getElementById('filter-staff');
       const mProj = document.getElementById('manual-project');
       const mSplitProj = document.getElementById('manual-split-target-project');
       const mPart = document.getElementById('manual-partner');
@@ -2275,6 +2353,16 @@
         const prev = fProj.value;
         fProj.innerHTML = `<option value="">Công trình ▾</option>${projOptions}`;
         fProj.value = prev;
+      }
+      if (fStaff) {
+        const prev = fStaff.value;
+        const staffNames = Array.from(new Set([
+          ...accounts.map(a => a.id),
+          ...transactions.map(t => t.staff),
+          ...transactions.map(t => t.recipient)
+        ].filter(Boolean)));
+        fStaff.innerHTML = `<option value="">Nhân viên ▾</option>` + staffNames.map(n => `<option value="${n}">${n}</option>`).join('');
+        fStaff.value = prev;
       }
       if (mProj) {
         const prev = mProj.value;
@@ -2316,11 +2404,13 @@
       const q = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
       const fProj = document.getElementById('filter-project')?.value || '';
       const fType = document.getElementById('filter-type')?.value || '';
+      const fStaff = cfg.features.mainScreenPolishV149 ? (document.getElementById('filter-staff')?.value || '') : '';
 
       const items = (baseList || getFilteredTransactions()).filter(tx => {
         if (fProj && tx.project !== fProj) return false;
         if (fType && tx.type !== fType) return false;
-        if (q) {
+        if (fStaff && tx.staff !== fStaff && tx.recipient !== fStaff) return false;
+        if (!cfg.features.mainScreenPolishV149 && q) {
           const hay = [tx.note, tx.project, tx.partner, tx.category, tx.internalGroup, tx.staff, tx.recipient, String(tx.amount)].join(' ').toLowerCase();
           if (!hay.includes(q)) return false;
         }
