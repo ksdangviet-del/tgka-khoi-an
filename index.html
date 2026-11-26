@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="TGKA Khởi An" />
   <meta name="theme-color" content="#F97316" />
-  <link id="pwa-apple-touch-icon" rel="apple-touch-icon" href="" />
-  <link id="pwa-manifest-link" rel="manifest" href="" />
+  <link id="pwa-apple-touch-icon" rel="apple-touch-icon" sizes="180x180" href="" />
+  <link id="pwa-manifest-link" rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22TGKA%20Kh%E1%BB%9Fi%20An%22%2C%22short_name%22%3A%22TGKA%20Kh%E1%BB%9Fi%20An%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%23F8FAFC%22%2C%22theme_color%22%3A%22%23F97316%22%7D" />
   <title>TGKA Khởi An - Quản Lý Xây Dựng Trọn Gói</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -32,6 +32,9 @@
     html, body {
       margin: 0;
       padding: 0;
+      position: fixed;
+      inset: 0;
+      width: 100%;
       height: 100%;
       min-height: 100lvh;
       background: #F8FAFC;
@@ -63,7 +66,7 @@
     .app-shell {
       width: 100%;
       max-width: 480px;
-      height: 100dvh;
+      height: 100%;
       min-height: 100lvh;
       margin: 0 auto;
       background: var(--tgka-bg);
@@ -305,28 +308,28 @@
 
   <div class="app-shell">
     <!-- ==================== HEADER CHÍNH (KHÓA CHUẨN v1.30 + LOGO KA KHỞI AN v1.36) ==================== -->
+    <!-- ==================== HEADER CHÍNH (KHÓA CHUẨN v1.30 + LOGO KA KHỞI AN v1.37) ==================== -->
     <header class="tgka-header">
       <!-- Hàng 1: Logo Mái Nhà KA, Tên App TGKA Khởi An & Các Nút Viên Thuốc Kính Mờ -->
       <div class="flex items-center justify-between gap-2">
         <div class="flex items-center gap-2.5 min-w-0">
-          <div id="header-brand-logo-box" class="w-8 h-8 rounded-xl bg-white border border-white/60 shadow-2xs flex items-center justify-center flex-shrink-0 p-1">
-            <svg width="24" height="22" viewBox="0 0 120 108" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Mái nhà đỏ & cột trái chữ K -->
-              <path d="M12 48L58 18L108 48" stroke="#E11D1D" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M23 28V76" stroke="#E11D1D" stroke-width="11" stroke-linecap="round"/>
+          <div id="header-brand-logo-box" class="w-[42px] h-[42px] rounded-2xl bg-gradient-to-b from-white to-[#FFF7ED] border border-[#FED7AA] ring-2 ring-white/30 shadow-[0_3px_10px_rgba(15,23,42,0.12)] flex items-center justify-center flex-shrink-0 p-1">
+            <svg width="34" height="32" viewBox="0 0 120 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Mái nhà đỏ & cột trái chữ K to rõ sắc nét -->
+              <path d="M10 52L60 16L110 52" stroke="#E11D1D" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M22 28V82" stroke="#E11D1D" stroke-width="13" stroke-linecap="round"/>
               <!-- Nét xám than & chéo chữ A dưới mái -->
-              <polygon points="31,45 43,38 43,66 31,66" fill="#52525B"/>
-              <polygon points="46,36 58,29 58,66 46,66" fill="#52525B"/>
-              <path d="M33 44L47 66" stroke="#E11D1D" stroke-width="7.5" stroke-linecap="round"/>
+              <polygon points="31,47 45,38 45,70 31,70" fill="#52525B"/>
+              <polygon points="48,36 62,27 62,70 48,70" fill="#52525B"/>
+              <path d="M33 45L49 70" stroke="#E11D1D" stroke-width="9" stroke-linecap="round"/>
               <!-- Cửa sổ 4 ô xám than -->
-              <rect x="52" y="34" width="6" height="6" fill="#52525B"/>
-              <rect x="60" y="34" width="6" height="6" fill="#52525B"/>
-              <rect x="52" y="42" width="6" height="6" fill="#52525B"/>
-              <rect x="60" y="42" width="6" height="6" fill="#52525B"/>
-              <!-- Chữ HOME đỏ mảnh tinh tế -->
-              <text x="33" y="83" fill="#E11D1D" font-family="Be Vietnam Pro, sans-serif" font-weight="700" font-size="16.5" letter-spacing="2.2">HOME</text>
-              <line x1="18" y1="88" x2="102" y2="88" stroke="#18181B" stroke-width="1.6"/>
-              <text x="18" y="98" fill="#52525B" font-family="Be Vietnam Pro, sans-serif" font-weight="600" font-size="6.6" letter-spacing="1.8">DESIGN YOUR DREAMS</text>
+              <rect x="54" y="34" width="7" height="7" rx="1" fill="#52525B"/>
+              <rect x="63" y="34" width="7" height="7" rx="1" fill="#52525B"/>
+              <rect x="54" y="43" width="7" height="7" rx="1" fill="#52525B"/>
+              <rect x="63" y="43" width="7" height="7" rx="1" fill="#52525B"/>
+              <!-- Chữ HOME đỏ rõ nét -->
+              <text x="33" y="92" fill="#E11D1D" font-family="Be Vietnam Pro, sans-serif" font-weight="700" font-size="20" letter-spacing="2.4">HOME</text>
+              <line x1="16" y1="99" x2="104" y2="99" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round"/>
             </svg>
           </div>
           <div class="min-w-0">
@@ -339,7 +342,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.36</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.37</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1250,12 +1253,22 @@
         features: {
           khoiAnBrandLogoAndName: true
         }
+      },
+      'v1.37': {
+        version: 'v1.37',
+        extends: 'v1.36',
+        date: '26/11/2026',
+        title: 'Full 100% Màn Hình iPhone PWA, Phóng To Logo Header Viền Cam & Icon App Chuyên Nghiệp',
+        summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.36; nhúng trực tiếp manifest tĩnh chuẩn iOS Safari + khóa position: fixed để chạy full 100% màn hình không thanh địa chỉ, phóng to logo mái nhà KA với viền cam ấm đồng bộ giao diện app và nâng cấp Icon màn hình chính nền cam chuyển sắc sang trọng.',
+        features: {
+          refinedBrandIconAndTrueFullscreen: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.36';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.37';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1266,12 +1279,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.36';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.36';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.36') {
-      ACTIVE_VERSION = 'v1.36';
-      localStorage.setItem('tgka_active_version', 'v1.36');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.36');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.37';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.37';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.37') {
+      ACTIVE_VERSION = 'v1.37';
+      localStorage.setItem('tgka_active_version', 'v1.37');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.37');
     }
 
     // =========================================================================
@@ -4207,16 +4220,115 @@
       c.height = size;
       const ctx = c.getContext('2d');
       const s = size / 180;
+      const cfg = resolveVersionConfig(ACTIVE_VERSION);
 
-      // Nền trắng tinh khôi + viền cam ấm đồng bộ giao diện app
+      if (cfg.features.refinedBrandIconAndTrueFullscreen) {
+        // Nền cam chuyển sắc thương hiệu TGKA đồng bộ Header app
+        const bgGrad = ctx.createLinearGradient(0, 0, size, size);
+        bgGrad.addColorStop(0, '#F97316');
+        bgGrad.addColorStop(1, '#EA580C');
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(0, 0, size, size);
+
+        // Thẻ trắng bo góc ở trung tâm có viền cam nhạt & bóng nổi sang trọng
+        const cardX = 22 * s;
+        const cardY = 22 * s;
+        const cardW = 136 * s;
+        const cardH = 136 * s;
+        const cardR = 30 * s;
+
+        ctx.save();
+        ctx.shadowColor = 'rgba(124, 45, 18, 0.28)';
+        ctx.shadowBlur = 14 * s;
+        ctx.shadowOffsetY = 6 * s;
+        ctx.fillStyle = '#FFFFFF';
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, cardR);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.strokeStyle = '#FED7AA';
+        ctx.lineWidth = 2.5 * s;
+        ctx.beginPath();
+        ctx.roundRect(cardX, cardY, cardW, cardH, cardR);
+        ctx.stroke();
+
+        // Mái nhà đỏ & cột trái chữ K cân đối trọn vẹn trong thẻ trắng
+        ctx.strokeStyle = '#E11D1D';
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 11.5 * s;
+        ctx.beginPath();
+        ctx.moveTo(38 * s, 82 * s);
+        ctx.lineTo(90 * s, 46 * s);
+        ctx.lineTo(142 * s, 82 * s);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(51 * s, 58 * s);
+        ctx.lineTo(51 * s, 118 * s);
+        ctx.stroke();
+
+        // Khối xám than & nét chéo chữ A dưới mái
+        ctx.fillStyle = '#52525B';
+        ctx.beginPath();
+        ctx.moveTo(60 * s, 77 * s);
+        ctx.lineTo(73 * s, 69 * s);
+        ctx.lineTo(73 * s, 102 * s);
+        ctx.lineTo(60 * s, 102 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(77 * s, 66 * s);
+        ctx.lineTo(90 * s, 58 * s);
+        ctx.lineTo(90 * s, 102 * s);
+        ctx.lineTo(77 * s, 102 * s);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#E11D1D';
+        ctx.lineWidth = 8 * s;
+        ctx.beginPath();
+        ctx.moveTo(62 * s, 76 * s);
+        ctx.lineTo(79 * s, 102 * s);
+        ctx.stroke();
+
+        // Cửa sổ 4 ô xám than
+        ctx.fillStyle = '#52525B';
+        const winSize = 7 * s;
+        const winGap = 2.5 * s;
+        const wx = 86 * s;
+        const wy = 65 * s;
+        ctx.fillRect(wx, wy, winSize, winSize);
+        ctx.fillRect(wx + winSize + winGap, wy, winSize, winSize);
+        ctx.fillRect(wx, wy + winSize + winGap, winSize, winSize);
+        ctx.fillRect(wx + winSize + winGap, wy + winSize + winGap, winSize, winSize);
+
+        // Chữ HOME đỏ sắc nét
+        ctx.fillStyle = '#E11D1D';
+        ctx.font = `bold ${Math.round(21 * s)}px "Be Vietnam Pro", Arial, sans-serif`;
+        ctx.textAlign = 'left';
+        ctx.fillText('H O M E', 62 * s, 121 * s);
+
+        // Đường gạch chân điểm nhấn cam ấm
+        ctx.strokeStyle = '#F97316';
+        ctx.lineCap = 'round';
+        ctx.lineWidth = 2.6 * s;
+        ctx.beginPath();
+        ctx.moveTo(46 * s, 131 * s);
+        ctx.lineTo(134 * s, 131 * s);
+        ctx.stroke();
+
+        return c.toDataURL('image/png');
+      }
+
+      // Nhánh kế thừa v1.36 (khi khôi phục về v1.36)
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, size, size);
-
       ctx.strokeStyle = '#F97316';
       ctx.lineWidth = 6 * s;
       ctx.strokeRect(3 * s, 3 * s, size - 6 * s, size - 6 * s);
-
-      // Mái nhà đỏ & cột trái chữ K
       ctx.strokeStyle = '#E11D1D';
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -4226,13 +4338,10 @@
       ctx.lineTo(90 * s, 36 * s);
       ctx.lineTo(154 * s, 76 * s);
       ctx.stroke();
-
       ctx.beginPath();
       ctx.moveTo(42 * s, 50 * s);
       ctx.lineTo(42 * s, 118 * s);
       ctx.stroke();
-
-      // Khối xám than & nét chéo chữ A dưới mái
       ctx.fillStyle = '#52525B';
       ctx.beginPath();
       ctx.moveTo(52 * s, 72 * s);
@@ -4241,7 +4350,6 @@
       ctx.lineTo(52 * s, 98 * s);
       ctx.closePath();
       ctx.fill();
-
       ctx.beginPath();
       ctx.moveTo(70 * s, 60 * s);
       ctx.lineTo(84 * s, 52 * s);
@@ -4249,15 +4357,12 @@
       ctx.lineTo(70 * s, 98 * s);
       ctx.closePath();
       ctx.fill();
-
       ctx.strokeStyle = '#E11D1D';
       ctx.lineWidth = 8.5 * s;
       ctx.beginPath();
       ctx.moveTo(54 * s, 71 * s);
       ctx.lineTo(72 * s, 98 * s);
       ctx.stroke();
-
-      // Cửa sổ 4 ô xám than
       ctx.fillStyle = '#52525B';
       const winSize = 8 * s;
       const winGap = 3 * s;
@@ -4267,33 +4372,25 @@
       ctx.fillRect(wx + winSize + winGap, wy, winSize, winSize);
       ctx.fillRect(wx, wy + winSize + winGap, winSize, winSize);
       ctx.fillRect(wx + winSize + winGap, wy + winSize + winGap, winSize, winSize);
-
-      // Chữ HOME đỏ
       ctx.fillStyle = '#E11D1D';
       ctx.font = `bold ${Math.round(23 * s)}px "Be Vietnam Pro", Arial, sans-serif`;
       ctx.textAlign = 'left';
       ctx.fillText('H O M E', 54 * s, 118 * s);
-
-      // Đường kẻ ngang & slogan
       ctx.strokeStyle = '#18181B';
       ctx.lineWidth = 2 * s;
       ctx.beginPath();
       ctx.moveTo(34 * s, 126 * s);
       ctx.lineTo(146 * s, 126 * s);
       ctx.stroke();
-
       ctx.fillStyle = '#52525B';
       ctx.font = `600 ${Math.round(8.2 * s)}px "Be Vietnam Pro", Arial, sans-serif`;
       ctx.textAlign = 'center';
       ctx.fillText('D E S I G N  Y O U R  D R E A M S', 90 * s, 139 * s);
-
-      // Dải nhấn thương hiệu TGKA KHỞI AN dưới đáy icon
       ctx.fillStyle = '#EA580C';
       ctx.fillRect(14 * s, 148 * s, 152 * s, 20 * s);
       ctx.fillStyle = '#FFFFFF';
       ctx.font = `bold ${Math.round(10.5 * s)}px "Be Vietnam Pro", Arial, sans-serif`;
       ctx.fillText('TGKA KHỞI AN', 90 * s, 162 * s);
-
       return c.toDataURL('image/png');
     }
 
@@ -4302,27 +4399,8 @@
       if (!cfg.features.standaloneFullScreenPwa) return;
       try {
         const icon180 = cfg.features.khoiAnBrandLogoAndName ? drawKhoiAnLogoOnCanvas(180) : '';
-        const icon512 = cfg.features.khoiAnBrandLogoAndName ? drawKhoiAnLogoOnCanvas(512) : '';
         const touchLink = document.getElementById('pwa-apple-touch-icon');
         if (touchLink && icon180) touchLink.href = icon180;
-
-        const appTitle = cfg.features.khoiAnBrandLogoAndName ? 'TGKA Khởi An' : 'TGKA Khải An';
-        const manifestObj = {
-          name: appTitle,
-          short_name: appTitle,
-          start_url: window.location.href,
-          display: 'standalone',
-          orientation: 'portrait',
-          background_color: '#F8FAFC',
-          theme_color: '#F97316',
-          icons: [
-            { src: icon180, sizes: '180x180', type: 'image/png' },
-            { src: icon512, sizes: '512x512', type: 'image/png' }
-          ]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/manifest+json' });
-        const manifestLink = document.getElementById('pwa-manifest-link');
-        if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
       } catch (e) {}
     }
 
