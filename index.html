@@ -164,6 +164,40 @@
     .ios-touch-field:focus {
       border-color: #EA580C;
     }
+    /* Chế độ v1.38: Phóng to vùng chạm nhập liệu (50px-52px) & đường viền viên thuốc dễ bấm trên điện thoại */
+    body.vietinbank-hero-v138 .ios-touch-field,
+    body.vietinbank-hero-v138 .modal-backdrop.entry-bottom-sheet .ios-touch-field {
+      min-height: 50px !important;
+      height: 50px !important;
+      border-radius: 18px !important;
+      border: 1.5px solid #CBD5E1 !important;
+      padding: 0 15px !important;
+      font-size: 14.5px !important;
+    }
+    body.vietinbank-hero-v138 .ios-touch-field:focus,
+    body.vietinbank-hero-v138 .modal-backdrop.entry-bottom-sheet .ios-touch-field:focus {
+      border-color: #EA580C !important;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.12);
+    }
+    body.vietinbank-hero-v138 .entry-primary-btn,
+    body.vietinbank-hero-v138 .modal-backdrop.entry-bottom-sheet .entry-primary-btn {
+      height: 52px !important;
+      border-radius: 999px !important;
+      font-size: 15px !important;
+      letter-spacing: 0.2px;
+    }
+    body.vietinbank-hero-v138 .entry-shift-btn,
+    body.vietinbank-hero-v138 .modal-backdrop.entry-bottom-sheet .entry-shift-btn {
+      height: 48px !important;
+      border-radius: 999px !important;
+      font-size: 13.5px !important;
+    }
+    body.vietinbank-hero-v138 .pill-touch-v138 {
+      height: 36px !important;
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+      font-size: 11.5px !important;
+    }
     /* Chế độ tinh gọn bảng nhập liệu v1.34 (giảm chiều cao thanh cố định trên điện thoại) */
     body.compact-entry-v134 .ios-touch-field {
       min-height: 40px;
@@ -342,7 +376,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.37</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.38</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -385,22 +419,25 @@
 
     <!-- ==================== NỘI DUNG CHÍNH: KHÓA CỐ ĐỊNH TỪ THANH TÌM KIẾM TRỞ LÊN ==================== -->
     <main class="flex-1 flex flex-col min-h-0 bg-[#F8FAFC] overflow-hidden">
-      <div class="px-3.5 pt-3.5 pb-2 space-y-3 flex-shrink-0">
-        <!-- Thẻ Tổng Quan Tồn Quỹ Thực Chuẩn v1.30 -->
-        <section onclick="openCashbookModal('staff')" class="overview-card cursor-pointer active:scale-[0.995] transition space-y-3">
-          <!-- Hàng trên: Nhãn Tồn Quỹ Thực, Bộ Chuyển Kỳ, Huy Hiệu Sổ Quỹ & Con Mắt Ẩn/Hiện -->
-          <div class="flex items-center justify-between gap-1.5">
-            <div class="flex items-center gap-1.5 min-w-0">
-              <span class="text-[11px] font-bold uppercase tracking-wide text-slate-500 whitespace-nowrap">TỒN QUỸ THỰC</span>
-              <div onclick="event.stopPropagation()" class="inline-flex items-center gap-1 px-2 h-6 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[10.5px] font-bold text-[#EA580C]">
-                <button type="button" onclick="shiftPeriodCursor(-1)" class="px-0.5">‹</button>
-                <span id="hero-period-label" class="whitespace-nowrap">Toàn bộ 2026</span>
-                <button type="button" onclick="shiftPeriodCursor(1)" class="px-0.5">›</button>
+      <div class="px-3.5 pt-3 pb-2 space-y-2.5 flex-shrink-0">
+        <!-- Thẻ Tổng Quan Tồn Quỹ Thực Gọn Gàng, Khoa Học (v1.38) -->
+        <section onclick="openCashbookModal('staff')" class="overview-card cursor-pointer active:scale-[0.995] transition !p-3 space-y-2.5">
+          <!-- Hàng 1: Nhãn + Kỳ xem + Số Dư Thực Tế nằm gọn 1 tầng không khoảng trống thừa -->
+          <div class="flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="flex items-center gap-1.5">
+                <span class="text-[10.5px] font-bold uppercase tracking-wide text-slate-500 whitespace-nowrap">TỒN QUỸ THỰC</span>
+                <div onclick="event.stopPropagation()" class="inline-flex items-center gap-1 px-2 h-5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[10px] font-bold text-[#EA580C]">
+                  <button type="button" onclick="shiftPeriodCursor(-1)" class="px-0.5">‹</button>
+                  <span id="hero-period-label" class="whitespace-nowrap">Toàn bộ 2026</span>
+                  <button type="button" onclick="shiftPeriodCursor(1)" class="px-0.5">›</button>
+                </div>
               </div>
+              <div id="hero-net-balance" class="mt-0.5 text-[22px] font-semibold text-slate-900 tracking-tight tabular-nums whitespace-nowrap leading-tight">*** *** *** <span class="vnd-u">₫</span></div>
             </div>
 
-            <div class="flex items-center gap-1.5 flex-shrink-0">
-              <span class="h-6 px-2.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[10.5px] font-bold text-[#EA580C] inline-flex items-center gap-1 whitespace-nowrap">
+            <div class="flex items-center gap-1.5 flex-shrink-0 self-start">
+              <span class="h-7 px-2.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[11px] font-bold text-[#EA580C] inline-flex items-center gap-1 whitespace-nowrap">
                 <span>Sổ quỹ</span>
                 <span>›</span>
               </span>
@@ -413,66 +450,63 @@
             </div>
           </div>
 
-          <!-- Số dư chính lớn sắc nét với ký hiệu ₫ gạch chân -->
-          <div id="hero-net-balance" class="text-[24px] font-semibold text-slate-900 tracking-tight tabular-nums whitespace-nowrap">*** *** *** <span class="vnd-u">₫</span></div>
-
-          <!-- 2 cột Tổng Thu & Tổng Chi -->
-          <div class="grid grid-cols-2 gap-2.5 pt-2.5 border-t border-slate-100">
-            <div class="min-w-0">
-              <div class="flex items-center gap-1 text-[10.5px] font-medium text-slate-500">
-                <span class="w-4 h-4 rounded-full bg-emerald-50 text-[#059669] inline-flex items-center justify-center flex-shrink-0">
-                  <svg class="svg-duo" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="7" y1="17" x2="17" y2="7"/>
-                    <polyline points="7 7 17 7 17 17"/>
-                  </svg>
-                </span>
-                <span>Tổng Thu</span>
+          <!-- Hàng 2: 2 Thẻ Con Tổng Thu & Tổng Chi Gọn Gàng Cân Đối -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="rounded-2xl bg-emerald-50/70 border border-emerald-200/70 px-2.5 py-2 flex items-center justify-between gap-1.5 min-w-0">
+              <div class="min-w-0">
+                <div class="text-[10px] font-semibold text-emerald-800/80">Tổng Thu (+)</div>
+                <div id="hero-total-thu" class="text-[13.5px] font-semibold text-[#059669] tabular-nums whitespace-nowrap">*** <span class="vnd-u">₫</span></div>
               </div>
-              <div id="hero-total-thu" class="mt-0.5 text-[14.5px] font-semibold text-[#059669] tabular-nums whitespace-nowrap">*** <span class="vnd-u">₫</span></div>
+              <span class="w-6 h-6 rounded-full bg-white text-[#059669] border border-emerald-200/80 inline-flex items-center justify-center flex-shrink-0">
+                <svg class="svg-duo" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+                  <line x1="7" y1="17" x2="17" y2="7"/>
+                  <polyline points="7 7 17 7 17 17"/>
+                </svg>
+              </span>
             </div>
 
-            <div class="min-w-0 text-right">
-              <div class="inline-flex items-center justify-end gap-1 text-[10.5px] font-medium text-slate-500">
-                <span>Tổng Chi</span>
-                <span class="w-4 h-4 rounded-full bg-rose-50 text-[#DC2626] inline-flex items-center justify-center flex-shrink-0">
-                  <svg class="svg-duo" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="7" y1="7" x2="17" y2="17"/>
-                    <polyline points="17 7 17 17 7 17"/>
-                  </svg>
-                </span>
+            <div class="rounded-2xl bg-rose-50/70 border border-rose-200/70 px-2.5 py-2 flex items-center justify-between gap-1.5 min-w-0">
+              <div class="min-w-0">
+                <div class="text-[10px] font-semibold text-rose-800/80">Tổng Chi (-)</div>
+                <div id="hero-total-chi" class="text-[13.5px] font-semibold text-[#DC2626] tabular-nums whitespace-nowrap">*** <span class="vnd-u">₫</span></div>
               </div>
-              <div id="hero-total-chi" class="mt-0.5 text-[14.5px] font-semibold text-[#DC2626] tabular-nums whitespace-nowrap">*** <span class="vnd-u">₫</span></div>
+              <span class="w-6 h-6 rounded-full bg-white text-[#DC2626] border border-rose-200/80 inline-flex items-center justify-center flex-shrink-0">
+                <svg class="svg-duo" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1">
+                  <line x1="7" y1="7" x2="17" y2="17"/>
+                  <polyline points="17 7 17 17 7 17"/>
+                </svg>
+              </span>
             </div>
           </div>
 
-          <!-- Hàng 4 Nút Báo Cáo Nhanh Viên Thuốc Viền Cam Nhạt (Cổ đông | Đối tác | Lương thợ | Quỹ NV) -->
-          <div onclick="event.stopPropagation()" class="grid grid-cols-4 gap-1.5 pt-2.5 border-t border-slate-100">
-            <button type="button" onclick="openReportModal('shareholders')" class="h-8 px-1.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[10.5px] font-bold inline-flex items-center justify-center gap-1 whitespace-nowrap active:scale-95 transition">
-              <svg class="svg-duo" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+          <!-- Hàng 3: 4 Nút Báo Cáo Nhanh Viên Thuốc Dễ Chạm (Cổ đông | Đối tác | Lương thợ | Quỹ NV) -->
+          <div onclick="event.stopPropagation()" class="grid grid-cols-4 gap-1.5">
+            <button type="button" onclick="openReportModal('shareholders')" class="pill-touch-v138 h-9 px-2 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[11px] font-bold inline-flex items-center justify-center gap-1 whitespace-nowrap active:scale-95 transition">
+              <svg class="svg-duo" width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
                 <path d="M21.21 15.89A10 10 0 1 1 8 2.83" stroke="#334155"/>
                 <path d="M22 12A10 10 0 0 0 12 2v10z" stroke="#EA580C" fill="#FDBA74" fill-opacity="0.4"/>
               </svg>
               <span>Cổ đông</span>
             </button>
 
-            <button type="button" onclick="openReportModal('partners')" class="h-8 px-1.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[10.5px] font-bold inline-flex items-center justify-center gap-1 whitespace-nowrap active:scale-95 transition">
-              <svg class="svg-duo" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+            <button type="button" onclick="openReportModal('partners')" class="pill-touch-v138 h-9 px-2 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[11px] font-bold inline-flex items-center justify-center gap-1 whitespace-nowrap active:scale-95 transition">
+              <svg class="svg-duo" width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
                 <rect x="2" y="7" width="20" height="14" rx="2" stroke="#334155" fill="#FDBA74" fill-opacity="0.35"/>
                 <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" stroke="#EA580C"/>
               </svg>
               <span>Đối tác</span>
             </button>
 
-            <button type="button" onclick="openReportModal('payroll')" class="h-8 px-1.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[10.5px] font-bold inline-flex items-center justify-center gap-1 whitespace-nowrap active:scale-95 transition">
-              <svg class="svg-duo" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+            <button type="button" onclick="openReportModal('payroll')" class="pill-touch-v138 h-9 px-2 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[11px] font-bold inline-flex items-center justify-center gap-1 whitespace-nowrap active:scale-95 transition">
+              <svg class="svg-duo" width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
                 <path d="M2 18h20" stroke="#334155"/>
                 <path d="M6 18v-3a6 6 0 0 1 12 0v3" stroke="#EA580C" fill="#FDBA74" fill-opacity="0.4"/>
               </svg>
               <span>Lương thợ</span>
             </button>
 
-            <button type="button" onclick="openReportModal('staff')" class="h-8 px-1.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[10.5px] font-bold inline-flex items-center justify-center gap-1 whitespace-nowrap active:scale-95 transition">
-              <svg class="svg-duo" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+            <button type="button" onclick="openReportModal('staff')" class="pill-touch-v138 h-9 px-2 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[11px] font-bold inline-flex items-center justify-center gap-1 whitespace-nowrap active:scale-95 transition">
+              <svg class="svg-duo" width="12.5" height="12.5" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
                 <rect x="2" y="5" width="20" height="14" rx="2.5" stroke="#334155" fill="#FDBA74" fill-opacity="0.35"/>
                 <path d="M16 12h4" stroke="#EA580C"/>
               </svg>
@@ -494,7 +528,7 @@
               <span id="history-count-label" class="px-2 py-0.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[11px] font-bold text-[#EA580C] tabular-nums">0</span>
             </div>
 
-            <button id="btn-history-header-action" onclick="handleHistoryHeaderAction()" class="h-8 px-3 rounded-full bg-white border border-slate-200 shadow-2xs text-[11.5px] font-semibold text-slate-700 inline-flex items-center gap-1.5 active:bg-slate-50 transition">
+            <button id="btn-history-header-action" onclick="handleHistoryHeaderAction()" class="h-8.5 px-3.5 rounded-full bg-white border border-slate-200 shadow-2xs text-[11.5px] font-semibold text-slate-700 inline-flex items-center gap-1.5 active:bg-slate-50 transition">
               <svg class="svg-duo" width="13.5" height="13.5" viewBox="0 0 24 24" fill="none" stroke-width="1.9">
                 <line x1="18" y1="20" x2="18" y2="10" stroke="#EA580C"/>
                 <line x1="12" y1="20" x2="12" y2="4" stroke="#334155"/>
@@ -504,23 +538,23 @@
             </button>
           </div>
 
-          <!-- Thanh Lọc Dạng Viên Thuốc Nổi Khối 1 Hàng Ngang -->
-          <div class="bg-white rounded-full p-1.5 border border-slate-200/80 shadow-2xs flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-            <button id="pill-filter-reset" onclick="resetDashboardFilters()" class="h-8 px-3.5 rounded-full bg-[#EA580C] text-white text-[11.5px] font-bold flex-shrink-0">Tất cả</button>
-            <div class="relative flex-1 min-w-[100px]">
-              <svg class="svg-duo absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <!-- Thanh Lọc Dạng Viên Thuốc Nổi Khối 1 Hàng Ngang Dễ Chạm -->
+          <div class="bg-white rounded-full p-1.5 border border-slate-200/90 shadow-2xs flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+            <button id="pill-filter-reset" onclick="resetDashboardFilters()" class="pill-touch-v138 h-9 px-4 rounded-full bg-[#EA580C] text-white text-[12px] font-bold flex-shrink-0">Tất cả</button>
+            <div class="relative flex-1 min-w-[105px]">
+              <svg class="svg-duo absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" width="13.5" height="13.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"/>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
-              <input id="search-input" type="text" oninput="renderDashboard()" placeholder="Tìm kiếm" class="w-full h-8 pl-7 pr-2.5 rounded-full bg-slate-50 border border-slate-200/80 text-[11.5px] outline-none" />
+              <input id="search-input" type="text" oninput="renderDashboard()" placeholder="Tìm kiếm" class="pill-touch-v138 w-full h-9 pl-8 pr-3 rounded-full bg-slate-50 border border-slate-200/90 text-[12px] outline-none" />
             </div>
-            <select id="filter-type" onchange="renderDashboard()" class="h-8 px-2.5 rounded-full bg-white border border-slate-200 text-[11.5px] font-semibold text-slate-700 outline-none flex-shrink-0">
+            <select id="filter-type" onchange="renderDashboard()" class="pill-touch-v138 h-9 px-3 rounded-full bg-white border border-slate-200 text-[12px] font-semibold text-slate-700 outline-none flex-shrink-0">
               <option value="">Loại ▾</option>
               <option value="Thu">Thu (+)</option>
               <option value="Chi">Chi (-)</option>
               <option value="ChuyenQuy">Ứng NV (⇄)</option>
             </select>
-            <select id="filter-project" onchange="renderDashboard()" class="h-8 px-2.5 rounded-full bg-white border border-slate-200 text-[11.5px] font-semibold text-slate-700 outline-none max-w-[115px] truncate flex-shrink-0">
+            <select id="filter-project" onchange="renderDashboard()" class="pill-touch-v138 h-9 px-3 rounded-full bg-white border border-slate-200 text-[12px] font-semibold text-slate-700 outline-none max-w-[120px] truncate flex-shrink-0">
               <option value="">Công trình ▾</option>
             </select>
           </div>
@@ -1263,12 +1297,22 @@
         features: {
           refinedBrandIconAndTrueFullscreen: true
         }
+      },
+      'v1.38': {
+        version: 'v1.38',
+        extends: 'v1.37',
+        date: '26/11/2026',
+        title: 'Chuông Thông Báo Chuyển Tiền Kiểu VietinBank, Nút Viên Thuốc Lớn & Tồn Quỹ Thực Gọn Khoa Học',
+        summary: 'Giữ nguyên 100% cấu trúc và toàn bộ chức năng của bản v1.37; nâng cấp chuông thông báo 2 nốt Ting-Ting trong trẻo giống app VietinBank iPay (mở khóa âm thanh tự động trên iOS), phóng to các ô nhập liệu 50px–52px cùng viền viên thuốc dễ chạm và tinh gọn thẻ Tồn Quỹ Thực loại bỏ khoảng trống thừa.',
+        features: {
+          vietinbankChimeAndBalancedHero: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.37';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.38';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1279,12 +1323,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.37';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.37';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.37') {
-      ACTIVE_VERSION = 'v1.37';
-      localStorage.setItem('tgka_active_version', 'v1.37');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.37');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.38';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.38';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.38') {
+      ACTIVE_VERSION = 'v1.38';
+      localStorage.setItem('tgka_active_version', 'v1.38');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.38');
     }
 
     // =========================================================================
@@ -1550,23 +1594,80 @@
       return accounts.find(a => a.id === currentUserId) || accounts[0];
     }
 
-    function playSuccessChime() {
-      if (!soundEnabled) return;
+    let _sharedAudioCtx = null;
+    function getUnlockedAudioContext() {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return null;
+      if (!_sharedAudioCtx) {
+        _sharedAudioCtx = new AudioCtx();
+      }
+      if (_sharedAudioCtx.state === 'suspended') {
+        _sharedAudioCtx.resume().catch(() => {});
+      }
+      return _sharedAudioCtx;
+    }
+
+    function unlockAudioOnFirstGesture() {
+      getUnlockedAudioContext();
+    }
+
+    function playSuccessChime(forcePlay = false) {
+      if (!soundEnabled && !forcePlay) return;
       try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (!AudioCtx) return;
-        const ctx = new AudioCtx();
+        const ctx = getUnlockedAudioContext();
+        if (!ctx) return;
+        const cfg = resolveVersionConfig(ACTIVE_VERSION);
+        const now = ctx.currentTime + 0.01;
+
+        if (cfg.features.vietinbankChimeAndBalancedHero) {
+          // Chuông thông báo biến động số dư kiểu VietinBank iPay ("Ting - Ting" 2 nốt chuông sáng trong trẻo B5 -> E6 + bồi âm)
+          const notes = [
+            { freq: 987.77, overtone: 1975.53, start: now, dur: 0.24, gain: 0.22 },        // B5
+            { freq: 1318.51, overtone: 2637.02, start: now + 0.145, dur: 0.42, gain: 0.26 } // E6
+          ];
+          notes.forEach(n => {
+            const osc1 = ctx.createOscillator();
+            const osc2 = ctx.createOscillator();
+            const g1 = ctx.createGain();
+            const g2 = ctx.createGain();
+
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(n.freq, n.start);
+            g1.gain.setValueAtTime(0.0001, n.start);
+            g1.gain.linearRampToValueAtTime(n.gain, n.start + 0.012);
+            g1.gain.exponentialRampToValueAtTime(0.0008, n.start + n.dur);
+
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(n.overtone, n.start);
+            g2.gain.setValueAtTime(0.0001, n.start);
+            g2.gain.linearRampToValueAtTime(n.gain * 0.28, n.start + 0.01);
+            g2.gain.exponentialRampToValueAtTime(0.0005, n.start + n.dur * 0.7);
+
+            osc1.connect(g1);
+            osc2.connect(g2);
+            g1.connect(ctx.destination);
+            g2.connect(ctx.destination);
+
+            osc1.start(n.start);
+            osc2.start(n.start);
+            osc1.stop(n.start + n.dur + 0.02);
+            osc2.stop(n.start + n.dur + 0.02);
+          });
+          return;
+        }
+
+        // Nhánh cũ (v1.37 trở về trước)
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(660, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(990, ctx.currentTime + 0.12);
-        gain.gain.setValueAtTime(0.08, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+        osc.frequency.setValueAtTime(660, now);
+        osc.frequency.exponentialRampToValueAtTime(990, now + 0.12);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.16);
+        osc.start(now);
+        osc.stop(now + 0.16);
       } catch (e) {}
     }
 
@@ -1799,7 +1900,12 @@
     function toggleSound() {
       soundEnabled = !soundEnabled;
       localStorage.setItem('tgka_sound_v1', soundEnabled ? '1' : '0');
-      showToast(soundEnabled ? 'Đã bật âm thanh thông báo' : 'Đã tắt âm thanh');
+      if (soundEnabled) {
+        playSuccessChime(true);
+        showToast('Đã bật chuông thông báo VietinBank');
+      } else {
+        showToast('Đã tắt âm thanh');
+      }
     }
 
     function togglePrivacyMask() {
@@ -1821,6 +1927,7 @@
       const cfg = resolveVersionConfig(ACTIVE_VERSION);
       document.body.classList.toggle('compact-entry-v134', !!cfg.features.compactDataEntrySheets);
       document.body.classList.toggle('thumb-sheets-v135', !!cfg.features.thumbReachBottomSheets);
+      document.body.classList.toggle('vietinbank-hero-v138', !!cfg.features.vietinbankChimeAndBalancedHero);
       const histActionLabel = document.getElementById('btn-history-header-label');
       if (histActionLabel) {
         histActionLabel.textContent = cfg.features.transactionHistoryReportExportA4 ? 'Báo cáo LSGD' : 'Công nợ CT';
@@ -4436,6 +4543,8 @@
     // =========================================================================
     // 11. KHỞI TẠO ỨNG DỤNG
     // =========================================================================
+    window.addEventListener('touchstart', unlockAudioOnFirstGesture, { passive: true });
+    window.addEventListener('pointerdown', unlockAudioOnFirstGesture, { passive: true });
     window.addEventListener('DOMContentLoaded', () => {
       setupStandalonePwaAssets();
       lockStandaloneViewportHeight();
