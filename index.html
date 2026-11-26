@@ -376,7 +376,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.38</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.39</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -905,7 +905,14 @@
           <div class="text-[10.5px] opacity-90">Đóng băng nguyên bản từng mốc nâng cấp</div>
         </div>
         <div class="flex items-center gap-1.5">
-          <button onclick="copyFullHtmlBackup()" class="h-7 px-2.5 rounded-full bg-white text-[#EA580C] text-[10.5px] font-bold">Sao chép index.html</button>
+          <button id="btn-version-quick-github-update" onclick="quickUpdateFromGitHub()" class="h-7 px-2.5 rounded-full bg-white text-[#EA580C] text-[10.5px] font-bold inline-flex items-center gap-1 shadow-2xs active:scale-95 transition">
+            <svg class="svg-duo" width="11.5" height="11.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+            <span>Cập nhật từ GitHub</span>
+          </button>
+          <button id="btn-version-legacy-copy" onclick="copyFullHtmlBackup()" class="hidden h-7 px-2.5 rounded-full bg-white text-[#EA580C] text-[10.5px] font-bold">Sao chép index.html</button>
           <button onclick="closeModal('version-modal')" class="w-8 h-8 rounded-full bg-white/15 text-white flex items-center justify-center">✕</button>
         </div>
       </div>
@@ -931,6 +938,30 @@
         <div class="grid grid-cols-2 gap-2">
           <button onclick="runManualDeltaSync()" class="h-10 rounded-xl bg-[#EA580C] text-white text-[12px] font-bold">Lưu & Đồng Bộ Ngay</button>
           <button onclick="copyAppsScriptCode()" class="h-10 rounded-xl bg-slate-100 text-slate-700 text-[12px] font-semibold">Chép Mã.gs</button>
+        </div>
+        <button id="btn-sync-copy-index-html" onclick="copyFullHtmlBackup()" class="w-full h-10 rounded-xl bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[12px] font-bold inline-flex items-center justify-center gap-1.5 active:scale-[0.99] transition">
+          <svg class="svg-duo" width="13.5" height="13.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span>Sao chép index.html (Lưu bản dự phòng)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL 11: XÁC NHẬN KHÔI PHỤC PHIÊN BẢN AN TOÀN (v1.39) ==================== -->
+  <div id="confirm-restore-version-modal" class="modal-backdrop">
+    <div class="modal-sheet" style="max-width: 375px; height: auto;">
+      <div class="tgka-modal-head px-4 py-3 flex items-center justify-between flex-shrink-0">
+        <span class="text-[13.5px] font-bold">Xác Nhận Khôi Phục Phiên Bản</span>
+        <button onclick="closeModal('confirm-restore-version-modal')" class="w-7 h-7 rounded-full bg-white/15 text-white flex items-center justify-center">✕</button>
+      </div>
+      <div class="p-4 space-y-3 bg-white">
+        <div id="confirm-restore-version-message" class="text-[12px] text-slate-700 leading-relaxed space-y-1.5"></div>
+        <div class="grid grid-cols-2 gap-2 pt-1">
+          <button onclick="closeModal('confirm-restore-version-modal')" class="h-10 rounded-full bg-slate-100 text-slate-700 text-[12px] font-semibold">Hủy Bỏ</button>
+          <button onclick="executePendingRestoreVersion()" class="h-10 rounded-full bg-[#EA580C] text-white text-[12px] font-bold">Đồng Ý Khôi Phục</button>
         </div>
       </div>
     </div>
@@ -1307,12 +1338,22 @@
         features: {
           vietinbankChimeAndBalancedHero: true
         }
+      },
+      'v1.39': {
+        version: 'v1.39',
+        extends: 'v1.38',
+        date: '26/11/2026',
+        title: 'Chuyển Sao Chép index.html Sang Đồng Bộ, Cập Nhật Nhanh GitHub & Cảnh Báo Khôi Phục Phiên Bản',
+        summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.38; chuyển nút Sao chép index.html sang hộp thoại Đồng Bộ Google Sheets, bổ sung nút Cập nhật từ GitHub 1 chạm (xóa sạch cache cũ, nạp bản mới tức thì, giữ nguyên 100% dữ liệu) và hiển thị hộp thoại cảnh báo xác nhận trước khi khôi phục bất kỳ phiên bản nào.',
+        features: {
+          syncBackupAndQuickGitHubUpdate: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.38';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.39';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1323,12 +1364,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.38';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.38';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.38') {
-      ACTIVE_VERSION = 'v1.38';
-      localStorage.setItem('tgka_active_version', 'v1.38');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.38');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.39';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.39';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.39') {
+      ACTIVE_VERSION = 'v1.39';
+      localStorage.setItem('tgka_active_version', 'v1.39');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.39');
     }
 
     // =========================================================================
@@ -1524,6 +1565,7 @@
     let partnerProjectFilter = '';
     let expandedReportPartnerKey = '';
     let pendingDeleteAction = null;
+    let pendingRestoreTargetVersion = '';
     let adminOverrideStaff = false;
     let txDraftProofPhotos = [];
     let hrFiltersCollapsed = false;
@@ -1928,6 +1970,13 @@
       document.body.classList.toggle('compact-entry-v134', !!cfg.features.compactDataEntrySheets);
       document.body.classList.toggle('thumb-sheets-v135', !!cfg.features.thumbReachBottomSheets);
       document.body.classList.toggle('vietinbank-hero-v138', !!cfg.features.vietinbankChimeAndBalancedHero);
+      const hasV139 = !!cfg.features.syncBackupAndQuickGitHubUpdate;
+      const btnQuickGh = document.getElementById('btn-version-quick-github-update');
+      const btnLegacyCopy = document.getElementById('btn-version-legacy-copy');
+      const btnSyncCopy = document.getElementById('btn-sync-copy-index-html');
+      if (btnQuickGh) btnQuickGh.classList.toggle('hidden', !hasV139);
+      if (btnLegacyCopy) btnLegacyCopy.classList.toggle('hidden', hasV139);
+      if (btnSyncCopy) btnSyncCopy.classList.toggle('hidden', !hasV139);
       const histActionLabel = document.getElementById('btn-history-header-label');
       if (histActionLabel) {
         histActionLabel.textContent = cfg.features.transactionHistoryReportExportA4 ? 'Báo cáo LSGD' : 'Công nợ CT';
@@ -4243,12 +4292,62 @@
 
     function restoreAppVersion(ver) {
       if (!RAW_VERSION_SPECS[ver]) return;
+      const cfg = resolveVersionConfig(ACTIVE_VERSION);
+      if (cfg.features.syncBackupAndQuickGitHubUpdate) {
+        pendingRestoreTargetVersion = ver;
+        const targetSpec = RAW_VERSION_SPECS[ver];
+        const msgEl = document.getElementById('confirm-restore-version-message');
+        if (msgEl) {
+          msgEl.innerHTML = `
+            <div class="p-2.5 rounded-xl bg-[#FFF7ED] border border-[#FED7AA] text-[#9A3412] font-semibold">
+              Bạn chuẩn bị chuyển giao diện & tính năng về mốc <strong>${targetSpec.version}</strong> (${targetSpec.title}).
+            </div>
+            <p>• Các tính năng được nâng cấp sau mốc <strong>${targetSpec.version}</strong> sẽ tạm ẩn theo đúng kỷ luật bảo toàn phiên bản.</p>
+            <p>• Toàn bộ dữ liệu <strong>Thu Chi, Công Trình, Đối Tác, Lương Thợ & Nhật Ký</strong> đang lưu trên máy vẫn được giữ nguyên 100%.</p>
+          `;
+        }
+        openModal('confirm-restore-version-modal');
+        return;
+      }
+      applyRestoreAppVersion(ver);
+    }
+
+    function executePendingRestoreVersion() {
+      const target = pendingRestoreTargetVersion;
+      pendingRestoreTargetVersion = '';
+      closeModal('confirm-restore-version-modal');
+      if (target) applyRestoreAppVersion(target);
+    }
+
+    function applyRestoreAppVersion(ver) {
+      if (!RAW_VERSION_SPECS[ver]) return;
       ACTIVE_VERSION = ver;
       localStorage.setItem('tgka_active_version', ver);
       privacyMasked = resolveVersionConfig(ACTIVE_VERSION).features.privacyDefaultMaskedCashbookHero !== false;
       closeModal('version-modal');
       renderDashboard();
-      showToast('Đã khôi phục phiên bản ' + ver);
+      showToast('Đã khôi phục nguyên bản phiên bản ' + ver);
+    }
+
+    async function quickUpdateFromGitHub() {
+      showToast('Đang dọn bộ nhớ đệm & nạp bản mới nhất từ GitHub...');
+      try {
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          await Promise.all(cacheNames.map(name => caches.delete(name)));
+        }
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(regs.map(r => r.unregister()));
+        }
+      } catch (e) {}
+
+      // Bỏ qua cache trình duyệt và tải thẳng tệp index.html mới nhất trên GitHub Pages (giữ nguyên localStorage)
+      const url = new URL(window.location.href);
+      url.searchParams.set('v_sync', String(Date.now()));
+      setTimeout(() => {
+        window.location.replace(url.toString());
+      }, 350);
     }
 
     function openSyncModal() {
