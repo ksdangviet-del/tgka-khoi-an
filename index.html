@@ -400,7 +400,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.46</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.47</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -444,37 +444,38 @@
     <!-- ==================== NỘI DUNG CHÍNH: KHÓA CỐ ĐỊNH TỪ THANH TÌM KIẾM TRỞ LÊN ==================== -->
     <main class="flex-1 flex flex-col min-h-0 bg-[#F8FAFC] overflow-hidden">
       <div class="px-3.5 pt-3 pb-2 space-y-2.5 flex-shrink-0">
-        <!-- Thẻ Tổng Quan Tổng Doanh Thu Hợp Đồng & Thu Chi Công Trình (v1.44: chỉ chạm nút Báo cáo tài chính mới mở bảng) -->
+        <!-- Thẻ Tổng Quan Tổng Doanh Thu Hợp Đồng & Thu Chi Công Trình (v1.47: bố cục 2 hàng cân xứng giữa kỳ xem & Báo cáo tài chính) -->
         <section id="hero-overview-section" class="overview-card transition !p-3 space-y-2.5">
-          <!-- Hàng 1: Nhãn + Kỳ xem + Tổng Doanh Thu Hợp Đồng nằm gọn 1 tầng không khoảng trống thừa -->
-          <div class="flex items-center justify-between gap-2">
-            <div class="min-w-0">
-              <div class="flex items-center gap-1.5">
-                <span id="hero-main-label" class="text-[10.5px] font-bold uppercase tracking-wide text-slate-500 whitespace-nowrap">TỔNG DOANH THU</span>
-                <div onclick="event.stopPropagation()" class="inline-flex items-center gap-1 px-2 h-5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[10px] font-bold text-[#EA580C]">
-                  <button type="button" onclick="shiftPeriodCursor(-1)" class="px-0.5">‹</button>
-                  <span id="hero-period-label" class="whitespace-nowrap">Toàn bộ 2026</span>
-                  <button type="button" onclick="shiftPeriodCursor(1)" class="px-0.5">›</button>
-                </div>
+          <!-- Hàng 1: Nhãn TỔNG DOANH THU bên trái & Nút Báo cáo tài chính + Con mắt bên phải -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between gap-2">
+              <span id="hero-main-label" class="text-[10.5px] font-bold uppercase tracking-wide text-slate-500 whitespace-nowrap">TỔNG DOANH THU</span>
+              <div class="flex items-center gap-1.5 flex-shrink-0">
+                <button type="button" onclick="event.stopPropagation();openCashbookModal('overview')" class="h-7 px-2.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[11px] font-bold text-[#EA580C] inline-flex items-center gap-1 whitespace-nowrap active:scale-95 transition">
+                  <span id="hero-cashbook-btn-label">Báo cáo tài chính</span>
+                  <span>›</span>
+                </button>
+                <button type="button" onclick="event.stopPropagation();togglePrivacyMask()" title="Ẩn / Hiện số Thu Chi" class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
+                  <svg class="svg-duo" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3" fill="#CBD5E1"/>
+                  </svg>
+                </button>
               </div>
-              <div id="hero-net-balance" class="mt-0.5 text-[22px] font-semibold text-slate-900 tracking-tight tabular-nums whitespace-nowrap leading-tight">*** *** <span class="vnd-u">₫</span></div>
             </div>
 
-            <div class="flex items-center gap-1.5 flex-shrink-0 self-start">
-              <button type="button" onclick="event.stopPropagation();openCashbookModal('overview')" class="h-7 px-2.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[11px] font-bold text-[#EA580C] inline-flex items-center gap-1 whitespace-nowrap active:scale-95 transition">
-                <span id="hero-cashbook-btn-label">Báo cáo tài chính</span>
-                <span>›</span>
-              </button>
-              <button type="button" onclick="event.stopPropagation();togglePrivacyMask()" title="Ẩn / Hiện số Thu Chi" class="w-7 h-7 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
-                <svg class="svg-duo" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3" fill="#CBD5E1"/>
-                </svg>
-              </button>
+            <!-- Hàng 2: Số tiền Tổng Doanh Thu bên trái & Viên thuốc chọn kỳ < Toàn bộ 2026 > cân đối bên phải -->
+            <div class="flex items-center justify-between gap-2">
+              <div id="hero-net-balance" class="text-[22px] font-semibold text-slate-900 tracking-tight tabular-nums whitespace-nowrap leading-tight">*** *** <span class="vnd-u">₫</span></div>
+              <div onclick="event.stopPropagation()" class="inline-flex items-center gap-1.5 px-2.5 h-6 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[10.5px] font-bold text-[#EA580C] flex-shrink-0">
+                <button type="button" onclick="shiftPeriodCursor(-1)" class="px-0.5">‹</button>
+                <span id="hero-period-label" class="whitespace-nowrap">Toàn bộ 2026</span>
+                <button type="button" onclick="shiftPeriodCursor(1)" class="px-0.5">›</button>
+              </div>
             </div>
           </div>
 
-          <!-- Hàng 2: 2 Thẻ Con Tổng Thu (Khách hàng) & Tổng Chi (Công trình) Gọn Gàng Cân Đối -->
+          <!-- Hàng 3: 2 Thẻ Con Tổng Thu (Khách hàng) & Tổng Chi (Công trình) Gọn Gàng Cân Đối -->
           <div class="grid grid-cols-2 gap-2">
             <div class="rounded-2xl bg-emerald-50/70 border border-emerald-200/70 px-2.5 py-2 flex items-center justify-between gap-1.5 min-w-0">
               <div class="min-w-0">
@@ -1498,12 +1499,22 @@
         features: {
           v146ProfitGlossaryPreviewAndSplitCommon: true
         }
+      },
+      'v1.47': {
+        version: 'v1.47',
+        extends: 'v1.46',
+        date: '26/11/2026',
+        title: 'Mã Công Trình Nhân Công N-, Chống Đè Chữ Số Lãi CT & Cân Đối Thẻ Tổng Doanh Thu',
+        summary: 'Giữ nguyên 100% giao diện chuẩn khóa v1.46; thêm nút chọn loại công trình Trọn gói (TG-) hoặc Nhân công / Ngoài (N-) khi tạo công trình mới, tách 2 dòng Lãi công trình & Lãi thực CT chống đè chữ số trên điện thoại và căn đối lại thẻ Tổng Doanh Thu.',
+        features: {
+          laborProjectCodeNAndBalancedLayoutV147: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.46';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.47';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1514,12 +1525,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.46';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.46';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.46') {
-      ACTIVE_VERSION = 'v1.46';
-      localStorage.setItem('tgka_active_version', 'v1.46');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.46');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.47';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.47';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.47') {
+      ACTIVE_VERSION = 'v1.47';
+      localStorage.setItem('tgka_active_version', 'v1.47');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.47');
     }
 
     // =========================================================================
@@ -1711,6 +1722,7 @@
     let activeCashbookTab = 'overview';
     let activeReportTab = 'shareholders';
     let activeCatalogTab = 'projects';
+    let catalogProjectType = 'TG';
     let catalogWorkerRoleFilter = 'all';
     let partnerProjectFilter = '';
     let expandedReportPartnerKey = '';
@@ -2466,6 +2478,7 @@
       const hasV142 = !!cfg.features.revenueHeroAndFinancialReportExport;
       const hasV144 = !!cfg.features.focusedFinancialReportV144 || !!cfg.features.cleanTwoTabFinancialReportAndA4Profit;
       const hasV146 = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon;
+      const hasV147 = !!cfg.features.laborProjectCodeNAndBalancedLayoutV147;
       const m = computeFinancialReportMetrics();
       const filtered = m.filtered;
 
@@ -2645,12 +2658,23 @@
                     <div class="text-[#DC2626] text-center amount-nowrap">Chi: <strong>${formatVNDHtml(p.chi)}</strong></div>
                     <div class="text-slate-700 text-right amount-nowrap">Nợ KH: <strong>${formatVNDHtml(p.receivable)}</strong></div>
                   </div>
-                  ${hasV144 ? `
+                  ${hasV144 ? (hasV147 ? `
+                    <div class="space-y-1 pt-1.5 border-t border-slate-200/60 text-[10.5px]">
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-slate-600">Tầng 1 • Lãi công trình (HĐ):</span>
+                        <span class="font-bold ${p.margin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${formatVNDHtml(p.margin)}</span>
+                      </div>
+                      <div class="flex items-center justify-between gap-2">
+                        <span class="text-slate-600">Tầng 2 • Lãi thực CT (Thu - Chi):</span>
+                        <span class="font-bold ${p.cashNet >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${formatVNDHtml(p.cashNet)}</span>
+                      </div>
+                    </div>
+                  ` : `
                     <div class="grid grid-cols-2 gap-1 pt-1 border-t border-slate-200/60 text-[10.5px]">
                       <div class="${p.margin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${hasV146 ? 'Lãi CT (HĐ):' : 'Lãi gộp HĐ:'} <strong>${formatVNDHtml(p.margin)}</strong></div>
                       <div class="${p.cashNet >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} text-right amount-nowrap">${hasV146 ? 'Lãi thực CT:' : 'Lãi thực thu-chi:'} <strong>${formatVNDHtml(p.cashNet)}</strong></div>
                     </div>
-                  ` : ''}
+                  `) : ''}
                 </div>
               `).join('')}
             </div>
@@ -2718,12 +2742,23 @@
               <div class="text-[#DC2626] text-center amount-nowrap">Đã chi: <span class="font-semibold">${formatVNDHtml(g.chi)}</span></div>
               <div class="text-slate-800 text-right amount-nowrap">Còn thu: <span class="font-semibold">${formatVNDHtml(g.receivable)}</span></div>
             </div>
-            ${hasV144 ? `
+            ${hasV144 ? (hasV147 ? `
+              <div class="space-y-1 pt-1.5 report-row-divider text-[11px]">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-slate-600">Tầng 1 • Lãi công trình (HĐ):</span>
+                  <span class="font-semibold ${g.margin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${formatVNDHtml(g.margin)}</span>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-slate-600">Tầng 2 • Lãi thực CT (Thu - Chi):</span>
+                  <span class="font-semibold ${g.cashNet >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${formatVNDHtml(g.cashNet)}</span>
+                </div>
+              </div>
+            ` : `
               <div class="grid grid-cols-2 gap-1.5 pt-1.5 report-row-divider text-[10.5px]">
                 <div class="${g.margin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${hasV146 ? 'Tầng 1 • Lãi công trình (HĐ):' : 'Lãi gộp HĐ:'} <span class="font-semibold">${formatVNDHtml(g.margin)}</span></div>
                 <div class="${g.cashNet >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} text-right amount-nowrap">${hasV146 ? 'Tầng 2 • Lãi thực CT:' : 'Lãi thực (Thu-Chi):'} <span class="font-semibold">${formatVNDHtml(g.cashNet)}</span></div>
               </div>
-            ` : ''}
+            `) : ''}
           </div>
         `).join('') + profitGlossaryCardHtml;
       } else {
@@ -4556,21 +4591,42 @@
       const editCode = (document.getElementById('cat-proj-edit-code')?.value || '').trim();
       const customer = (document.getElementById('cat-proj-customer')?.value || '').trim();
       const address = (document.getElementById('cat-proj-address')?.value || '').trim();
+      const prefix = catalogProjectType === 'N' ? 'N' : 'TG';
       if (editCode) {
         previewEl.innerHTML = `Mã công trình đang sửa: <strong class="text-[#EA580C]">${editCode}</strong>`;
         return;
       }
       if (!customer) {
-        previewEl.innerHTML = `Mã tự động: <span class="text-slate-400">Nhập tên chủ nhà & địa chỉ (VD: Anh Tỵ + Khu 1 Hà An → <strong>TG-A TỴ K1HA</strong>)</span>`;
+        previewEl.innerHTML = prefix === 'N'
+          ? `Mã nhân công tự động: <span class="text-slate-400">VD: Anh Nam + Khu 2 Hà An → <strong>N-A NAM K2HA</strong></span>`
+          : `Mã trọn gói tự động: <span class="text-slate-400">VD: Anh Tỵ + Khu 1 Hà An → <strong>TG-A TỴ K1HA</strong></span>`;
         return;
       }
-      const generated = `TG-${customer.toUpperCase()} ${abbreviateAddress(address)}`;
+      const generated = `${prefix}-${customer.toUpperCase()} ${abbreviateAddress(address)}`;
       previewEl.innerHTML = `Mã công trình tự động: <strong class="text-[#EA580C]">${generated}</strong>`;
+    }
+
+    function setCatalogProjectType(type) {
+      catalogProjectType = type === 'N' ? 'N' : 'TG';
+      const btnTG = document.getElementById('btn-proj-type-tg');
+      const btnN = document.getElementById('btn-proj-type-n');
+      if (btnTG) {
+        btnTG.className = catalogProjectType === 'TG'
+          ? 'h-8 rounded-full bg-[#EA580C] text-white text-[11px] font-bold transition'
+          : 'h-8 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold transition';
+      }
+      if (btnN) {
+        btnN.className = catalogProjectType === 'N'
+          ? 'h-8 rounded-full bg-[#EA580C] text-white text-[11px] font-bold transition'
+          : 'h-8 rounded-full bg-slate-100 text-slate-600 text-[11px] font-semibold transition';
+      }
+      updateCatalogProjectCodePreview();
     }
 
     function renderCatalogModal() {
       const cfg = resolveVersionConfig(ACTIVE_VERSION);
       const hasV146 = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon;
+      const hasV147 = !!cfg.features.laborProjectCodeNAndBalancedLayoutV147;
       const body = document.getElementById('catalog-modal-body');
       ['projects', 'partners', 'workers'].forEach(t => {
         const b = document.getElementById('cat-tab-' + t);
@@ -4586,6 +4642,12 @@
           <div class="bg-white rounded-2xl p-3 border border-slate-200/80 space-y-2.5">
             <div class="text-[11px] font-bold text-[#EA580C]">+ THÊM / SỬA CÔNG TRÌNH</div>
             <input id="cat-proj-edit-code" type="hidden" value="" />
+            ${hasV147 ? `
+              <div class="grid grid-cols-2 gap-2">
+                <button id="btn-proj-type-tg" type="button" onclick="setCatalogProjectType('TG')" class="h-8 rounded-full ${catalogProjectType === 'TG' ? 'bg-[#EA580C] text-white font-bold' : 'bg-slate-100 text-slate-600 font-semibold'} text-[11px] transition">Trọn gói (TG-)</button>
+                <button id="btn-proj-type-n" type="button" onclick="setCatalogProjectType('N')" class="h-8 rounded-full ${catalogProjectType === 'N' ? 'bg-[#EA580C] text-white font-bold' : 'bg-slate-100 text-slate-600 font-semibold'} text-[11px] transition">Nhân công / Ngoài (N-)</button>
+              </div>
+            ` : ''}
             <div class="grid grid-cols-2 gap-2.5">
               <input id="cat-proj-customer" type="text" oninput="updateCatalogProjectCodePreview()" placeholder="Tên chủ nhà (VD: Anh Tỵ)" class="w-full ios-touch-field" />
               <input id="cat-proj-address" type="text" oninput="updateCatalogProjectCodePreview()" placeholder="Địa chỉ (VD: Khu 1 Hà An)" class="w-full ios-touch-field" />
@@ -4594,14 +4656,19 @@
               <input id="cat-proj-year" type="number" value="2026" placeholder="Năm" class="w-full ios-touch-field" />
               <input id="cat-proj-val" type="text" inputmode="numeric" oninput="formatCurrencyInputEl(this)" placeholder="Giá trị HĐ (đ)" class="w-full ios-touch-field font-bold" />
             </div>
-            ${hasV146 ? `<div id="cat-proj-code-preview" class="px-3 py-1.5 rounded-xl bg-[#FFF7ED] border border-[#FED7AA] text-[11px] text-slate-700">Mã tự động: <span class="text-slate-400">Nhập tên chủ nhà & địa chỉ (VD: Anh Tỵ + Khu 1 Hà An → <strong>TG-A TỴ K1HA</strong>)</span></div>` : ''}
+            ${hasV146 ? `<div id="cat-proj-code-preview" class="px-3 py-1.5 rounded-xl bg-[#FFF7ED] border border-[#FED7AA] text-[11px] text-slate-700">${catalogProjectType === 'N' ? 'Mã nhân công tự động: <span class="text-slate-400">VD: Anh Nam + Khu 2 Hà An → <strong>N-A NAM K2HA</strong></span>' : 'Mã trọn gói tự động: <span class="text-slate-400">VD: Anh Tỵ + Khu 1 Hà An → <strong>TG-A TỴ K1HA</strong></span>'}</div>` : ''}
             <button onclick="saveCatalogProject()" class="entry-primary-btn w-full h-11 rounded-2xl bg-[#EA580C] text-white text-[13px] font-bold">Lưu Công Trình</button>
           </div>
           <div class="space-y-2">
-            ${projects.map(p => `
+            ${projects.map(p => {
+              const isLaborProj = String(p.code || '').startsWith('N-');
+              return `
               <div class="report-card !p-3 flex items-center justify-between gap-2">
                 <div class="min-w-0">
-                  <div class="text-[12.5px] font-semibold text-slate-900 truncate">${p.code}</div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[12.5px] font-semibold text-slate-900 truncate">${p.code}</span>
+                    ${isLaborProj ? `<span class="px-2 py-0.5 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-[9.5px] font-semibold flex-shrink-0">Nhân công</span>` : ''}
+                  </div>
                   <div class="text-[10.5px] text-slate-500 truncate">${p.customer} • ${p.address} • HĐ: <span class="font-semibold text-slate-700 amount-nowrap">${formatVNDHtml(p.contractValue)}</span></div>
                 </div>
                 <div class="flex items-center gap-1.5 flex-shrink-0">
@@ -4609,7 +4676,8 @@
                   <button onclick="deleteCatalogProject('${p.code.replace(/'/g, "\\'")}')" class="h-8 px-3 rounded-full bg-rose-50 text-[#DC2626] text-[11px] font-medium">Xóa</button>
                 </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         `;
       } else if (activeCatalogTab === 'partners') {
@@ -4733,13 +4801,15 @@
     }
 
     function saveCatalogProject() {
+      const cfg = resolveVersionConfig(ACTIVE_VERSION);
       const editCode = document.getElementById('cat-proj-edit-code').value;
       const customer = (document.getElementById('cat-proj-customer').value || '').trim();
       const address = (document.getElementById('cat-proj-address').value || '').trim();
       const year = Number(document.getElementById('cat-proj-year').value) || 2026;
       const contractValue = parseVNDInput(document.getElementById('cat-proj-val').value);
       if (!customer) { showToast('⚠️ Vui lòng nhập tên chủ nhà'); return; }
-      const code = editCode || `TG-${customer.toUpperCase()} ${abbreviateAddress(address)}`;
+      const prefix = (cfg.features.laborProjectCodeNAndBalancedLayoutV147 && catalogProjectType === 'N') ? 'N' : 'TG';
+      const code = editCode || `${prefix}-${customer.toUpperCase()} ${abbreviateAddress(address)}`;
       const obj = { code, customer, address, year, contractValue, status: 'Đang thi công' };
       if (editCode) projects = projects.map(p => p.code === editCode ? obj : p);
       else projects.unshift(obj);
@@ -4753,6 +4823,7 @@
       const p = projects.find(x => x.code === code);
       if (!p) return;
       document.getElementById('cat-proj-edit-code').value = p.code;
+      setCatalogProjectType(String(p.code || '').startsWith('N-') ? 'N' : 'TG');
       document.getElementById('cat-proj-customer').value = p.customer;
       document.getElementById('cat-proj-address').value = p.address;
       document.getElementById('cat-proj-year').value = p.year;
