@@ -282,6 +282,42 @@
       height: 78dvh !important;
       max-height: 78dvh !important;
     }
+    /* Chế độ v1.48: Phủ kín 100% tràn viền sát mép đáy vật lý iPhone qua vùng thanh Home ảo (xóa sạch khoảng trắng đáy) */
+    body.edge-to-edge-bottom-v148,
+    html:has(body.edge-to-edge-bottom-v148) {
+      height: 100lvh !important;
+      min-height: 100lvh !important;
+      background: #F8FAFC !important;
+    }
+    @media (min-width: 520px) {
+      body.edge-to-edge-bottom-v148,
+      html:has(body.edge-to-edge-bottom-v148) {
+        background: #E2E8F0 !important;
+      }
+    }
+    body.edge-to-edge-bottom-v148 .app-shell {
+      height: 100lvh !important;
+      min-height: 100lvh !important;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    body.edge-to-edge-bottom-v148 .modal-backdrop {
+      bottom: calc(-1 * env(safe-area-inset-bottom, 34px)) !important;
+      padding-bottom: env(safe-area-inset-bottom, 34px) !important;
+    }
+    body.edge-to-edge-bottom-v148 .modal-backdrop.entry-bottom-sheet .modal-sheet {
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 34px)) !important;
+    }
+    body.edge-to-edge-bottom-v148 .modal-backdrop.entry-bottom-sheet .ios-scroll {
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 34px)) !important;
+    }
+    body.edge-to-edge-bottom-v148 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) .modal-sheet {
+      height: calc(100lvh - max(12px, env(safe-area-inset-top))) !important;
+      max-height: calc(100lvh - max(12px, env(safe-area-inset-top))) !important;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 34px)) !important;
+    }
+    body.edge-to-edge-bottom-v148 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) .ios-scroll {
+      padding-bottom: calc(28px + env(safe-area-inset-bottom, 34px)) !important;
+    }
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
@@ -400,7 +436,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.47</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.48</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1509,12 +1545,22 @@
         features: {
           laborProjectCodeNAndBalancedLayoutV147: true
         }
+      },
+      'v1.48': {
+        version: 'v1.48',
+        extends: 'v1.47',
+        date: '26/11/2026',
+        title: 'Phủ Kín Tràn Viền 100% Sát Mép Đáy Vật Lý iPhone (Xóa Khoảng Trắng Thanh Home Ảo)',
+        summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.47; mở rộng khung hiển thị 100lvh phủ kín qua vùng thanh Home ảo dưới đáy iPhone và tự động đệm an toàn cho nút Lưu trong các bảng nhập liệu & báo cáo.',
+        features: {
+          edgeToEdgeBottomSafeAreaV148: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.47';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.48';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1525,12 +1571,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.47';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.47';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.47') {
-      ACTIVE_VERSION = 'v1.47';
-      localStorage.setItem('tgka_active_version', 'v1.47');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.47');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.48';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.48';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.48') {
+      ACTIVE_VERSION = 'v1.48';
+      localStorage.setItem('tgka_active_version', 'v1.48');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.48');
     }
 
     // =========================================================================
@@ -2134,6 +2180,7 @@
       document.body.classList.toggle('vietinbank-hero-v138', !!cfg.features.vietinbankChimeAndBalancedHero);
       document.body.classList.toggle('full-report-sheets-v140', !!cfg.features.fullHeightDockedReportSheets);
       document.body.classList.toggle('fixed-entry-top-v141', !!cfg.features.fixedTopEdgeOnEntrySheets);
+      document.body.classList.toggle('edge-to-edge-bottom-v148', !!cfg.features.edgeToEdgeBottomSafeAreaV148);
       const hasV139 = !!cfg.features.syncBackupAndQuickGitHubUpdate;
       const btnQuickGh = document.getElementById('btn-version-quick-github-update');
       const btnLegacyCopy = document.getElementById('btn-version-legacy-copy');
@@ -5703,8 +5750,11 @@
       if (isStandalone) {
         const h = Math.max(window.innerHeight, window.screen.height);
         shell.style.height = h + 'px';
+        shell.style.minHeight = h + 'px';
         document.documentElement.style.height = h + 'px';
+        document.documentElement.style.minHeight = h + 'px';
         document.body.style.height = h + 'px';
+        document.body.style.minHeight = h + 'px';
       }
     }
 
