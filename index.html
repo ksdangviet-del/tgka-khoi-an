@@ -366,7 +366,6 @@
   <div id="toast-box"></div>
 
   <div class="app-shell">
-    <!-- ==================== HEADER CHÍNH (KHÓA CHUẨN v1.30 + LOGO KA KHỞI AN v1.36) ==================== -->
     <!-- ==================== HEADER CHÍNH (KHÓA CHUẨN v1.30 + LOGO KA KHỞI AN v1.37) ==================== -->
     <header class="tgka-header">
       <!-- Hàng 1: Logo Mái Nhà KA, Tên App TGKA Khởi An & Các Nút Viên Thuốc Kính Mờ -->
@@ -401,7 +400,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.45</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.46</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -659,7 +658,31 @@
 
         <div>
           <label class="block text-[11px] font-semibold text-slate-600 mb-1">Số tiền (VNĐ)</label>
-          <input id="manual-amount" type="text" inputmode="numeric" oninput="formatCurrencyInputEl(this)" placeholder="0" class="w-full ios-touch-field text-[16px] font-bold text-[#EA580C] tabular-nums" />
+          <input id="manual-amount" type="text" inputmode="numeric" oninput="formatCurrencyInputEl(this);updateSplitCommonPreview()" placeholder="0" class="w-full ios-touch-field text-[16px] font-bold text-[#EA580C] tabular-nums" />
+        </div>
+
+        <!-- Khung Tách / Phân Bổ Khoản Chi Chung Sang Công Trình Cụ Thể (v1.46) -->
+        <div id="manual-split-common-box" class="hidden bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3 space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-[11.5px] font-bold text-[#9A3412]">Tách / Phân bổ về công trình cụ thể</span>
+            <label class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#EA580C] cursor-pointer">
+              <input id="manual-split-enable" type="checkbox" onchange="toggleSplitCommonMode()" class="w-4 h-4 accent-[#EA580C]" />
+              <span>Bật tách CT</span>
+            </label>
+          </div>
+          <div id="manual-split-fields" class="hidden space-y-2 pt-1">
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] font-semibold text-slate-600 mb-1">Công trình chốt</label>
+                <select id="manual-split-target-project" onchange="updateSplitCommonPreview()" class="w-full ios-touch-field text-[12px] font-semibold"></select>
+              </div>
+              <div>
+                <label class="block text-[10px] font-semibold text-slate-600 mb-1">Số tiền chốt cho CT (đ)</label>
+                <input id="manual-split-amount" type="text" inputmode="numeric" oninput="formatCurrencyInputEl(this);updateSplitCommonPreview()" placeholder="0" class="w-full ios-touch-field text-[13.5px] font-bold text-[#059669] tabular-nums" />
+              </div>
+            </div>
+            <div id="manual-split-preview-text" class="text-[10.5px] text-slate-700 bg-white/85 rounded-xl px-2.5 py-1.5 border border-[#FED7AA]/70 leading-relaxed"></div>
+          </div>
         </div>
 
         <div id="manual-transfer-recipient-box" class="hidden bg-sky-50 border border-sky-200 rounded-2xl p-3 space-y-1.5">
@@ -671,7 +694,7 @@
         <div id="manual-project-partner-row" class="grid grid-cols-2 gap-2.5">
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Công trình</label>
-            <select id="manual-project" class="w-full ios-touch-field">
+            <select id="manual-project" onchange="onManualTypeChange()" class="w-full ios-touch-field">
               <option value="">-- Chi chung / Chưa gắn CT --</option>
             </select>
           </div>
@@ -717,7 +740,7 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL 2: BÁO CÁO TÀI CHÍNH CHUYÊN NGHIỆP (v1.42 / v1.43) ==================== -->
+  <!-- ==================== MODAL 2: BÁO CÁO TÀI CHÍNH CHUYÊN NGHIỆP (v1.42 / v1.46) ==================== -->
   <div id="cashbook-modal" class="modal-backdrop modal-top-pinned" onclick="if(event.target===this)closeModal('cashbook-modal')">
     <div class="modal-sheet" style="height: min(650px, 86dvh);">
       <div class="tgka-modal-head px-4 py-3.5 flex items-center justify-between flex-shrink-0">
@@ -1138,7 +1161,7 @@
 
   <script>
     // =========================================================================
-    // 1. SỔ ĐĂNG KÝ PHIÊN BẢN & ĐÓNG BĂNG CẤU HÌNH (v1.0 -> v1.35)
+    // 1. SỔ ĐĂNG KÝ PHIÊN BẢN & ĐÓNG BĂNG CẤU HÌNH (v1.0 -> v1.46)
     // =========================================================================
     const RAW_VERSION_SPECS = {
       'v1.0': {
@@ -1465,12 +1488,22 @@
         features: {
           cleanTwoTabFinancialReportAndA4Profit: true
         }
+      },
+      'v1.46': {
+        version: 'v1.46',
+        extends: 'v1.45',
+        date: '26/11/2026',
+        title: 'Chú Giải 3 Tầng Lợi Nhuận, Xem Trước Mã Công Trình & Tách Chi Chung Về Công Trình',
+        summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.45; hiển thị đầy đủ 3 tầng lợi nhuận (Lãi công trình, Lãi thực công trình, Lãi ròng công ty) kèm thẻ chú thích khái niệm dễ hiểu, hiển thị xem trước mã công trình tự động khi thêm mới, và hỗ trợ Tách/Phân bổ khoản Chi chung của đối tác về công trình cụ thể mà tự động trừ số dư còn lại.',
+        features: {
+          v146ProfitGlossaryPreviewAndSplitCommon: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.45';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.46';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1481,12 +1514,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.45';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.45';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.45') {
-      ACTIVE_VERSION = 'v1.45';
-      localStorage.setItem('tgka_active_version', 'v1.45');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.45');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.46';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.46';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.46') {
+      ACTIVE_VERSION = 'v1.46';
+      localStorage.setItem('tgka_active_version', 'v1.46');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.46');
     }
 
     // =========================================================================
@@ -2172,6 +2205,7 @@
     function populateSelects() {
       const fProj = document.getElementById('filter-project');
       const mProj = document.getElementById('manual-project');
+      const mSplitProj = document.getElementById('manual-split-target-project');
       const mPart = document.getElementById('manual-partner');
       const mCat = document.getElementById('manual-category');
       const mGrp = document.getElementById('manual-internal-group');
@@ -2187,6 +2221,11 @@
         const prev = mProj.value;
         mProj.innerHTML = `<option value="">-- Chi chung / Chưa gắn CT --</option>${projOptions}`;
         mProj.value = prev;
+      }
+      if (mSplitProj) {
+        const prev = mSplitProj.value;
+        mSplitProj.innerHTML = projOptions;
+        if (prev) mSplitProj.value = prev;
       }
       if (lProj) {
         const prev = lProj.value;
@@ -2264,6 +2303,7 @@
         ` : '';
 
         const canEdit = isAdmin || tx.staff === currentUserId;
+        const canSplitCommon = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon && canEdit && tx.type === 'Chi' && !tx.project && Number(tx.amount) > 0;
 
         return `
           <article onclick="markTransactionRead('${tx.id}')" class="bg-white rounded-[20px] px-3.5 py-3 border ${cardBorderClass} shadow-[0_2px_8px_rgba(15,23,42,0.025)] transition">
@@ -2282,6 +2322,7 @@
               <div class="text-[12.5px] font-semibold text-slate-900 leading-snug min-w-0 truncate">${tx.note || (isTransfer ? `Ứng chi / chuyển quỹ từ ${tx.staff} sang ${tx.recipient}` : '(Không có nội dung)')}</div>
               ${canEdit ? `
                 <div class="flex items-center gap-1 flex-shrink-0" onclick="event.stopPropagation()">
+                  ${canSplitCommon ? `<button onclick="openSplitCommonTransaction('${tx.id}')" class="h-6 px-2.5 rounded-full bg-[#FFF7ED] border border-[#FED7AA] text-[#EA580C] text-[10.5px] font-bold">Tách CT</button>` : ''}
                   <button onclick="editTransaction('${tx.id}')" class="h-6 px-2.5 rounded-full bg-slate-100 text-slate-700 text-[10.5px] font-semibold">Sửa</button>
                   <button onclick="deleteTransaction('${tx.id}')" class="h-6 px-2.5 rounded-full bg-slate-100 text-slate-600 text-[10.5px] font-semibold">Xóa</button>
                 </div>
@@ -2299,6 +2340,7 @@
                 <span>${vnDate}</span>
               </span>
               ${tx.project && tx.partner ? `<span class="px-2 py-0.2 rounded-full bg-slate-100 text-slate-600 font-medium">${tx.project}</span>` : ''}
+              ${!tx.project && tx.type === 'Chi' ? `<span class="px-2 py-0.2 rounded-full bg-amber-50 text-amber-800 border border-amber-200/70 font-medium">Chi chung / Chưa gắn CT</span>` : ''}
             </div>
             ${txPhotosHtml}
           </article>
@@ -2328,7 +2370,7 @@
     }
 
     // =========================================================================
-    // 7. BÁO CÁO TÀI CHÍNH CHUYÊN NGHIỆP & BÁO CÁO NGHIỆP VỤ (v1.42)
+    // 7. BÁO CÁO TÀI CHÍNH CHUYÊN NGHIỆP & BÁO CÁO NGHIỆP VỤ (v1.42 / v1.46)
     // =========================================================================
     function computeFinancialReportMetrics() {
       const filtered = getFilteredTransactions();
@@ -2423,6 +2465,7 @@
       const cfg = resolveVersionConfig(ACTIVE_VERSION);
       const hasV142 = !!cfg.features.revenueHeroAndFinancialReportExport;
       const hasV144 = !!cfg.features.focusedFinancialReportV144 || !!cfg.features.cleanTwoTabFinancialReportAndA4Profit;
+      const hasV146 = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon;
       const m = computeFinancialReportMetrics();
       const filtered = m.filtered;
 
@@ -2515,6 +2558,17 @@
         }
       }
 
+      const profitGlossaryCardHtml = hasV146 ? `
+        <div class="report-card !bg-[#FFFBF5] !border-[#FED7AA] space-y-2 text-[11px]">
+          <div class="text-[12px] font-bold text-[#9A3412]">Chú Thích 3 Tầng Lợi Nhuận TGKA Khởi An</div>
+          <div class="space-y-1.5 text-slate-700 leading-relaxed">
+            <div><strong class="text-slate-900">1. Lãi công trình (Lãi gộp HĐ = Giá trị HĐ − Chi trực tiếp CT):</strong> Là khoản lãi gộp của riêng từng nhà sau khi trừ toàn bộ vật tư đối tác, khoản chi phụ và công thợ gắn với công trình đó.</div>
+            <div class="pt-1 border-t border-[#FED7AA]/60"><strong class="text-[#059669]">2. Lãi thực công trình (Đã thu KH − Chi trực tiếp CT):</strong> Là dòng tiền lãi thực tế đang dương hoặc âm tại thời điểm hiện tại dựa trên số tiền chủ nhà đã thanh toán trừ đi chi phí đã chi.</div>
+            <div class="pt-1 border-t border-[#FED7AA]/60"><strong class="text-[#EA580C]">3. Lãi ròng công ty (Tổng Thu − Tổng Chi toàn công ty):</strong> Là lợi nhuận cuối cùng còn lại sau khi lấy tổng thu trừ toàn bộ chi trực tiếp công trình lẫn chi phí vận hành/quản lý chung.</div>
+          </div>
+        </div>
+      ` : '';
+
       if (!body) return;
       if (activeCashbookTab === 'overview') {
         const sViet = Math.round(m.netProfit * 0.35);
@@ -2558,13 +2612,13 @@
               </div>
 
               <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-emerald-50/80 border border-emerald-200/80 mt-1">
-                <span class="font-semibold text-emerald-900">III. Lãi gộp theo hợp đồng (Doanh thu - Chi CT)</span>
+                <span class="font-semibold text-emerald-900">III. ${hasV146 ? 'Tầng 1 • Lãi công trình (Lãi gộp HĐ)' : 'Lãi gộp theo hợp đồng (Doanh thu - Chi CT)'}</span>
                 <span class="font-bold ${m.grossProjectMargin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${formatVNDHtml(m.grossProjectMargin)}</span>
               </div>
 
               ${hasV144 ? `
                 <div class="flex items-center justify-between gap-2 p-2.5 rounded-xl ${m.netProfit >= 0 ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'} border">
-                  <span class="font-semibold text-slate-900">IV. Lãi ròng thực tế (Tổng Thu - Tổng Chi)</span>
+                  <span class="font-semibold text-slate-900">IV. ${hasV146 ? 'Tầng 3 • Lãi ròng công ty (Tổng Thu - Tổng Chi)' : 'Lãi ròng thực tế (Tổng Thu - Tổng Chi)'}</span>
                   <span class="font-bold ${m.netProfit >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${formatVNDHtml(m.netProfit)}</span>
                 </div>
               ` : ''}
@@ -2593,8 +2647,8 @@
                   </div>
                   ${hasV144 ? `
                     <div class="grid grid-cols-2 gap-1 pt-1 border-t border-slate-200/60 text-[10.5px]">
-                      <div class="${p.margin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">Lãi gộp HĐ: <strong>${formatVNDHtml(p.margin)}</strong></div>
-                      <div class="${p.cashNet >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} text-right amount-nowrap">Lãi thực thu-chi: <strong>${formatVNDHtml(p.cashNet)}</strong></div>
+                      <div class="${p.margin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${hasV146 ? 'Lãi CT (HĐ):' : 'Lãi gộp HĐ:'} <strong>${formatVNDHtml(p.margin)}</strong></div>
+                      <div class="${p.cashNet >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} text-right amount-nowrap">${hasV146 ? 'Lãi thực CT:' : 'Lãi thực thu-chi:'} <strong>${formatVNDHtml(p.cashNet)}</strong></div>
                     </div>
                   ` : ''}
                 </div>
@@ -2620,6 +2674,7 @@
               </div>
             </div>
           </div>
+          ${profitGlossaryCardHtml}
         `;
       } else if (activeCashbookTab === 'staff') {
         const rows = computeStaffBalances(filtered);
@@ -2665,12 +2720,12 @@
             </div>
             ${hasV144 ? `
               <div class="grid grid-cols-2 gap-1.5 pt-1.5 report-row-divider text-[10.5px]">
-                <div class="${g.margin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">Lãi gộp HĐ: <span class="font-semibold">${formatVNDHtml(g.margin)}</span></div>
-                <div class="${g.cashNet >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} text-right amount-nowrap">Lãi thực (Thu-Chi): <span class="font-semibold">${formatVNDHtml(g.cashNet)}</span></div>
+                <div class="${g.margin >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} amount-nowrap">${hasV146 ? 'Tầng 1 • Lãi công trình (HĐ):' : 'Lãi gộp HĐ:'} <span class="font-semibold">${formatVNDHtml(g.margin)}</span></div>
+                <div class="${g.cashNet >= 0 ? 'text-[#059669]' : 'text-[#DC2626]'} text-right amount-nowrap">${hasV146 ? 'Tầng 2 • Lãi thực CT:' : 'Lãi thực (Thu-Chi):'} <span class="font-semibold">${formatVNDHtml(g.cashNet)}</span></div>
               </div>
             ` : ''}
           </div>
-        `).join('');
+        `).join('') + profitGlossaryCardHtml;
       } else {
         const rows = buildPartnerProjectSummary('');
         body.innerHTML = rows.map(r => `
@@ -2787,8 +2842,8 @@
         ['4', 'Tổng chi trực tiếp theo các công trình khách hàng', formatVND(m.projectChi), '#DC2626', false],
         ['5', 'Chi phí chung / chưa gắn công trình', formatVND(m.generalChi), '#475569', false],
         ['6', 'Tổng chi thực tế toàn công ty (4 + 5)', formatVND(m.totalChi), '#DC2626', true],
-        ['7', 'Lãi gộp dự kiến theo hợp đồng (1 - 4)', formatVND(m.grossProjectMargin), '#059669', true],
-        ['8', 'Lãi ròng thực tế (Tổng Thu - Tổng Chi)', formatVND(m.netProfit), m.netProfit >= 0 ? '#059669' : '#DC2626', true],
+        ['7', 'Lãi công trình / Lãi gộp HĐ (1 - 4)', formatVND(m.grossProjectMargin), '#059669', true],
+        ['8', 'Lãi ròng công ty (Tổng Thu - Tổng Chi)', formatVND(m.netProfit), m.netProfit >= 0 ? '#059669' : '#DC2626', true],
         ['9', 'Tồn quỹ thực tế hiện có', formatVND(m.netProfit), '#EA580C', true]
       ];
 
@@ -2830,12 +2885,21 @@
       // MỤC II: BẢNG DOANH THU, THU CHI & LÃI THỰC THEO TỪNG CÔNG TRÌNH
       const cfg = resolveVersionConfig(ACTIVE_VERSION);
       const hasA4ProfitCol = !!cfg.features.cleanTwoTabFinancialReportAndA4Profit;
+      const hasV146A4 = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon;
       ctx.fillStyle = '#0F172A';
       ctx.font = 'bold 17px Be Vietnam Pro, Arial, sans-serif';
-      ctx.fillText(hasA4ProfitCol ? 'II. CHI TIẾT DOANH THU, THU CHI & LÃI THỰC THEO CÔNG TRÌNH KHÁCH HÀNG' : 'II. CHI TIẾT DOANH THU & THU CHI THEO CÔNG TRÌNH KHÁCH HÀNG', mx, y);
+      ctx.fillText(hasV146A4 ? 'II. CHI TIẾT DOANH THU, LÃI CÔNG TRÌNH & LÃI THỰC THEO CÔNG TRÌNH' : (hasA4ProfitCol ? 'II. CHI TIẾT DOANH THU, THU CHI & LÃI THỰC THEO CÔNG TRÌNH KHÁCH HÀNG' : 'II. CHI TIẾT DOANH THU & THU CHI THEO CÔNG TRÌNH KHÁCH HÀNG'), mx, y);
       y += 12;
 
-      const pCols = hasA4ProfitCol ? [
+      const pCols = hasV146A4 ? [
+        { label: 'Mã công trình', w: Math.round(tableW * 0.19), align: 'left' },
+        { label: 'Chủ nhà', w: Math.round(tableW * 0.115), align: 'left' },
+        { label: 'Giá trị HĐ', w: Math.round(tableW * 0.12), align: 'right' },
+        { label: 'Đã thu KH', w: Math.round(tableW * 0.115), align: 'right' },
+        { label: 'Chi CT', w: Math.round(tableW * 0.115), align: 'right' },
+        { label: 'Lãi CT (HĐ)', w: Math.round(tableW * 0.12), align: 'right' },
+        { label: 'Lãi thực CT', w: tableW - Math.round(tableW * 0.775), align: 'right' }
+      ] : (hasA4ProfitCol ? [
         { label: 'Mã công trình', w: Math.round(tableW * 0.21), align: 'left' },
         { label: 'Chủ nhà', w: Math.round(tableW * 0.13), align: 'left' },
         { label: 'Giá trị HĐ', w: Math.round(tableW * 0.135), align: 'right' },
@@ -2850,7 +2914,7 @@
         { label: 'Đã thu KH', w: Math.round(tableW * 0.15), align: 'right' },
         { label: 'Chi công trình', w: Math.round(tableW * 0.15), align: 'right' },
         { label: 'Còn phải thu', w: tableW - Math.round(tableW * 0.85), align: 'right' }
-      ];
+      ]);
 
       ctx.fillStyle = '#FFF7ED';
       ctx.fillRect(mx, y, tableW, rowH);
@@ -2882,12 +2946,16 @@
         ctx.strokeStyle = '#CBD5E1';
         ctx.strokeRect(mx, y, tableW, rowH);
 
-        const vals = hasA4ProfitCol
-          ? [p.code, p.customer, formatVND(p.contract), formatVND(p.thu), formatVND(p.chi), formatVND(p.receivable), formatVND(p.cashNet)]
-          : [p.code, p.customer, formatVND(p.contract), formatVND(p.thu), formatVND(p.chi), formatVND(p.receivable)];
-        const colors = hasA4ProfitCol
-          ? ['#0F172A', '#334155', '#0F172A', '#059669', '#DC2626', '#B45309', p.cashNet >= 0 ? '#059669' : '#DC2626']
-          : ['#0F172A', '#334155', '#0F172A', '#059669', '#DC2626', '#B45309'];
+        const vals = hasV146A4
+          ? [p.code, p.customer, formatVND(p.contract), formatVND(p.thu), formatVND(p.chi), formatVND(p.margin), formatVND(p.cashNet)]
+          : (hasA4ProfitCol
+            ? [p.code, p.customer, formatVND(p.contract), formatVND(p.thu), formatVND(p.chi), formatVND(p.receivable), formatVND(p.cashNet)]
+            : [p.code, p.customer, formatVND(p.contract), formatVND(p.thu), formatVND(p.chi), formatVND(p.receivable)]);
+        const colors = hasV146A4
+          ? ['#0F172A', '#334155', '#0F172A', '#059669', '#DC2626', p.margin >= 0 ? '#059669' : '#DC2626', p.cashNet >= 0 ? '#059669' : '#DC2626']
+          : (hasA4ProfitCol
+            ? ['#0F172A', '#334155', '#0F172A', '#059669', '#DC2626', '#B45309', p.cashNet >= 0 ? '#059669' : '#DC2626']
+            : ['#0F172A', '#334155', '#0F172A', '#059669', '#DC2626', '#B45309']);
         let rx = mx;
         pCols.forEach((c, ci) => {
           if (ci > 0) {
@@ -2897,9 +2965,9 @@
             ctx.stroke();
           }
           ctx.fillStyle = colors[ci];
-          ctx.font = ci >= 2 ? `bold ${hasA4ProfitCol ? '12.5px' : '13.5px'} Be Vietnam Pro, Arial, sans-serif` : `${hasA4ProfitCol ? '12.5px' : '13.5px'} Be Vietnam Pro, Arial, sans-serif`;
+          ctx.font = ci >= 2 ? `bold ${hasA4ProfitCol ? '12px' : '13.5px'} Be Vietnam Pro, Arial, sans-serif` : `${hasA4ProfitCol ? '12px' : '13.5px'} Be Vietnam Pro, Arial, sans-serif`;
           ctx.textAlign = c.align;
-          ctx.fillText(vals[ci], c.align === 'right' ? rx + c.w - 8 : rx + 8, y + 24);
+          ctx.fillText(vals[ci], c.align === 'right' ? rx + c.w - 7 : rx + 7, y + 24);
           rx += c.w;
         });
         ctx.textAlign = 'left';
@@ -3065,12 +3133,12 @@
             <tr><td colspan="5">3. Công nợ khách hàng còn phải thu</td><td colspan="4" style="text-align:right;mso-number-format:'#,##0';">${m.receivableFromClients}</td></tr>
             <tr><td colspan="5">4. Tổng chi theo các công trình của khách hàng</td><td colspan="4" style="text-align:right;mso-number-format:'#,##0';">${m.projectChi}</td></tr>
             <tr><td colspan="5">5. Chi chung / Chưa gắn công trình</td><td colspan="4" style="text-align:right;mso-number-format:'#,##0';">${m.generalChi}</td></tr>
-            <tr><td colspan="5">6. Lãi gộp theo hợp đồng (Doanh thu - Chi CT)</td><td colspan="4" style="text-align:right;font-weight:bold;mso-number-format:'#,##0';">${m.grossProjectMargin}</td></tr>
-            <tr><td colspan="5">7. Lãi ròng thực tế (Tổng Thu - Tổng Chi)</td><td colspan="4" style="text-align:right;font-weight:bold;mso-number-format:'#,##0';">${m.netProfit}</td></tr>
+            <tr><td colspan="5">6. Lãi công trình / Lãi gộp HĐ (Doanh thu - Chi CT)</td><td colspan="4" style="text-align:right;font-weight:bold;mso-number-format:'#,##0';">${m.grossProjectMargin}</td></tr>
+            <tr><td colspan="5">7. Lãi ròng công ty (Tổng Thu - Tổng Chi)</td><td colspan="4" style="text-align:right;font-weight:bold;mso-number-format:'#,##0';">${m.netProfit}</td></tr>
             <tr><td colspan="5">8. Tồn quỹ thực tế hiện có</td><td colspan="4" style="text-align:right;font-weight:bold;mso-number-format:'#,##0';">${m.netProfit}</td></tr>
             <tr><td colspan="9" style="font-weight:bold;background:#FFF7ED;">II. CHI TIẾT DOANH THU, THU CHI & LÃI TỪNG CÔNG TRÌNH</td></tr>
             <tr style="font-weight:bold;background:#F1F5F9;">
-              <th>STT</th><th>Mã công trình</th><th>Chủ nhà</th><th>Giá trị HĐ</th><th>Đã thu KH</th><th>Chi công trình</th><th>Còn phải thu</th><th>Lãi gộp HĐ</th><th>Lãi thực Thu-Chi</th>
+              <th>STT</th><th>Mã công trình</th><th>Chủ nhà</th><th>Giá trị HĐ</th><th>Đã thu KH</th><th>Chi công trình</th><th>Còn phải thu</th><th>Lãi công trình (HĐ)</th><th>Lãi thực CT (Thu-Chi)</th>
             </tr>
             ${projRowsHtml}
             <tr><td colspan="9" style="font-weight:bold;background:#FFF7ED;">III. QUỸ TIỀN MẶT / TÀI KHOẢN THEO NHÂN SỰ</td></tr>
@@ -3162,6 +3230,10 @@
       document.getElementById('manual-category').value = DEFAULT_CATEGORIES[0];
       document.getElementById('manual-internal-group').value = '';
       document.getElementById('manual-note').value = '';
+      const splitChk = document.getElementById('manual-split-enable');
+      const splitAmt = document.getElementById('manual-split-amount');
+      if (splitChk) splitChk.checked = false;
+      if (splitAmt) splitAmt.value = '';
       adminOverrideStaff = false;
       txDraftProofPhotos = [];
       renderTxDraftProofPhotos();
@@ -3170,13 +3242,65 @@
       openModal('entry-modal');
     }
 
+    function toggleSplitCommonMode() {
+      const enabled = !!document.getElementById('manual-split-enable')?.checked;
+      const fields = document.getElementById('manual-split-fields');
+      if (fields) fields.classList.toggle('hidden', !enabled);
+      updateSplitCommonPreview();
+    }
+
+    function updateSplitCommonPreview() {
+      const previewEl = document.getElementById('manual-split-preview-text');
+      if (!previewEl) return;
+      const totalAmt = parseVNDInput(document.getElementById('manual-amount')?.value);
+      const splitAmt = parseVNDInput(document.getElementById('manual-split-amount')?.value);
+      const targetProj = document.getElementById('manual-split-target-project')?.value || '';
+      const remain = Math.max(0, totalAmt - splitAmt);
+
+      if (splitAmt <= 0) {
+        previewEl.innerHTML = `Nhập số tiền đối tác chốt cho công trình <strong>${targetProj}</strong>; phần dư còn lại sẽ tự động giữ nguyên ở mục <strong>Chi chung / Chưa gắn CT</strong>.`;
+      } else if (splitAmt >= totalAmt) {
+        previewEl.innerHTML = `Toàn bộ <strong>${formatVNDHtml(totalAmt)}</strong> sẽ được chuyển thẳng vào công trình <strong>${targetProj}</strong> (không còn số dư ở Chi chung).`;
+      } else {
+        previewEl.innerHTML = `• Chuyển sang <strong>${targetProj}</strong>: <strong class="text-[#059669]">${formatVNDHtml(splitAmt)}</strong><br/>• Còn lại tại <strong>Chi chung / Chưa gắn CT</strong>: <strong class="text-[#EA580C]">${formatVNDHtml(remain)}</strong>`;
+      }
+    }
+
+    function openSplitCommonTransaction(id) {
+      editTransaction(id);
+      const cfg = resolveVersionConfig(ACTIVE_VERSION);
+      if (!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon) return;
+      const splitChk = document.getElementById('manual-split-enable');
+      if (splitChk) {
+        splitChk.checked = true;
+        toggleSplitCommonMode();
+      }
+    }
+
     function onManualTypeChange() {
+      const cfg = resolveVersionConfig(ACTIVE_VERSION);
       const t = document.getElementById('manual-type').value;
+      const editId = document.getElementById('manual-edit-id')?.value || '';
+      const curProj = document.getElementById('manual-project')?.value || '';
       const isTransfer = t === 'ChuyenQuy';
       const transferBox = document.getElementById('manual-transfer-recipient-box');
       const projPartRow = document.getElementById('manual-project-partner-row');
       const catGroupRow = document.getElementById('manual-category-group-row');
+      const splitBox = document.getElementById('manual-split-common-box');
       const noteEl = document.getElementById('manual-note');
+
+      const showSplitBox = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon && !!editId && t === 'Chi' && !curProj;
+      if (splitBox) {
+        splitBox.classList.toggle('hidden', !showSplitBox);
+        if (!showSplitBox) {
+          const chk = document.getElementById('manual-split-enable');
+          if (chk) chk.checked = false;
+          const flds = document.getElementById('manual-split-fields');
+          if (flds) flds.classList.add('hidden');
+        } else {
+          updateSplitCommonPreview();
+        }
+      }
 
       if (transferBox) transferBox.classList.toggle('hidden', !isTransfer);
       if (projPartRow) projPartRow.classList.toggle('hidden', isTransfer);
@@ -3247,6 +3371,7 @@
     }
 
     function saveManualTransaction() {
+      const cfg = resolveVersionConfig(ACTIVE_VERSION);
       const editId = document.getElementById('manual-edit-id').value;
       const type = document.getElementById('manual-type').value;
       const date = document.getElementById('manual-date').value || '2026-11-26';
@@ -3265,6 +3390,75 @@
       }
       if (type === 'ChuyenQuy' && (!recipient || recipient === staff)) {
         showToast('⚠️ Vui lòng chọn nhân viên nhận tiền khác người chuyển');
+        return;
+      }
+
+      // Xử lý thông minh: Tách / Phân bổ khoản Chi chung về công trình cụ thể (v1.46)
+      const splitEnabled = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon && !!editId && type === 'Chi' && !project && !!document.getElementById('manual-split-enable')?.checked;
+      if (splitEnabled) {
+        const targetProj = document.getElementById('manual-split-target-project')?.value || '';
+        const splitAmt = parseVNDInput(document.getElementById('manual-split-amount')?.value);
+        if (!targetProj) {
+          showToast('⚠️ Vui lòng chọn công trình để phân bổ');
+          return;
+        }
+        if (splitAmt <= 0 || splitAmt > amount) {
+          showToast('⚠️ Số tiền phân bổ phải lớn hơn 0 và không vượt quá khoản chi chung');
+          return;
+        }
+        const remainAmt = amount - splitAmt;
+        const allocatedTx = {
+          id: 'tx_' + Date.now(),
+          date,
+          type: 'Chi',
+          staff,
+          recipient: '',
+          amount: splitAmt,
+          project: targetProj,
+          partner,
+          category,
+          internalGroup,
+          note: note ? `${note} (Phân bổ về ${targetProj})` : `Phân bổ từ chi chung về ${targetProj}`,
+          photos: [...txDraftProofPhotos],
+          seenBy: [currentUserId]
+        };
+
+        if (remainAmt === 0) {
+          transactions = transactions.map(t => t.id === editId ? { ...allocatedTx, id: editId } : t);
+          showToast(`Đã chuyển toàn bộ sang ${targetProj}`);
+        } else {
+          const updatedCommonTx = {
+            id: editId,
+            date,
+            type: 'Chi',
+            staff,
+            recipient: '',
+            amount: remainAmt,
+            project: '',
+            partner,
+            category,
+            internalGroup,
+            note,
+            photos: [...txDraftProofPhotos],
+            seenBy: [currentUserId]
+          };
+          const nextList = [];
+          transactions.forEach(t => {
+            if (t.id === editId) {
+              nextList.push(allocatedTx);
+              nextList.push(updatedCommonTx);
+            } else {
+              nextList.push(t);
+            }
+          });
+          transactions = nextList;
+          showToast(`Đã tách ${formatVND(splitAmt)} về ${targetProj} (Chi chung còn ${formatVND(remainAmt)})`);
+        }
+
+        saveAllLocal();
+        closeModal('entry-modal');
+        renderDashboard();
+        playSuccessChime();
         return;
       }
 
@@ -3308,11 +3502,15 @@
       document.getElementById('manual-amount').value = formatPlainNumber(tx.amount);
       adminOverrideStaff = (getCurrentUser().role === 'Admin' && tx.staff && tx.staff !== currentUserId);
       renderEntryStaffLockedBadge(tx.staff || currentUserId);
+      document.getElementById('manual-project').value = tx.project || '';
+      const splitChk = document.getElementById('manual-split-enable');
+      const splitAmt = document.getElementById('manual-split-amount');
+      if (splitChk) splitChk.checked = false;
+      if (splitAmt) splitAmt.value = '';
       onManualTypeChange();
       if (tx.type === 'ChuyenQuy' && tx.recipient) {
         document.getElementById('manual-transfer-recipient').value = tx.recipient;
       }
-      document.getElementById('manual-project').value = tx.project || '';
       document.getElementById('manual-partner').value = tx.partner || '';
       document.getElementById('manual-category').value = tx.category || DEFAULT_CATEGORIES[0];
       document.getElementById('manual-internal-group').value = tx.internalGroup || '';
@@ -3920,7 +4118,7 @@
       ctx.fillText(
         items.length > maxRows
           ? `* Hiển thị ${maxRows}/${items.length} dòng đầu tiên trên ảnh. Dùng Xuất Excel hoặc Xuất File A4 để in trọn bộ ${items.length} dòng.`
-          : 'Báo cáo được xuất tự động từ hệ thống quản lý thi công trọn gói TGKA Khải An.',
+          : 'Báo cáo được xuất tự động từ hệ thống quản lý thi công trọn gói TGKA Khởi An.',
         32,
         y + 34
       );
@@ -4352,7 +4550,27 @@
         .join('');
     }
 
+    function updateCatalogProjectCodePreview() {
+      const previewEl = document.getElementById('cat-proj-code-preview');
+      if (!previewEl) return;
+      const editCode = (document.getElementById('cat-proj-edit-code')?.value || '').trim();
+      const customer = (document.getElementById('cat-proj-customer')?.value || '').trim();
+      const address = (document.getElementById('cat-proj-address')?.value || '').trim();
+      if (editCode) {
+        previewEl.innerHTML = `Mã công trình đang sửa: <strong class="text-[#EA580C]">${editCode}</strong>`;
+        return;
+      }
+      if (!customer) {
+        previewEl.innerHTML = `Mã tự động: <span class="text-slate-400">Nhập tên chủ nhà & địa chỉ (VD: Anh Tỵ + Khu 1 Hà An → <strong>TG-A TỴ K1HA</strong>)</span>`;
+        return;
+      }
+      const generated = `TG-${customer.toUpperCase()} ${abbreviateAddress(address)}`;
+      previewEl.innerHTML = `Mã công trình tự động: <strong class="text-[#EA580C]">${generated}</strong>`;
+    }
+
     function renderCatalogModal() {
+      const cfg = resolveVersionConfig(ACTIVE_VERSION);
+      const hasV146 = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon;
       const body = document.getElementById('catalog-modal-body');
       ['projects', 'partners', 'workers'].forEach(t => {
         const b = document.getElementById('cat-tab-' + t);
@@ -4369,13 +4587,14 @@
             <div class="text-[11px] font-bold text-[#EA580C]">+ THÊM / SỬA CÔNG TRÌNH</div>
             <input id="cat-proj-edit-code" type="hidden" value="" />
             <div class="grid grid-cols-2 gap-2.5">
-              <input id="cat-proj-customer" type="text" placeholder="Tên chủ nhà (VD: Anh Tỵ)" class="w-full ios-touch-field" />
-              <input id="cat-proj-address" type="text" placeholder="Địa chỉ (VD: Khu 1 Hà An)" class="w-full ios-touch-field" />
+              <input id="cat-proj-customer" type="text" oninput="updateCatalogProjectCodePreview()" placeholder="Tên chủ nhà (VD: Anh Tỵ)" class="w-full ios-touch-field" />
+              <input id="cat-proj-address" type="text" oninput="updateCatalogProjectCodePreview()" placeholder="Địa chỉ (VD: Khu 1 Hà An)" class="w-full ios-touch-field" />
             </div>
             <div class="grid grid-cols-2 gap-2.5">
               <input id="cat-proj-year" type="number" value="2026" placeholder="Năm" class="w-full ios-touch-field" />
               <input id="cat-proj-val" type="text" inputmode="numeric" oninput="formatCurrencyInputEl(this)" placeholder="Giá trị HĐ (đ)" class="w-full ios-touch-field font-bold" />
             </div>
+            ${hasV146 ? `<div id="cat-proj-code-preview" class="px-3 py-1.5 rounded-xl bg-[#FFF7ED] border border-[#FED7AA] text-[11px] text-slate-700">Mã tự động: <span class="text-slate-400">Nhập tên chủ nhà & địa chỉ (VD: Anh Tỵ + Khu 1 Hà An → <strong>TG-A TỴ K1HA</strong>)</span></div>` : ''}
             <button onclick="saveCatalogProject()" class="entry-primary-btn w-full h-11 rounded-2xl bg-[#EA580C] text-white text-[13px] font-bold">Lưu Công Trình</button>
           </div>
           <div class="space-y-2">
@@ -4538,6 +4757,7 @@
       document.getElementById('cat-proj-address').value = p.address;
       document.getElementById('cat-proj-year').value = p.year;
       document.getElementById('cat-proj-val').value = formatPlainNumber(p.contractValue);
+      updateCatalogProjectCodePreview();
     }
 
     function deleteCatalogProject(code) {
