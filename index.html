@@ -276,6 +276,12 @@
     body.full-report-sheets-v140 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) .ios-scroll {
       padding-bottom: max(22px, calc(14px + env(safe-area-inset-bottom))) !important;
     }
+    /* Chế độ v1.41: Cố định mép trên của Nhật Ký Công Trình & Danh Mục khi chuyển tab (không nhảy chiều cao) */
+    body.fixed-entry-top-v141 #sitelog-modal .modal-sheet,
+    body.fixed-entry-top-v141 #catalog-modal .modal-sheet {
+      height: 78dvh !important;
+      max-height: 78dvh !important;
+    }
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
@@ -395,7 +401,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.40</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.41</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1377,12 +1383,22 @@
         features: {
           fullHeightDockedReportSheets: true
         }
+      },
+      'v1.41': {
+        version: 'v1.41',
+        extends: 'v1.40',
+        date: '26/11/2026',
+        title: 'Cố Định Mép Trên Của Nhật Ký Công Trình & Danh Mục Khi Chuyển Tab',
+        summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.40; khóa cố định chiều cao của hộp thoại Nhật Ký Công Trình & Chấm Công và Thêm Mới Danh Mục Quản Lý để mép trên thanh tiêu đề cam cùng dải tab đứng yên tại một vị trí duy nhất khi chuyển tab.',
+        features: {
+          fixedTopEdgeOnEntrySheets: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.40';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.41';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1393,12 +1409,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.40';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.40';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.40') {
-      ACTIVE_VERSION = 'v1.40';
-      localStorage.setItem('tgka_active_version', 'v1.40');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.40');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.41';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.41';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.41') {
+      ACTIVE_VERSION = 'v1.41';
+      localStorage.setItem('tgka_active_version', 'v1.41');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.41');
     }
 
     // =========================================================================
@@ -2000,6 +2016,7 @@
       document.body.classList.toggle('thumb-sheets-v135', !!cfg.features.thumbReachBottomSheets);
       document.body.classList.toggle('vietinbank-hero-v138', !!cfg.features.vietinbankChimeAndBalancedHero);
       document.body.classList.toggle('full-report-sheets-v140', !!cfg.features.fullHeightDockedReportSheets);
+      document.body.classList.toggle('fixed-entry-top-v141', !!cfg.features.fixedTopEdgeOnEntrySheets);
       const hasV139 = !!cfg.features.syncBackupAndQuickGitHubUpdate;
       const btnQuickGh = document.getElementById('btn-version-quick-github-update');
       const btnLegacyCopy = document.getElementById('btn-version-legacy-copy');
