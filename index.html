@@ -257,6 +257,25 @@
       border-radius: 14px !important;
       font-size: 13px !important;
     }
+    /* Chế độ v1.40: Kéo dài các bảng báo cáo chạm sát đáy màn hình iPhone, xóa khoảng trống thừa phía dưới */
+    body.full-report-sheets-v140 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) {
+      align-items: flex-end !important;
+      padding-top: max(12px, env(safe-area-inset-top)) !important;
+      padding-bottom: 0 !important;
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    body.full-report-sheets-v140 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) .modal-sheet {
+      max-width: 480px !important;
+      height: calc(100dvh - max(12px, env(safe-area-inset-top))) !important;
+      max-height: calc(100dvh - max(12px, env(safe-area-inset-top))) !important;
+      border-radius: 26px 26px 0 0 !important;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      box-shadow: 0 -14px 40px rgba(15, 23, 42, 0.24);
+    }
+    body.full-report-sheets-v140 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) .ios-scroll {
+      padding-bottom: max(22px, calc(14px + env(safe-area-inset-bottom))) !important;
+    }
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
@@ -376,7 +395,7 @@
         </div>
 
         <div class="flex items-center gap-1.5 flex-shrink-0">
-          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.39</button>
+          <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.40</button>
           <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
             <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1348,12 +1367,22 @@
         features: {
           syncBackupAndQuickGitHubUpdate: true
         }
+      },
+      'v1.40': {
+        version: 'v1.40',
+        extends: 'v1.39',
+        date: '26/11/2026',
+        title: 'Kéo Dài Các Bảng Báo Cáo Chạm Sát Đáy Màn Hình (Xóa Khoảng Trống Dưới Đáy)',
+        summary: 'Giữ nguyên 100% giao diện màn hình chính v1.30–v1.39 và toàn bộ chức năng của bản v1.39; kéo dài các bảng báo cáo (Báo Cáo Lịch Sử Giao Dịch, Báo Cáo Sổ Quỹ Chi Tiết, Báo Cáo & Đối Soát TGKA) từ ngay dưới Dynamic Island xuống sát mép đáy màn hình iPhone, loại bỏ khoảng trống hở phía dưới và mở rộng vùng xem danh sách.',
+        features: {
+          fullHeightDockedReportSheets: true
+        }
       }
     };
 
     function resolveVersionConfig(verKey) {
       const chain = [];
-      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.39';
+      let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.40';
       while (curr && RAW_VERSION_SPECS[curr]) {
         chain.unshift(RAW_VERSION_SPECS[curr]);
         curr = RAW_VERSION_SPECS[curr].extends;
@@ -1364,12 +1393,12 @@
       return { ...top, features: mergedFeatures };
     }
 
-    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.39';
-    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.39';
-    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.39') {
-      ACTIVE_VERSION = 'v1.39';
-      localStorage.setItem('tgka_active_version', 'v1.39');
-      localStorage.setItem('tgka_latest_seen_ver', 'v1.39');
+    let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.40';
+    if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.40';
+    if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.40') {
+      ACTIVE_VERSION = 'v1.40';
+      localStorage.setItem('tgka_active_version', 'v1.40');
+      localStorage.setItem('tgka_latest_seen_ver', 'v1.40');
     }
 
     // =========================================================================
@@ -1970,6 +1999,7 @@
       document.body.classList.toggle('compact-entry-v134', !!cfg.features.compactDataEntrySheets);
       document.body.classList.toggle('thumb-sheets-v135', !!cfg.features.thumbReachBottomSheets);
       document.body.classList.toggle('vietinbank-hero-v138', !!cfg.features.vietinbankChimeAndBalancedHero);
+      document.body.classList.toggle('full-report-sheets-v140', !!cfg.features.fullHeightDockedReportSheets);
       const hasV139 = !!cfg.features.syncBackupAndQuickGitHubUpdate;
       const btnQuickGh = document.getElementById('btn-version-quick-github-update');
       const btnLegacyCopy = document.getElementById('btn-version-legacy-copy');
