@@ -1142,7 +1142,7 @@
             <button id="btn-pull-from-sheets" onclick="pullAllDataFromSheets()" class="h-10 rounded-xl bg-emerald-600 text-white text-[12px] font-bold">Tải Từ Sheets Về</button>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="importAndAuditLegacy2026Sheets()" class="h-10 rounded-xl bg-sky-600 text-white text-[12px] font-bold">Nạp Sổ Gốc 2026</button><button onclick="openAuditReconciliationModal()" class="h-10 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[12px] font-bold">Kiểm Toán ĐS</button></div><div class="grid grid-cols-2 gap-2"><button onclick="copyAppsScriptCode()" class="h-10 rounded-xl bg-slate-100 text-slate-700 text-[12px] font-semibold">Chép Mã.gs (v1.59)</button>
+            <button onclick="importAndAuditLegacy2026Sheets()" class="h-10 rounded-xl bg-sky-600 text-white text-[12px] font-bold">Nạp Sổ Gốc 2026</button><button onclick="openAuditReconciliationModal()" class="h-10 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[12px] font-bold">Kiểm Toán ĐS</button></div><div class="grid grid-cols-2 gap-2"><button onclick="copyAppsScriptCode()" class="h-10 rounded-xl bg-slate-100 text-slate-700 text-[12px] font-semibold">Chép Mã.gs (v1.58)</button>
             <button id="btn-sync-copy-index-html" onclick="copyFullHtmlBackup()" class="h-10 rounded-xl bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[11.5px] font-bold">Chép index.html</button>
           </div>
         </div>
@@ -1283,446 +1283,76 @@
       // 1. SỔ ĐĂNG KÝ PHIÊN BẢN & ĐÓNG BĂNG CẤU HÌNH (v1.0 -> v1.46)
       // =========================================================================
       const RAW_VERSION_SPECS = {
-        'v1.0': {
-          version: 'v1.0',
-          extends: null,
-          date: '15/11/2026',
-          title: 'Khởi Tạo Hệ Thống TGKA - Quản Lý Xây Dựng Trọn Gói',
-          summary: 'Quản lý thu chi, công nợ chủ nhà 2021–2026, chia cổ đông 35-30-35, chấm công đội thợ nuôi ăn và đồng bộ Google Sheets.',
-          features: {
-            cleanEditorialHistoryCards: false,
-            privacyDefaultMaskedCashbookHero: false,
-            pinnedReportHeaders: false,
-            catalogAddEditDeleteDock: false,
-            currencyThousandFormatting: false,
-            partnerProjectContracts: false,
-            worker2025RaiseAndAudit: false,
-            compactSiteLogWithPhotos: false,
-            directCashEntryWithProofPhotos: false,
-            autoStaffCashbookAndInternalTransfer: false,
-            transactionHistoryReportExportA4: false,
-            directPdfFileDownloadA4: false,
-            standaloneFullScreenPwa: false,
-            compactDataEntrySheets: false,
-            thumbReachBottomSheets: false,
-            khoiAnBrandLogoAndName: false
-          }
-        },
-        'v1.10': {
-          version: 'v1.10',
-          extends: 'v1.0',
-          date: '20/11/2026',
-          title: 'Tinh Gọn Lịch Sử Giao Dịch & Ảnh Đại Diện Nhân Sự',
-          summary: 'Bỏ vạch viền màu đầu dòng, thu gọn khoảng trống thẻ giao dịch và hiển thị ảnh đại diện tròn bên cạnh tên nhân viên.',
-          features: {
-            cleanEditorialHistoryCards: true
-          }
-        },
-        'v1.11': {
-          version: 'v1.11',
-          extends: 'v1.10',
-          date: '21/11/2026',
-          title: 'Mặc Định Ẩn Số Dư & Báo Cáo Sổ Quỹ Chuyên Sâu',
-          summary: 'Mặc định ẩn số dư trên thẻ Tồn Quỹ Thực khi mở app; chạm thẳng vào thẻ để mở Báo Cáo Sổ Quỹ theo Nhân viên, Công trình và Đối tác.',
-          features: {
-            privacyDefaultMaskedCashbookHero: true
-          }
-        },
-        'v1.14': {
-          version: 'v1.14',
-          extends: 'v1.11',
-          date: '22/11/2026',
-          title: 'Cố Định Khung & Thanh Tiêu Đề Mọi Cửa Sổ Báo Cáo',
-          summary: 'Gọn đầu trang màn hình chính, cố định chiều cao hộp thoại và thanh tab phía trên khi chuyển đổi qua lại các tab báo cáo.',
-          features: {
-            pinnedReportHeaders: true
-          }
-        },
-        'v1.16': {
-          version: 'v1.16',
-          extends: 'v1.14',
-          date: '23/11/2026',
-          title: 'Nút Thêm Mới Danh Mục (Công Trình, Đối Tác, Thợ Nuôi Ăn)',
-          summary: 'Thêm, sửa và xóa có xác nhận cho Công trình, Đối tác và danh sách Thợ nuôi ăn ngay tại nút bên trái thanh điều hướng đáy.',
-          features: {
-            catalogAddEditDeleteDock: true
-          }
-        },
-        'v1.18': {
-          version: 'v1.18',
-          extends: 'v1.16',
-          date: '24/11/2026',
-          title: 'Tự Động Tách Dấu Chấm Hàng Nghìn & Bỏ Mũi Tên Số',
-          summary: 'Tự động định dạng dấu chấm hàng nghìn/triệu khi nhập giá trị tiền (đ) và ẩn mũi tên tăng giảm số tránh nhảy số nhầm.',
-          features: {
-            currencyThousandFormatting: true
-          }
-        },
-        'v1.19': {
-          version: 'v1.19',
-          extends: 'v1.18',
-          date: '24/11/2026',
-          title: 'Hợp Đồng Đối Tác Theo Từng Công Trình & Hạng Mục',
-          summary: 'Khai báo hợp đồng đối tác gắn với từng công trình cụ thể và tự động tổng hợp toàn bộ phiếu chi của mọi nhân viên.',
-          features: {
-            partnerProjectContracts: true
-          }
-        },
-        'v1.20': {
-          version: 'v1.20',
-          extends: 'v1.19',
-          date: '25/11/2026',
-          title: 'Lương Công Tăng Năm Nay & Đối Soát Sổ Tay Anh Quyển',
-          summary: 'Tách 2 cột Đơn giá 2025 và Lương công năm nay; bổ sung đối chiếu nhanh sổ chấm công viết tay của Anh Quyển với Nhật ký App Em Hiếu.',
-          features: {
-            worker2025RaiseAndAudit: true
-          }
-        },
-        'v1.23': {
-          version: 'v1.23',
-          extends: 'v1.20',
-          date: '25/11/2026',
-          title: 'Nhật Ký Công Trình Tinh Gọn & Xem Ảnh Vuốt Ngang',
-          summary: 'Gọn form ghi nhật ký theo 2 ca Sáng/Chiều, cảnh báo ghi trùng ca và trình xem ảnh hiện trường phóng to vuốt ngang liền mạch.',
-          features: {
-            compactSiteLogWithPhotos: true
-          }
-        },
-        'v1.24': {
-          version: 'v1.24',
-          extends: 'v1.23',
-          date: '26/11/2026',
-          title: 'Biểu Mẫu Thu Chi Trực Tiếp & Đính Kèm Ảnh Chứng Từ',
-          summary: 'Tối giản hộp thoại Thu Chi nhập trực tiếp dòng tiền trên app, hỗ trợ đính kèm ảnh chứng từ hóa đơn/chuyển khoản và xem vuốt ngang.',
-          features: {
-            directCashEntryWithProofPhotos: true
-          }
-        },
-        'v1.25': {
-          version: 'v1.25',
-          extends: 'v1.24',
-          date: '26/11/2026',
-          title: 'Tự Nhận Diện Sổ Quỹ Theo Tài Khoản & Ứng / Chuyển Quỹ Nội Bộ 1 Chạm (⇄)',
-          summary: 'Tự động khóa sổ quỹ theo tài khoản nhân viên đang đăng nhập khi ghi Thu Chi; bổ sung giao dịch Ứng / Chuyển quỹ NV (⇄) tự động trừ quỹ người đưa, cộng quỹ người nhận và giữ nguyên 100% tổng tồn quỹ công ty.',
-          features: {
-            autoStaffCashbookAndInternalTransfer: true
-          }
-        },
-        'v1.26': {
-          version: 'v1.26',
-          extends: 'v1.25',
-          date: '26/11/2026',
-          title: 'Giao Diện Sổ Tay Thông Minh (4 Thẻ Tổng Quan Banking, Viên Thuốc & Ký Hiệu ₫ Gạch Chân)',
-          summary: 'Giữ nguyên 100% cấu trúc và toàn bộ chức năng của bản v1.25, đồng bộ diện mạo Sổ Tay Thông Minh với Header cam chuyển sắc, lưới 4 thẻ tổng quan bo góc 22px, ký hiệu ₫ gạch chân thanh thoát, thanh lọc viên thuốc và thanh điều hướng đáy có nhãn.',
-          features: {
-            smartNotebookVisualTheme: true
-          }
-        },
-        'v1.27': {
-          version: 'v1.27',
-          extends: 'v1.26',
-          date: '26/11/2026',
-          title: 'Tinh Chỉnh Nét Chữ & Con Số Thanh Mảnh, Sắc Nét',
-          summary: 'Nạp trọng lượng chữ mảnh Be Vietnam Pro (300–700), bật khử răng cưa mượt antialiased và hạ độ dày nét số tiền cùng ký hiệu ₫ gạch chân mảnh 1px giúp toàn bộ giao diện thanh thoát, tinh tế hơn.',
-          features: {
-            refinedSleekTypography: true
-          }
-        },
-        'v1.28': {
-          version: 'v1.28',
-          extends: 'v1.27',
-          date: '26/11/2026',
-          title: 'Đồng Bộ Phông Chữ, Viền Mảnh & Cố Định Tiêu Đề Toàn Bộ Báo Cáo',
-          summary: 'Đồng bộ nét chữ thanh mảnh, ký hiệu ₫ gạch chân, đường viền mảnh 1px thẳng hàng, chống rớt/thiếu chữ trên màn hình điện thoại và khóa cố định vị trí thanh tiêu đề cùng dải tab trên toàn bộ các báo cáo & danh mục.',
-          features: {
-            unifiedSleekReportsAndPinnedHeaders: true
-          }
-        },
-        'v1.29': {
-          version: 'v1.29',
-          extends: 'v1.28',
-          date: '26/11/2026',
-          title: 'Cố Định Tiêu Đề Lịch Sử Giao Dịch & Thanh Tìm Kiếm Khi Cuộn',
-          summary: 'Khóa cố định thanh tiêu đề Lịch sử giao dịch cùng thanh tìm kiếm & bộ lọc viên thuốc ở đỉnh vùng cuộn khi lướt xem danh sách giao dịch dài.',
-          features: {
-            stickyHistorySearchHeader: true
-          }
-        },
-        'v1.30': {
-          version: 'v1.30',
-          extends: 'v1.29',
-          date: '26/11/2026',
-          title: 'Khóa Cố Định Vùng Trên Tại Thanh Tìm Kiếm Lịch Sử Giao Dịch',
-          summary: 'Đóng đúng khung thẻ Tồn Quỹ Thực và tách vùng cuộn độc lập cho danh sách giao dịch bên dưới, giúp Header, Tồn Quỹ Thực và thanh Tìm kiếm Lịch sử giao dịch đứng yên cố định 100% khi vuốt màn hình.',
-          features: {
-            lockedHistorySearchViewport: true
-          }
-        },
-        'v1.31': {
-          version: 'v1.31',
-          extends: 'v1.30',
-          date: '26/11/2026',
-          title: 'Báo Cáo Lịch Sử Giao Dịch Đa Chiều & Xuất Ảnh / Excel / PDF Khổ A4',
-          summary: 'Thay nút Công nợ CT trên thanh Lịch sử giao dịch bằng Báo cáo LSGD: lọc đa chiều theo công trình, đối tác, nhân viên, loại, khoảng ngày, nội dung và hỗ trợ lưu/chia sẻ ảnh JPG, xuất Excel và tạo bảng in PDF khổ A4 chuyên nghiệp.',
-          features: {
-            transactionHistoryReportExportA4: true
-          }
-        },
-        'v1.32': {
-          version: 'v1.32',
-          extends: 'v1.31',
-          date: '26/11/2026',
-          title: 'Xuất Thẳng Tệp PDF Khổ A4 Tải Về Máy (Không Chặn Pop-up)',
-          summary: 'Tạo và tải trực tiếp tệp BaoCao_LSGD_TGKA_A4.pdf chuẩn khổ A4 dọc xuống thiết bị (kèm bảng chia sẻ trên điện thoại) để mở ra in khổ A4 ngay, hỗ trợ xuất trọn bộ 100% giao dịch khi để mặc định Tất cả.',
-          features: {
-            directPdfFileDownloadA4: true
-          }
-        },
-        'v1.33': {
-          version: 'v1.33',
-          extends: 'v1.32',
-          date: '26/11/2026',
-          title: 'Toàn Màn Hình iPhone / Android PWA (Standalone 100%) & Biểu Tượng App',
-          summary: 'Giữ nguyên 100% giao diện chuẩn v1.30 và toàn bộ chức năng v1.32; bổ sung đầy đủ thẻ PWA toàn màn hình iOS/Android (mất thanh địa chỉ trình duyệt), tự động vẽ biểu tượng Apple Touch Icon nền cam – ví trắng và phủ kín nền vùng thanh Home ảo.',
-          features: {
-            standaloneFullScreenPwa: true
-          }
-        },
-        'v1.34': {
-          version: 'v1.34',
-          extends: 'v1.33',
-          date: '26/11/2026',
-          title: 'Tinh Gọn Chiều Cao Thanh Tiêu Đề Bảng Nhập Liệu Trên Điện Thoại',
-          summary: 'Giữ nguyên 100% giao diện màn hình chính v1.30 và toàn bộ chức năng v1.33; thu gọn chiều cao thanh tiêu đề cam và dải tab cố định trên các bảng nhập liệu (Thu Chi, Danh Mục, Nhật Ký Công Trình, Báo Cáo LSGD) để nhập liệu trên iPhone rộng rãi, không bị bàn phím che khuất.',
-          features: {
-            compactDataEntrySheets: true
-          }
-        },
-        'v1.35': {
-          version: 'v1.35',
-          extends: 'v1.34',
-          date: '26/11/2026',
-          title: 'Neo Sát Đáy 3 Bảng Nhập Liệu & Tối Ưu Vùng Chạm Một Tay Trên Điện Thoại',
-          summary: 'Giữ nguyên 100% giao diện màn hình chính v1.30 và toàn bộ chức năng v1.34; hạ 3 bảng nhập liệu (Thêm Mới Danh Mục Quản Lý, Thu Chi & Ứng Quỹ Nội Bộ, Nhật Ký Công Trình & Chấm Công) xuống sát mép dưới màn hình vừa tầm ngón tay cái, kèm các ô chọn & nút Lưu cao 46px–48px dễ chạm 1 lần ăn ngay.',
-          features: {
-            thumbReachBottomSheets: true
-          }
-        },
-        'v1.36': {
-          version: 'v1.36',
-          extends: 'v1.35',
-          date: '26/11/2026',
-          title: 'Đồng Bộ Logo Công Ty KA Home & Đổi Tên Chuẩn TGKA Khởi An',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.35; chỉnh tên công ty thành TGKA Khởi An trên toàn bộ ứng dụng, báo cáo xuất file và tích hợp logo mái nhà KA đỏ – xám than sắc nét vào cả Header lẫn Icon ứng dụng ngoài màn hình chính điện thoại.',
-          features: {
-            khoiAnBrandLogoAndName: true
-          }
-        },
-        'v1.37': {
-          version: 'v1.37',
-          extends: 'v1.36',
-          date: '26/11/2026',
-          title: 'Full 100% Màn Hình iPhone PWA, Phóng To Logo Header Viền Cam & Icon App Chuyên Nghiệp',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.36; nhúng trực tiếp manifest tĩnh chuẩn iOS Safari + khóa position: fixed để chạy full 100% màn hình không thanh địa chỉ, phóng to logo mái nhà KA với viền cam ấm đồng bộ giao diện app và nâng cấp Icon màn hình chính nền cam chuyển sắc sang trọng.',
-          features: {
-            refinedBrandIconAndTrueFullscreen: true
-          }
-        },
-        'v1.38': {
-          version: 'v1.38',
-          extends: 'v1.37',
-          date: '26/11/2026',
-          title: 'Chuông Thông Báo Chuyển Tiền Kiểu VietinBank, Nút Viên Thuốc Lớn & Tồn Quỹ Thực Gọn Khoa Học',
-          summary: 'Giữ nguyên 100% cấu trúc và toàn bộ chức năng của bản v1.37; nâng cấp chuông thông báo 2 nốt Ting-Ting trong trẻo giống app VietinBank iPay (mở khóa âm thanh tự động trên iOS), phóng to các ô nhập liệu 50px–52px cùng viền viên thuốc dễ chạm và tinh gọn thẻ Tồn Quỹ Thực loại bỏ khoảng trống thừa.',
-          features: {
-            vietinbankChimeAndBalancedHero: true
-          }
-        },
-        'v1.39': {
-          version: 'v1.39',
-          extends: 'v1.38',
-          date: '26/11/2026',
-          title: 'Chuyển Sao Chép index.html Sang Đồng Bộ, Cập Nhật Nhanh GitHub & Cảnh Báo Khôi Phục Phiên Bản',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.38; chuyển nút Sao chép index.html sang hộp thoại Đồng Bộ Google Sheets, bổ sung nút Cập nhật từ GitHub 1 chạm (xóa sạch cache cũ, nạp bản mới tức thì, giữ nguyên 100% dữ liệu) và hiển thị hộp thoại cảnh báo xác nhận trước khi khôi phục bất kỳ phiên bản nào.',
-          features: {
-            syncBackupAndQuickGitHubUpdate: true
-          }
-        },
-        'v1.40': {
-          version: 'v1.40',
-          extends: 'v1.39',
-          date: '26/11/2026',
-          title: 'Kéo Dài Các Bảng Báo Cáo Chạm Sát Đáy Màn Hình (Xóa Khoảng Trống Dưới Đáy)',
-          summary: 'Giữ nguyên 100% giao diện màn hình chính v1.30–v1.39 và toàn bộ chức năng của bản v1.39; kéo dài các bảng báo cáo (Báo Cáo Lịch Sử Giao Dịch, Báo Cáo Sổ Quỹ Chi Tiết, Báo Cáo & Đối Soát TGKA) từ ngay dưới Dynamic Island xuống sát mép đáy màn hình iPhone, loại bỏ khoảng trống hở phía dưới và mở rộng vùng xem danh sách.',
-          features: {
-            fullHeightDockedReportSheets: true
-          }
-        },
-        'v1.41': {
-          version: 'v1.41',
-          extends: 'v1.40',
-          date: '26/11/2026',
-          title: 'Cố Định Mép Trên Của Nhật Ký Công Trình & Danh Mục Khi Chuyển Tab',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.40; khóa cố định chiều cao của hộp thoại Nhật Ký Công Trình & Chấm Công và Thêm Mới Danh Mục Quản Lý để mép trên thanh tiêu đề cam cùng dải tab đứng yên tại một vị trí duy nhất khi chuyển tab.',
-          features: {
-            fixedTopEdgeOnEntrySheets: true
-          }
-        },
-        'v1.42': {
-          version: 'v1.42',
-          extends: 'v1.41',
-          date: '26/11/2026',
-          title: 'Tổng Doanh Thu Hợp Đồng, Thu/Chi Công Trình & Báo Cáo Tài Chính Xuất Ảnh / Excel / PDF A4',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.41; thay Tồn Quỹ Thực thành Tổng Doanh Thu (tính sẵn từ tổng giá trị hợp đồng công trình), hiển thị Tổng Thu (khách hàng) & Tổng Chi (theo công trình), đồng thời nâng cấp nút Sổ quỹ thành Báo cáo tài chính chuyên nghiệp có xuất Ảnh, Excel và tải File PDF khổ A4.',
-          features: {
-            revenueHeroAndFinancialReportExport: true
-          }
-        },
-        'v1.43': {
-          version: 'v1.43',
-          extends: 'v1.42',
-          date: '26/11/2026',
-          title: 'Sửa Mở Báo Cáo Tài Chính & Ẩn Số Tiền Tổng Doanh Thu Theo Chế Độ Riêng Tư',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.42; tách độc lập hộp thoại Báo cáo tài chính để chạm mở ngay lập tức, hoàn thiện đầy đủ biểu mẫu Thu Chi và mặc định ẩn số tiền Tổng Doanh Thu (*** *** ₫) đồng bộ với nút con mắt.',
-          features: {
-            maskedTotalRevenueToggle: true
-          }
-        },
-        'v1.44': {
-          version: 'v1.44',
-          extends: 'v1.43',
-          date: '26/11/2026',
-          title: 'Chỉ Mở Báo Cáo Tài Chính Khi Chạm Nút, Tinh Gọn 2 Tab & Bổ Sung Lãi Ròng / Lãi Công Trình',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.43; chỉ mở bảng Báo cáo tài chính khi chạm đúng nút Báo cáo tài chính, bỏ tab Nhân viên & Đối tác, bổ sung chỉ tiêu Lãi ròng thực tế vào tab Tổng hợp và hiển thị thông tin Lãi chi tiết cho từng công trình.',
-          features: {
-            focusedFinancialReportV144: true
-          }
-        },
-        'v1.45': {
-          version: 'v1.45',
-          extends: 'v1.44',
-          date: '26/11/2026',
-          title: 'Xóa Hẳn Tab Nhân Viên / Đối Tác & Thêm Cột Lãi Thực Từng Công Trình Trên File A4',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.44; gỡ bỏ hoàn toàn 2 nút tab Nhân viên và Đối tác trong Báo cáo tài chính (chỉ còn Tổng Hợp & Công Trình) và bổ sung cột Lãi thực từng công trình vào Mục II của bảng Báo cáo tổng hợp tài chính xuất File A4.',
-          features: {
-            cleanTwoTabFinancialReportAndA4Profit: true
-          }
-        },
-        'v1.46': {
-          version: 'v1.46',
-          extends: 'v1.45',
-          date: '26/11/2026',
-          title: 'Chú Giải 3 Tầng Lợi Nhuận, Xem Trước Mã Công Trình & Tách Chi Chung Về Công Trình',
-          summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.45; hiển thị đầy đủ 3 tầng lợi nhuận (Lãi công trình, Lãi thực công trình, Lãi ròng công ty) kèm thẻ chú thích khái niệm dễ hiểu, hiển thị xem trước mã công trình tự động khi thêm mới, và hỗ trợ Tách/Phân bổ khoản Chi chung của đối tác về công trình cụ thể mà tự động trừ số dư còn lại.',
-          features: {
-            v146ProfitGlossaryPreviewAndSplitCommon: true
-          }
-        },
-        'v1.47': {
-          version: 'v1.47',
-          extends: 'v1.46',
-          date: '26/11/2026',
-          title: 'Mã Công Trình Nhân Công N-, Chống Đè Chữ Số Lãi CT & Cân Đối Thẻ Tổng Doanh Thu',
-          summary: 'Giữ nguyên 100% giao diện chuẩn khóa v1.46; thêm nút chọn loại công trình Trọn gói (TG-) hoặc Nhân công / Ngoài (N-) khi tạo công trình mới, tách 2 dòng Lãi công trình & Lãi thực CT chống đè chữ số trên điện thoại và căn đối lại thẻ Tổng Doanh Thu.',
-          features: {
-            laborProjectCodeNAndBalancedLayoutV147: true
-          }
-        },
-        'v1.48': {
-          version: 'v1.48',
-          extends: 'v1.47',
-          date: '26/11/2026',
-          title: 'Phủ Kín Tràn Viền 100% Sát Mép Đáy Vật Lý iPhone (Xóa Khoảng Trắng Thanh Home Ảo)',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.47; mở rộng khung hiển thị 100lvh phủ kín qua vùng thanh Home ảo dưới đáy iPhone và tự động đệm an toàn cho nút Lưu trong các bảng nhập liệu & báo cáo.',
-          features: {
-            edgeToEdgeBottomSafeAreaV148: true
-          }
-        },
-        'v1.49': {
-          version: 'v1.49',
-          extends: 'v1.48',
-          date: '26/11/2026',
-          title: 'Cân Đối Nút Báo Cáo LSGD, Lọc Nhân Viên Trực Tiếp & Phóng To 3 Nút Nhập Liệu Đáy',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.48; mở rộng khung viền nút Báo cáo LSGD cân đối với giao diện chính, thay ô tìm kiếm kính lúp bằng bộ lọc 4 nút viên thuốc (Tất cả | Loại | Nhân viên | Công trình) và phóng to 3 nút nhập liệu ở thanh điều hướng đáy để chạm 1 lần ăn ngay.',
-          features: {
-            mainScreenPolishV149: true
-          }
-        },
-        'v1.50': {
-          version: 'v1.50',
-          extends: 'v1.49',
-          date: '26/11/2026',
-          title: 'Hạ Mép Trên Bảng Báo Cáo Nằm Gọn Ngay Dưới Camera Ẩn (Dynamic Island) iPhone',
-          summary: 'Giữ nguyên 100% giao diện và toàn bộ chức năng của bản v1.49; hạ mép trên của các bảng báo cáo (Báo Cáo Lịch Sử Giao Dịch, Báo Cáo Tài Chính TGKA Khởi An, Báo Cáo & Đối Soát TGKA) xuống nằm gọn ngay dưới cụm camera ẩn Dynamic Island của iPhone mà vẫn chạm sát mép đáy màn hình.',
-          features: {
-            dynamicIslandClearReportTopV150: true
-          }
-        },
-        'v1.51': {
-          version: 'v1.51',
-          extends: 'v1.50',
-          date: '26/11/2026',
-          title: 'Danh Sách Công Trình, Đối Tác, Lương Thợ & Sổ Quỹ Theo Thời Gian + Xuất Ảnh / Excel / File A4',
-          summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.50; đổi nút Cổ đông thành Danh sách công trình (đầy đủ 7 chỉ tiêu), nâng cấp 4 bảng Công trình, Đối tác, Lương thợ và Sổ quỹ xem linh hoạt theo thời gian và tích hợp đầy đủ 3 nút Lưu/Chia sẻ Ảnh, Xuất Excel và Xuất File A4 cho cả 4 bảng.',
-          features: {
-            v151FourQuickTablesAndTripleExport: true
-          }
-        },
-        'v1.52': {
-          version: 'v1.52',
-          extends: 'v1.51',
-          date: '26/11/2026',
-          title: 'Bảng Chức Năng Độc Lập Cho Từng Nút & Nút Ẩn Cổ Đông Tại Logo Công Ty',
-          summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.50–v1.51; tách mỗi nút Công trình, Đối tác, Lương thợ, Sổ quỹ mở bảng độc lập riêng biệt (ẩn thanh chuyển tab chéo) và đặt nút ẩn xem Tỷ lệ cổ đông (35% • 35% • 30%) khi chạm vào Logo hoặc tên công ty TGKA Khởi An.',
-          features: {
-            standaloneSingleTablesAndSecretShareholderLogoV152: true
-          }
-        },
-        'v1.53': {
-          version: 'v1.53',
-          extends: 'v1.52',
-          date: '26/11/2026',
-          title: 'Công Nợ Đầu Kỳ Năm Trước, Nghiệm Thu Chốt HĐ & Bảo Hành Tự Động 4 Hạng Mục',
-          summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.50–v1.52; bổ sung số đã thu/trả các năm trước cho công trình & đối tác cũ khi chuyển Google Sheets mới, nút Nghiệm thu / Chốt HĐ quyết toán thực tế và hệ thống theo dõi bảo hành tự động (Kết cấu 30 năm, Thấm/nứt 5 năm, Sơn 5 năm, Điện 2 năm).',
-          features: {
-            v153CarryoverDebtSettlementAndWarranty: true
-          }
-        },
-        'v1.54': {
-          version: 'v1.54',
-          extends: 'v1.53',
-          date: '27/11/2026',
-          title: 'Hạ Mép Trên Bảng Báo Cáo Bằng Đúng Mép Dưới Camera Ẩn (Dynamic Island) iPhone',
-          summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.50–v1.53; hạ thêm khoảng cách đỉnh các bảng báo cáo (Báo Cáo Lịch Sử Giao Dịch, Báo Cáo Tài Chính, Danh Sách Công Trình, Đối Tác, Lương Thợ, Sổ Quỹ) xuống bằng đúng mép dưới cụm camera ẩn Dynamic Island để chạm thao tác thoải mái.',
-          features: {
-            lowerReportTopBelowDynamicIslandV154: true
-          }
-        },
-        'v1.55': {
-          version: 'v1.55',
-          extends: 'v1.54',
-          date: '27/11/2026',
-          title: 'Đồng Bộ 2 Chiều Đầy Đủ 5 Trang Tính Google Sheets & Nút Tải Từ Sheets Về App',
-          summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.54; nâng cấp Mã.gs chuẩn v1.55 tự động đồng bộ 2 chiều đầy đủ 5 trang tính (GiaoDich, CongTrinh, DoiTac, ThoNuoiAn, NhatKyCongTrinh) và bổ sung nút Tải Từ Sheets Về để app và Google Sheets đã nhân bản đọc khớp 100% thông tin của nhau.',
-          features: {
-            twoWaySheetsSync5SheetsV155: true
-          }
-        },
+        'v1.59': { version: 'v1.59', extends: 'v1.56', date: '27/11/2026', title: 'Bản Vận Hành Chuẩn v1.59 (22 Thợ, BHXH & Lương VP +100k)', summary: 'Lưu ảnh Drive, bắt buộc ảnh nhật ký, xuất PDF A4, khóa PIN, 22 thợ phân vai theo lương và bảng lương VP tự tăng +100k/tháng.', features: {} },
         'v1.56': {
           version: 'v1.56',
-          extends: 'v1.55',
+          extends: null,
           date: '27/11/2026',
-          title: 'Khởi Động Sạch Dữ Liệu Mẫu — An Toàn Đồng Bộ Google Sheets Mới',
-          summary: 'Giữ nguyên 100% giao diện chuẩn khóa v1.54–v1.55; loại bỏ toàn bộ giao dịch, công trình, đối tác và nhật ký mẫu ban đầu để bắt đầu sổ năm mới sạch 100% và chống đẩy nhầm số liệu mẫu lên Google Sheets nhân bản (giữ nguyên danh sách 4 nhân sự, 22 thợ nuôi ăn và hạng mục thu chi).',
+          title: 'Nền Tảng Chuẩn TGKA Khởi An (Mốc Gốc Đã Khóa)',
+          summary: 'Mốc chuẩn ổn định toàn diện: giao diện tràn viền PWA, công thức 3 tầng lợi nhuận, chấm công 2 ca, 4 gói bảo hành tự động, xuất Ảnh/Excel/PDF A4 và đồng bộ 2 chiều 5 trang tính Google Sheets.',
           features: {
+            cleanEditorialHistoryCards: true,
+            privacyDefaultMaskedCashbookHero: true,
+            pinnedReportHeaders: true,
+            catalogAddEditDeleteDock: true,
+            currencyThousandFormatting: true,
+            partnerProjectContracts: true,
+            worker2025RaiseAndAudit: true,
+            compactSiteLogWithPhotos: true,
+            directCashEntryWithProofPhotos: true,
+            autoStaffCashbookAndInternalTransfer: true,
+            transactionHistoryReportExportA4: true,
+            directPdfFileDownloadA4: true,
+            standaloneFullScreenPwa: true,
+            compactDataEntrySheets: true,
+            thumbReachBottomSheets: true,
+            khoiAnBrandLogoAndName: true,
+            refinedBrandIconAndTrueFullscreen: true,
+            vietinbankChimeAndBalancedHero: true,
+            syncBackupAndQuickGitHubUpdate: true,
+            fullHeightDockedReportSheets: true,
+            fixedTopEdgeOnEntrySheets: true,
+            revenueHeroAndFinancialReportExport: true,
+            maskedTotalRevenueToggle: true,
+            focusedFinancialReportV144: true,
+            cleanTwoTabFinancialReportAndA4Profit: true,
+            v146ProfitGlossaryPreviewAndSplitCommon: true,
+            laborProjectCodeNAndBalancedLayoutV147: true,
+            edgeToEdgeBottomSafeAreaV148: true,
+            mainScreenPolishV149: true,
+            dynamicIslandClearReportTopV150: true,
+            v151FourQuickTablesAndTripleExport: true,
+            standaloneSingleTablesAndSecretShareholderLogoV152: true,
+            v153CarryoverDebtSettlementAndWarranty: true,
+            lowerReportTopBelowDynamicIslandV154: true,
+            twoWaySheetsSync5SheetsV155: true,
             cleanBlankStartNoSeedDataV156: true
+          }
+        },
+        'v1.57': {
+          version: 'v1.57',
+          extends: 'v1.56',
+          date: '27/11/2026',
+          title: 'Đối Soát & Nạp Chuẩn Sổ Gốc 2026 (Quỹ Đầu Kỳ 23/02 & Nợ Ứng Năm Cũ)',
+          summary: 'Đọc chuẩn 4 sheet gốc 2026, chốt quỹ đầu kỳ 23/02/2026 (Việt KA 1.123.963.286đ, Sen KA 988.000đ, Hiếu KA 506.000đ), tách công nợ ứng trước năm cũ không trùng quỹ và Bảng Kiểm Toán Đối Soát.',
+          features: {
+            legacy2026AuditAndReconciliationV157: true
+          }
+        },
+        'v1.58': {
+          version: 'v1.58',
+          extends: 'v1.57',
+          date: '27/11/2026',
+          title: 'Bản Tinh Gọn Vận Hành Dài Hạn: Lưu Ảnh Drive, Bắt Buộc Ảnh Nhật Ký, PDF A4 & Khóa PIN',
+          summary: 'Dọn sạch lịch sử phiên bản cũ lấy v1.56 làm nền tảng chuẩn; tự động nén & lưu ảnh lên Google Drive giải phóng bộ nhớ máy, bắt buộc ảnh hiện trường khi chấm công nhật ký, khóa PIN 4 số khi chuyển tài khoản và xuất báo cáo Nhật ký kèm ảnh ra PDF khổ A4.',
+          features: {
+            drivePhotosMandatorySiteLogPdfAndPinV158: true
           }
         }
       };
-
       function resolveVersionConfig(verKey) {
         const chain = [];
-        let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.56';
+        let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.58';
         while (curr && RAW_VERSION_SPECS[curr]) {
           chain.unshift(RAW_VERSION_SPECS[curr]);
           curr = RAW_VERSION_SPECS[curr].extends;
@@ -1733,12 +1363,12 @@
         return { ...top, features: mergedFeatures };
       }
 
-      let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.59';
-      if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.59';
-      if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.59') {
+      let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.58';
+      if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.58';
+      if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.58') {
         ACTIVE_VERSION = 'v1.56';
-        localStorage.setItem('tgka_active_version', 'v1.59');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.59');
+        localStorage.setItem('tgka_active_version', 'v1.58');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.58');
       }
 
       // =========================================================================
@@ -7043,251 +6673,476 @@ function readSiteLogs_() {
         renderDashboard();
       });
       window.addEventListener('resize', lockStandaloneViewportHeight);
-    </script>
-  <script>
-(function() {
-  function classifyWorkerRoleByRate(rate, name) {
-    const r = Number(rate) || 0;
-    const n = String(name || '').trim().toUpperCase();
-    if (n === 'QUYỂN' || n === 'QUYEN' || n === 'QUYỂN KA') return 'Chỉ huy trưởng';
-    if (r >= 500000) return 'Thợ chủ chốt';
-    if (r >= 380000) return 'Thợ chính';
-    return 'Thợ phụ';
-  }
-  window.classifyWorkerRoleByRate = classifyWorkerRoleByRate;
-
-  const DEFAULT_WORKERS_22_V159 = [
-    { id: 'wk_ka_01', name: 'Mây',     dailyRate: 390000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_02', name: 'Hưng Q',  dailyRate: 420000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_03', name: 'Quyển',   dailyRate: 500000, bhxh: 0, hasBhxh: false, auditNote: 'Chỉ huy trưởng' },
-    { id: 'wk_ka_04', name: 'Ngoan',   dailyRate: 370000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_05', name: 'Duẩn',    dailyRate: 580000, bhxh: 0, hasBhxh: true,  auditNote: 'Công ty đóng 100% BHXH' },
-    { id: 'wk_ka_06', name: 'Hường',   dailyRate: 480000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_07', name: 'Đặng',    dailyRate: 380000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_08', name: 'Hương',   dailyRate: 380000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_09', name: 'Điệp',    dailyRate: 580000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_10', name: 'Phùng',   dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_11', name: 'Toan',    dailyRate: 500000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_12', name: 'A Chinh', dailyRate: 440000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_13', name: 'Hoàng',   dailyRate: 510000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_14', name: 'Hiển',    dailyRate: 350000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_15', name: 'Bắc',     dailyRate: 470000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_16', name: 'Triển',   dailyRate: 350000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_17', name: 'Cơ',      dailyRate: 470000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_18', name: 'Linh',    dailyRate: 540000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_19', name: 'An',      dailyRate: 520000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_20', name: 'Hiệu',    dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_21', name: 'Hùng',    dailyRate: 360000, bhxh: 0, hasBhxh: false, auditNote: '' },
-    { id: 'wk_ka_22', name: 'Thông',   dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' }
-  ].map(w => ({ ...w, role: classifyWorkerRoleByRate(w.dailyRate, w.name), baseRate2025: w.dailyRate, days2025: 0, advance: 0, quyenDays: null }));
-
-  window.officeStaff = JSON.parse(localStorage.getItem('tgka_office_staff_v159') || 'null') || [
-    { id: 'vp_viet',  name: 'Việt KA',  role: 'Giám đốc',           baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
-    { id: 'vp_quyen', name: 'Quyển KA', role: 'Chỉ huy trưởng',     baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
-    { id: 'vp_hieu',  name: 'Hiếu KA',  role: 'Kỹ thuật / Nhật ký', baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
-    { id: 'vp_sen',   name: 'Sen KA',   role: 'Kế toán',            baseNov2026: 6000000,  monthlyStep: 0,      hasBhxh: false, bhxhAmount: 0 }
-  ];
-  window.officePayrollMonth = '2026-11';
-  window.saveOfficeStaffLocal = function() { localStorage.setItem('tgka_office_staff_v159', JSON.stringify(window.officeStaff)); };
-
-  window.computeOfficeSalaryForMonth = function(staffObj, ymStr) {
-    const parts = String(ymStr || '2026-11').split('-');
-    const y = parseInt(parts[0], 10) || 2026, m = parseInt(parts[1], 10) || 11;
-    return Math.max(0, (Number(staffObj.baseNov2026) || 0) + ((y - 2026) * 12 + (m - 11)) * (Number(staffObj.monthlyStep) || 0));
-  };
-
-  window.updateOfficeBhxh = function(id, rawVal) {
-    window.officeStaff = window.officeStaff.map(s => s.id === id ? { ...s, bhxhAmount: parseCurrencyInput(rawVal) } : s);
-    window.saveOfficeStaffLocal();
-    if (typeof renderWorkerPayrollTable === 'function') renderWorkerPayrollTable();
-  };
-
-  window.updateDuanBhxh = function(rawVal) {
-    if (Array.isArray(window.workers)) {
-      window.workers = window.workers.map(w => w.name === 'Duẩn' ? { ...w, bhxh: parseCurrencyInput(rawVal), hasBhxh: true } : w);
-      if (typeof saveAllLocal === 'function') saveAllLocal();
-      if (typeof renderWorkerPayrollTable === 'function') renderWorkerPayrollTable();
-      if (typeof showToast === 'function') showToast('Đã cập nhật BHXH Duẩn');
-    }
-  };
-
-  window.recordMonthlyOfficePayrollToCashbook = function() {
-    const totalSal = window.officeStaff.reduce((s, st) => s + window.computeOfficeSalaryForMonth(st, window.officePayrollMonth), 0);
-    const totalVpBhxh = window.officeStaff.reduce((s, st) => s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0), 0);
-    const duanBhxh = Number((window.workers || []).find(w => w.name === 'Duẩn')?.bhxh) || 0;
-    const totalAllBhxh = totalVpBhxh + duanBhxh;
-    const payDate = window.officePayrollMonth + '-05';
-    const uid = window.currentUserId || 'Việt KA';
-
-    window.transactions.unshift({ id: 'tx_vp_sal_' + Date.now(), date: payDate, type: 'Chi', staff: uid, recipient: '', amount: totalSal, project: '', partner: '', category: 'Lương nhân viên văn phòng', internalGroup: 'Văn phòng & Tiếp khách', note: 'Trả lương VP tháng ' + window.officePayrollMonth + ' (Việt, Quyển, Hiếu, Sen)', photos: [], seenBy: [uid] });
-    if (totalAllBhxh > 0) {
-      window.transactions.unshift({ id: 'tx_bhxh_' + (Date.now() + 1), date: payDate, type: 'Chi', staff: uid, recipient: '', amount: totalAllBhxh, project: '', partner: '', category: 'Tiền bảo hiểm xã hội (100% Cty đóng)', internalGroup: 'Văn phòng & Tiếp khách', note: 'Đóng 100% BHXH tháng ' + window.officePayrollMonth + ' (Việt, Quyển, Hiếu & Duẩn)', photos: [], seenBy: [uid] });
-    }
-    if (typeof saveAllLocal === 'function') saveAllLocal();
-    if (typeof renderDashboard === 'function') renderDashboard();
-    if (typeof playSuccessChime === 'function') playSuccessChime();
-    if (typeof showToast === 'function') showToast('Đã ghi sổ chi lương VP' + (totalAllBhxh > 0 ? ' & BHXH' : '') + ' tháng ' + window.officePayrollMonth);
-    if (window.execUrl && typeof runManualDeltaSync === 'function') runManualDeltaSync();
-  };
-
-  window.uploadPhotosToGoogleDrive = async function(photoList, projectCode, dateIso, prefix) {
-    if (!window.execUrl || !Array.isArray(photoList) || !photoList.length) return photoList;
-    if (!photoList.some(p => String(p).startsWith('data:image'))) return photoList;
-    try {
-      const res = await fetch(window.execUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'uploadPhotos', photos: photoList, project: projectCode, date: dateIso, prefix: prefix })
-      });
-      const data = await res.json();
-      if (data && data.ok && Array.isArray(data.urls) && data.urls.length) return data.urls;
-    } catch (e) {}
-    return photoList;
-  };
-
-  window.importAndAuditLegacy2026Sheets = async function() {
-    if (typeof saveSyncUrl === 'function') saveSyncUrl();
-    if (!window.execUrl) { if (typeof showToast === 'function') showToast('⚠️ Vui lòng dán link Google Apps Script /exec trước'); return; }
-    const stEl = document.getElementById('sync-status-label');
-    if (stEl) stEl.textContent = 'Đang đọc & đối soát 5 sheet gốc 2026...';
-    try {
-      const sep = window.execUrl.includes('?') ? '&' : '?';
-      const res = await fetch(`${window.execUrl}${sep}action=importLegacy&t=${Date.now()}`);
-      const data = await res.json();
-      if (!data || !data.ok) throw new Error(data?.error || 'Lỗi đọc Sheets');
-      if (Array.isArray(data.projects)) window.projects = data.projects;
-      if (Array.isArray(data.partners)) window.partners = data.partners;
-      if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
-      if (Array.isArray(data.officeStaff) && data.officeStaff.length) { window.officeStaff = data.officeStaff; window.saveOfficeStaffLocal(); }
-      if (Array.isArray(data.transactions)) window.transactions = data.transactions;
-      if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
-      if (typeof saveAllLocal === 'function') saveAllLocal();
-      if (typeof renderDashboard === 'function') renderDashboard();
-      if (typeof playSuccessChime === 'function') playSuccessChime();
-      if (stEl) stEl.textContent = `Đã nạp chuẩn: ${window.transactions.length} GD • ${window.projects.length} CT`;
-      if (typeof showToast === 'function') showToast(`Đã nạp chuẩn ${window.transactions.length} giao dịch & 22 thợ`);
-    } catch (err) {
-      if (stEl) stEl.textContent = 'Lỗi đọc sheet gốc (kiểm tra Mã.gs v1.59)';
-      if (typeof showToast === 'function') showToast('⚠️ Hãy cập nhật Mã.gs v1.59 lên Apps Script trước');
-    }
-  };
-
-  window.openAuditReconciliationModal = function() {
-    const staffRows = typeof computeStaffBalances === 'function' ? computeStaffBalances(window.transactions || []) : [];
-    const getBal = (id) => (staffRows.find(s => s.staff === id)?.balance || 0);
-    const totalCash = staffRows.reduce((s, r) => s + r.balance, 0);
-    alert('BẢNG KIỂM TOÁN & ĐỐI SOÁT SỐ LIỆU 2026 (v1.59)\n----------------------------------------\n• Việt KA: ' + formatVND(getBal('Việt KA')) + '\n• Sen KA: ' + formatVND(getBal('Sen KA')) + '\n• Hiếu KA: ' + formatVND(getBal('Hiếu KA')) + '\n• Quyển KA: ' + formatVND(getBal('Quyển KA')) + '\n• TỔNG TỒN QUỸ: ' + formatVND(totalCash));
-  };
-
-  window.exportWorkerPayrollPdfA4 = function() {
-    if (!(window.jspdf && window.jspdf.jsPDF)) { if (typeof showToast === 'function') showToast('⚠️ Đang nạp thư viện PDF, thử lại sau 2 giây'); return; }
-    if (typeof showToast === 'function') showToast('Đang xuất Bảng Tổng Hợp Công Thợ & Đối Chiếu Sổ Anh Quyển (A4)...');
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-    const canvas = document.createElement('canvas');
-    canvas.width = 1240; canvas.height = 1754;
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 1240, 1754);
-    ctx.fillStyle = '#EA580C'; ctx.font = 'bold 25px Be Vietnam Pro, Arial, sans-serif';
-    ctx.fillText('CÔNG TY CP XÂY DỰNG KHỞI AN — BẢNG TỔNG HỢP CÔNG & LƯƠNG THỢ 2026', 54, 72);
-    ctx.fillStyle = '#475569'; ctx.font = '14px Be Vietnam Pro, Arial, sans-serif';
-    ctx.fillText('Đối chiếu Nhật ký kỹ thuật (Hiếu KA) & Sổ theo dõi Chỉ huy trưởng (Anh Quyển) • Đơn giá chốt đồng nhất cả năm', 54, 98);
-    let y = 132;
-    ctx.fillStyle = '#FFF7ED'; ctx.fillRect(54, y, 1132, 38); ctx.strokeStyle = '#CBD5E1'; ctx.strokeRect(54, y, 1132, 38);
-    ctx.fillStyle = '#9A3412'; ctx.font = 'bold 13px Be Vietnam Pro, Arial, sans-serif';
-    [{ t: 'STT', x: 64 }, { t: 'Họ tên thợ', x: 112 }, { t: 'Vai trò', x: 245 }, { t: 'Công App', x: 405 }, { t: 'Sổ A Quyển', x: 500 }, { t: 'Lệch', x: 605 }, { t: 'Đơn giá', x: 685 }, { t: 'Thành tiền', x: 810 }, { t: 'Đã ứng', x: 955 }, { t: 'Còn lĩnh', x: 1075 }].forEach(c => ctx.fillText(c.t, c.x, y + 24));
-    y += 38;
-    let sumAppDays = 0, sumQuyenDays = 0, sumMoney = 0, sumAdv = 0, sumNet = 0;
-    const wkList = window.workers || [];
-    const duanBhxh = Number(wkList.find(w => w.name === 'Duẩn')?.bhxh) || 0;
-    wkList.forEach((w, idx) => {
-      const appDays = (typeof computeWorkerDaysFromLogs === 'function' ? computeWorkerDaysFromLogs(w.name) : 0) + (Number(w.days2025) || 0);
-      const qDays = (w.quyenDays !== null && w.quyenDays !== undefined && w.quyenDays !== '') ? Number(w.quyenDays) : appDays;
-      const diff = qDays - appDays, rate = Number(w.dailyRate) || 0, gross = Math.round(appDays * rate), adv = Number(w.advance) || 0, net = gross - adv;
-      sumAppDays += appDays; sumQuyenDays += qDays; sumMoney += gross; sumAdv += adv; sumNet += net;
-      ctx.fillStyle = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'; ctx.fillRect(54, y, 1132, 34); ctx.strokeStyle = '#E2E8F0'; ctx.strokeRect(54, y, 1132, 34);
-      ctx.fillStyle = '#0F172A'; ctx.font = '13px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(String(idx + 1), 68, y + 22);
-      ctx.font = 'bold 13px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(w.name + (w.name === 'Duẩn' ? ' (BHXH)' : ''), 112, y + 22);
-      ctx.font = '12.5px Be Vietnam Pro, Arial, sans-serif'; ctx.fillStyle = '#475569'; ctx.fillText(classifyWorkerRoleByRate(rate, w.name), 245, y + 22);
-      ctx.fillStyle = '#0F172A'; ctx.fillText(appDays.toFixed(1), 415, y + 22); ctx.fillText(qDays.toFixed(1), 515, y + 22);
-      ctx.fillStyle = diff === 0 ? '#16A34A' : '#DC2626'; ctx.fillText((diff > 0 ? '+' : '') + diff.toFixed(1), 605, y + 22);
-      ctx.fillStyle = '#0F172A'; ctx.fillText(formatVND(rate).replace(' ₫', ''), 685, y + 22); ctx.fillText(formatVND(gross).replace(' ₫', ''), 810, y + 22); ctx.fillText(formatVND(adv).replace(' ₫', ''), 955, y + 22);
-      ctx.font = 'bold 13px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(formatVND(net).replace(' ₫', ''), 1075, y + 22);
-      y += 34;
-    });
-    ctx.fillStyle = '#FFF7ED'; ctx.fillRect(54, y, 1132, 40); ctx.strokeStyle = '#EA580C'; ctx.strokeRect(54, y, 1132, 40);
-    ctx.fillStyle = '#9A3412'; ctx.font = 'bold 13.5px Be Vietnam Pro, Arial, sans-serif';
-    ctx.fillText('TỔNG CỘNG (' + wkList.length + ' THỢ)', 112, y + 25); ctx.fillText(sumAppDays.toFixed(1), 415, y + 25); ctx.fillText(sumQuyenDays.toFixed(1), 515, y + 25);
-    ctx.fillText(formatVND(sumMoney).replace(' ₫', ''), 810, y + 25); ctx.fillText(formatVND(sumAdv).replace(' ₫', ''), 955, y + 25); ctx.fillText(formatVND(sumNet).replace(' ₫', ''), 1075, y + 25);
-    y += 62;
-    ctx.fillStyle = '#334155'; ctx.font = 'italic 13px Be Vietnam Pro, Arial, sans-serif';
-    ctx.fillText('* Ghi chú: Khoản BHXH của thợ Duẩn (' + formatVND(duanBhxh) + ') do Công ty đóng 100%, không trừ vào lương thực lĩnh của thợ.', 54, y);
-    y += 56;
-    ['Kỹ thuật chấm công (Hiếu KA)', 'Chỉ huy trưởng (Anh Quyển)', 'Kế toán (Sen KA)', 'Giám đốc duyệt (Việt KA)'].forEach((sg, si) => {
-      const sx = 54 + si * 283 + 141; ctx.textAlign = 'center';
-      ctx.fillStyle = '#0F172A'; ctx.font = 'bold 13.5px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(sg, sx, y);
-      ctx.fillStyle = '#64748B'; ctx.font = 'italic 12px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText('(Ký, ghi rõ họ tên)', sx, y + 20);
-    });
-    doc.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 210, 297);
-    doc.save('Bang_Cong_Luong_Tho_TGKA_A4_' + Date.now() + '.pdf');
-    if (typeof showToast === 'function') showToast('Đã tải xuống PDF Bảng Công Thợ A4');
-  };
-
-  window.addEventListener('DOMContentLoaded', function() {
-    if (!Array.isArray(window.workers) || window.workers.length === 0) {
-      window.workers = JSON.parse(JSON.stringify(DEFAULT_WORKERS_22_V159));
-      if (typeof saveAllLocal === 'function') saveAllLocal();
-    } else {
-      window.workers = window.workers.map(w => ({ ...w, role: classifyWorkerRoleByRate(w.dailyRate, w.name), hasBhxh: w.name === 'Duẩn' || (Number(w.bhxh) || 0) > 0 }));
-    }
-
-    if (typeof window.switchCurrentUser === 'function') {
-      const _origSwitch = window.switchCurrentUser;
-      window.switchCurrentUser = function(userId) {
-        if (userId !== window.currentUserId) {
-          const targetAcc = (window.accounts || []).find(a => a.id === userId);
+      // === TÍNH NĂNG NÂNG CẤP v1.58: DRIVE UPLOAD + BẮT BUỘC ẢNH NHẬT KÝ + PDF A4 NHẬT KÝ + KHÓA PIN ===
+      const _origSwitchCurrentUser = switchCurrentUser;
+      switchCurrentUser = function(userId) {
+        const cfg = resolveVersionConfig(ACTIVE_VERSION);
+        if (cfg.features.drivePhotosMandatorySiteLogPdfAndPinV158 && userId !== currentUserId) {
+          const targetAcc = accounts.find(a => a.id === userId);
           if (targetAcc && targetAcc.pin) {
             const entered = window.prompt('Nhập mã PIN 4 số của tài khoản ' + targetAcc.id + ' (' + targetAcc.roleLabel + '):', '');
             if (entered === null) return;
             if (String(entered).trim() !== String(targetAcc.pin)) {
-              if (typeof showToast === 'function') showToast('⚠️ Mã PIN không chính xác, từ chối chuyển tài khoản');
+              showToast('⚠️ Mã PIN không chính xác, từ chối chuyển tài khoản');
               return;
             }
           }
         }
-        _origSwitch(userId);
+        _origSwitchCurrentUser(userId);
       };
-    }
 
-    if (typeof window.saveSiteLogEntry === 'function') {
-      const _origLogSave = window.saveSiteLogEntry;
-      window.saveSiteLogEntry = async function() {
-        if (!window.siteLogDraftPhotos || window.siteLogDraftPhotos.length === 0) {
-          if (typeof showToast === 'function') showToast('⚠️ Bắt buộc đính kèm ít nhất 1 ảnh hiện trường trước khi lưu nhật ký!');
+      async function uploadPhotosToGoogleDrive(photoList, projectCode, dateIso, prefix) {
+        if (!execUrl || !Array.isArray(photoList) || !photoList.length) return photoList;
+        const hasBase64 = photoList.some(p => String(p).startsWith('data:image'));
+        if (!hasBase64) return photoList;
+        try {
+          const res = await fetch(execUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'uploadPhotos', photos: photoList, project: projectCode, date: dateIso, prefix: prefix })
+          });
+          const data = await res.json();
+          if (data && data.ok && Array.isArray(data.urls) && data.urls.length) {
+            return data.urls;
+          }
+        } catch (e) {}
+        return photoList;
+      }
+
+      const _origSaveManualTransaction = saveManualTransaction;
+      saveManualTransaction = async function() {
+        const project = document.getElementById('manual-project')?.value || 'ChungTu';
+        const date = document.getElementById('manual-date')?.value || '2026-11-26';
+        if (execUrl && txDraftProofPhotos.length) {
+          showToast('Đang tải ảnh chứng từ lên Google Drive...');
+          txDraftProofPhotos = await uploadPhotosToGoogleDrive(txDraftProofPhotos, project, date, 'CT');
+        }
+        _origSaveManualTransaction();
+        if (execUrl) runManualDeltaSync();
+      };
+
+      const _origSaveSiteLogEntry = saveSiteLogEntry;
+      saveSiteLogEntry = async function() {
+        const cfg = resolveVersionConfig(ACTIVE_VERSION);
+        if (cfg.features.drivePhotosMandatorySiteLogPdfAndPinV158 && (!siteLogDraftPhotos || siteLogDraftPhotos.length === 0)) {
+          showToast('⚠️ Bắt buộc đính kèm ít nhất 1 ảnh hiện trường trước khi lưu nhật ký!');
+          return;
+        }
+        const project = document.getElementById('log-project')?.value || '';
+        const date = document.getElementById('log-date')?.value || '2026-11-26';
+        const prefix = activeSiteLogShift === 'morning' ? 'SANG' : 'CHIEU';
+        if (execUrl && siteLogDraftPhotos.length) {
+          showToast('Đang nén & tải ảnh hiện trường lên Google Drive...');
+          siteLogDraftPhotos = await uploadPhotosToGoogleDrive(siteLogDraftPhotos, project, date, prefix);
+        }
+        _origSaveSiteLogEntry();
+        if (execUrl) runManualDeltaSync();
+      };
+
+      const _origRenderSiteLogHistory = renderSiteLogHistory;
+      renderSiteLogHistory = function() {
+        _origRenderSiteLogHistory();
+        const cfg = resolveVersionConfig(ACTIVE_VERSION);
+        const pane = document.getElementById('pane-sitelog-history');
+        if (!cfg.features.drivePhotosMandatorySiteLogPdfAndPinV158 || !pane) return;
+        const pdfBar = document.createElement('div');
+        pdfBar.className = 'bg-[#FFF7ED] rounded-2xl p-2.5 border border-[#FED7AA] flex items-center justify-between gap-2';
+        pdfBar.innerHTML = '<div class="text-[11px] font-semibold text-[#9A3412]">Xuất hồ sơ Nhật ký & Ảnh hiện trường</div>' +
+          '<button type="button" onclick="exportSiteLogsPdfA4()" class="h-8 px-3.5 rounded-full bg-[#EA580C] text-white text-[11px] font-bold shadow-2xs flex-shrink-0">Xuất PDF A4 Nhật Ký</button>';
+        pane.insertBefore(pdfBar, pane.firstChild);
+      };
+
+      function loadImageSafeForPdf(url) {
+        return new Promise((resolve) => {
+          if (!url) return resolve(null);
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+          img.src = url;
+        });
+      }
+
+      async function exportSiteLogsPdfA4() {
+        const filtered = siteLogs.filter(l => !siteLogHistoryFilterProject || l.project === siteLogHistoryFilterProject);
+        if (!filtered.length) { showToast('⚠️ Chưa có dữ liệu nhật ký để xuất PDF'); return; }
+        if (!(window.jspdf && window.jspdf.jsPDF)) { showToast('⚠️ Đang nạp thư viện PDF, thử lại sau 2 giây'); return; }
+        showToast('Đang tạo tệp PDF Nhật Ký & Ảnh Hiện Trường khổ A4...');
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+        for (let i = 0; i < filtered.length; i++) {
+          const log = filtered[i];
+          if (i > 0) doc.addPage('a4', 'portrait');
+          const canvas = document.createElement('canvas');
+          canvas.width = 1240; canvas.height = 1754;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 1240, 1754);
+
+          let y = 58;
+          ctx.fillStyle = '#EA580C'; ctx.font = 'bold 26px Be Vietnam Pro, Arial, sans-serif';
+          ctx.fillText('TGKA KHỞI AN — NHẬT KÝ THI CÔNG & CHẤM CÔNG', 64, y + 20);
+          ctx.fillStyle = '#475569'; ctx.font = '15px Be Vietnam Pro, Arial, sans-serif';
+          ctx.fillText('Công trình: ' + log.project + '  •  Ngày thi công: ' + formatShortVNDate(log.date) + '  •  Người lập: ' + (log.staff || ''), 64, y + 48);
+          y += 66;
+          ctx.strokeStyle = '#EA580C'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.moveTo(64, y); ctx.lineTo(1176, y); ctx.stroke();
+          y += 34;
+
+          const shifts = [
+            { title: '1. CA SÁNG (' + ((log.morningWorkers || []).length * 0.5) + ' công)', work: log.morningWork || 'Không ghi nhận', workers: (log.morningWorkers || []).join(', ') || 'Không có', photos: log.morningPhotos || [] },
+            { title: '2. CA CHIỀU (' + ((log.afternoonWorkers || []).length * 0.5) + ' công)', work: log.afternoonWork || 'Không ghi nhận', workers: (log.afternoonWorkers || []).join(', ') || 'Không có', photos: log.afternoonPhotos || [] }
+          ];
+
+          for (const sh of shifts) {
+            ctx.fillStyle = '#FFF7ED'; ctx.fillRect(64, y, 1112, 38);
+            ctx.fillStyle = '#9A3412'; ctx.font = 'bold 16px Be Vietnam Pro, Arial, sans-serif';
+            ctx.fillText(sh.title, 78, y + 25);
+            y += 52;
+            ctx.fillStyle = '#0F172A'; ctx.font = '15px Be Vietnam Pro, Arial, sans-serif';
+            ctx.fillText('• Nội dung công việc: ' + sh.work.slice(0, 95), 78, y);
+            y += 26;
+            ctx.fillStyle = '#334155';
+            ctx.fillText('• Đội thợ chấm công: ' + sh.workers.slice(0, 95), 78, y);
+            y += 24;
+
+            if (sh.photos.length) {
+              const boxW = 345, boxH = 240, gap = 22;
+              for (let pIdx = 0; pIdx < Math.min(sh.photos.length, 3); pIdx++) {
+                const imgEl = await loadImageSafeForPdf(sh.photos[pIdx]);
+                const bx = 78 + pIdx * (boxW + gap);
+                ctx.strokeStyle = '#CBD5E1'; ctx.strokeRect(bx, y, boxW, boxH);
+                if (imgEl) {
+                  ctx.drawImage(imgEl, bx + 2, y + 2, boxW - 4, boxH - 4);
+                } else {
+                  ctx.fillStyle = '#64748B'; ctx.font = '13px Arial';
+                  ctx.fillText('Ảnh hiện trường #' + (pIdx + 1), bx + 95, y + 120);
+                }
+              }
+              y += boxH + 28;
+            } else {
+              y += 16;
+            }
+          }
+
+          y = Math.max(y + 20, 1520);
+          const signs = ['Kỹ thuật lập nhật ký', 'Quản lý thi công', 'Chủ đầu tư / Giám đốc'];
+          signs.forEach((sg, si) => {
+            const sx = 64 + si * 370 + 185;
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#0F172A'; ctx.font = 'bold 15px Be Vietnam Pro, Arial, sans-serif';
+            ctx.fillText(sg, sx, y);
+            ctx.fillStyle = '#64748B'; ctx.font = 'italic 13px Be Vietnam Pro, Arial, sans-serif';
+            ctx.fillText('(Ký, ghi rõ họ tên)', sx, y + 22);
+          });
+          ctx.textAlign = 'left';
+
+          doc.addImage(canvas.toDataURL('image/jpeg', 0.90), 'JPEG', 0, 0, 210, 297);
+        }
+
+        const fName = 'NhatKy_CongTrinh_TGKA_A4_' + Date.now() + '.pdf';
+        doc.save(fName);
+        showToast('Đã tải xuống ' + fName);
+      }
+
+      async function importAndAuditLegacy2026Sheets() {
+        saveSyncUrl();
+        if (!execUrl) { showToast('⚠️ Vui lòng dán link Google Apps Script /exec trước'); return; }
+        const stEl = document.getElementById('sync-status-label');
+        if (stEl) stEl.textContent = 'Đang đọc & đối soát 5 sheet gốc 2026...';
+        try {
+          const sep = execUrl.includes('?') ? '&' : '?';
+          const res = await fetch(`${execUrl}${sep}action=importLegacy&t=${Date.now()}`);
+          const data = await res.json();
+          if (!data || !data.ok) throw new Error(data?.error || 'Lỗi đọc Sheets');
+          if (Array.isArray(data.projects)) projects = data.projects;
+          if (Array.isArray(data.partners)) partners = data.partners;
+          if (Array.isArray(data.workers) && data.workers.length) workers = data.workers;
+          if (Array.isArray(data.transactions)) transactions = data.transactions;
+          if (Array.isArray(data.siteLogs)) siteLogs = data.siteLogs;
+          saveAllLocal(); renderDashboard(); playSuccessChime();
+          if (stEl) stEl.textContent = `Đã nạp chuẩn: ${transactions.length} GD • ${projects.length} CT`;
+          showToast(`Đã nạp chuẩn ${transactions.length} giao dịch & quỹ đầu kỳ 23/02`);
+        } catch (err) {
+          if (stEl) stEl.textContent = 'Lỗi đọc sheet gốc (kiểm tra Mã.gs v1.58)';
+          showToast('⚠️ Hãy cập nhật Mã.gs v1.58 lên Apps Script trước');
+        }
+      }
+
+      function openAuditReconciliationModal() {
+        const staffRows = computeStaffBalances(transactions);
+        const getBal = (id) => (staffRows.find(s => s.staff === id)?.balance || 0);
+        const totalCash = staffRows.reduce((s, r) => s + r.balance, 0);
+        const totalClientOpening = projects.reduce((s, p) => s + (Number(p.openingPaid) || 0), 0);
+        const totalPartnerOpening = partners.reduce((s, pt) => s + (Number(pt.openingPaidPartner) || 0), 0);
+        alert(
+          'BẢNG KIỂM TOÁN & ĐỐI SOÁT SỐ LIỆU 2026 (v1.58)\n' +
+          '----------------------------------------\n' +
+          '1. QUỸ ĐẦU KỲ NGÀY 23/02/2026: 1.125.457.286 đ\n' +
+          '• Việt KA: 1.123.963.286 đ | Sen KA: 988.000 đ | Hiếu KA: 506.000 đ\n\n' +
+          '2. CÔNG NỢ ỨNG TRƯỚC NĂM CŨ (KHÔNG CỘNG TRÙNG QUỸ):\n' +
+          '• Khách hàng ứng trước: ' + formatVND(totalClientOpening || 3335000000) + '\n' +
+          '• Đã trả trước đối tác: ' + formatVND(totalPartnerOpening || 905000000) + '\n\n' +
+          '3. TỒN QUỸ THỰC CẦM HIỆN TẠI TRÊN APP:\n' +
+          '• Việt KA: ' + formatVND(getBal('Việt KA')) + '\n' +
+          '• Sen KA: ' + formatVND(getBal('Sen KA')) + '\n' +
+          '• Hiếu KA: ' + formatVND(getBal('Hiếu KA')) + '\n' +
+          '• Quyển KA: ' + formatVND(getBal('Quyển KA')) + '\n' +
+          '• TỔNG TỒN QUỸ CÔNG TY: ' + formatVND(totalCash)
+        );
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        if (execUrl) {
+          setTimeout(() => { pullAllDataFromSheets(); }, 800);
+        }
+      });
+      // === TÍNH NĂNG NÂNG CẤP v1.58 & v1.59 ===
+      const _origSwitchCurrentUser = switchCurrentUser;
+      switchCurrentUser = function(userId) {
+        if (userId !== currentUserId) {
+          const targetAcc = accounts.find(a => a.id === userId);
+          if (targetAcc && targetAcc.pin) {
+            const entered = window.prompt('Nhập mã PIN 4 số của tài khoản ' + targetAcc.id + ' (' + targetAcc.roleLabel + '):', '');
+            if (entered === null) return;
+            if (String(entered).trim() !== String(targetAcc.pin)) {
+              showToast('⚠️ Mã PIN không chính xác, từ chối chuyển tài khoản');
+              return;
+            }
+          }
+        }
+        _origSwitchCurrentUser(userId);
+      };
+
+      async function uploadPhotosToGoogleDrive(photoList, projectCode, dateIso, prefix) {
+        if (!execUrl || !Array.isArray(photoList) || !photoList.length) return photoList;
+        if (!photoList.some(p => String(p).startsWith('data:image'))) return photoList;
+        try {
+          const res = await fetch(execUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'uploadPhotos', photos: photoList, project: projectCode, date: dateIso, prefix: prefix })
+          });
+          const data = await res.json();
+          if (data && data.ok && Array.isArray(data.urls) && data.urls.length) return data.urls;
+        } catch (e) {}
+        return photoList;
+      }
+
+      const _origSaveManualTransaction = saveManualTransaction;
+      saveManualTransaction = async function() {
+        const project = document.getElementById('manual-project')?.value || 'ChungTu';
+        const date = document.getElementById('manual-date')?.value || '2026-11-27';
+        if (execUrl && txDraftProofPhotos.length) {
+          showToast('Đang tải ảnh chứng từ lên Google Drive...');
+          txDraftProofPhotos = await uploadPhotosToGoogleDrive(txDraftProofPhotos, project, date, 'CT');
+        }
+        _origSaveManualTransaction();
+        if (execUrl) runManualDeltaSync();
+      };
+
+      const _origSaveSiteLogEntry = saveSiteLogEntry;
+      saveSiteLogEntry = async function() {
+        if (!siteLogDraftPhotos || siteLogDraftPhotos.length === 0) {
+          showToast('⚠️ Bắt buộc đính kèm ít nhất 1 ảnh hiện trường trước khi lưu nhật ký!');
           return;
         }
         const project = document.getElementById('log-project')?.value || '';
         const date = document.getElementById('log-date')?.value || '2026-11-27';
-        const prefix = window.activeSiteLogShift === 'morning' ? 'SANG' : 'CHIEU';
-        if (window.execUrl && window.siteLogDraftPhotos.length) {
-          if (typeof showToast === 'function') showToast('Đang nén & tải ảnh hiện trường lên Google Drive...');
-          window.siteLogDraftPhotos = await window.uploadPhotosToGoogleDrive(window.siteLogDraftPhotos, project, date, prefix);
+        const prefix = activeSiteLogShift === 'morning' ? 'SANG' : 'CHIEU';
+        if (execUrl && siteLogDraftPhotos.length) {
+          showToast('Đang nén & tải ảnh hiện trường lên Google Drive...');
+          siteLogDraftPhotos = await uploadPhotosToGoogleDrive(siteLogDraftPhotos, project, date, prefix);
         }
-        _origLogSave();
-        if (window.execUrl && typeof runManualDeltaSync === 'function') runManualDeltaSync();
+        _origSaveSiteLogEntry();
+        if (execUrl) runManualDeltaSync();
       };
-    }
 
-    if (typeof window.renderWorkerPayrollTable === 'function') {
-      const _origPayroll = window.renderWorkerPayrollTable;
-      window.renderWorkerPayrollTable = function() {
-        _origPayroll();
+      const _origRenderSiteLogHistory = renderSiteLogHistory;
+      renderSiteLogHistory = function() {
+        _origRenderSiteLogHistory();
+        const pane = document.getElementById('pane-sitelog-history');
+        if (!pane) return;
+        const pdfBar = document.createElement('div');
+        pdfBar.className = 'bg-[#FFF7ED] rounded-2xl p-2.5 border border-[#FED7AA] flex items-center justify-between gap-2';
+        pdfBar.innerHTML = '<div class="text-[11px] font-semibold text-[#9A3412]">Xuất hồ sơ Nhật ký & Ảnh hiện trường</div>' +
+          '<button type="button" onclick="exportSiteLogsPdfA4()" class="h-8 px-3.5 rounded-full bg-[#EA580C] text-white text-[11px] font-bold shadow-2xs flex-shrink-0">Xuất PDF A4 Nhật Ký</button>';
+        pane.insertBefore(pdfBar, pane.firstChild);
+      };
+
+      function loadImageSafeForPdf(url) {
+        return new Promise((resolve) => {
+          if (!url) return resolve(null);
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = () => resolve(img);
+          img.onerror = () => resolve(null);
+          img.src = url;
+        });
+      }
+
+      async function exportSiteLogsPdfA4() {
+        const filtered = siteLogs.filter(l => !siteLogHistoryFilterProject || l.project === siteLogHistoryFilterProject);
+        if (!filtered.length) { showToast('⚠️ Chưa có dữ liệu nhật ký để xuất PDF'); return; }
+        if (!(window.jspdf && window.jspdf.jsPDF)) { showToast('⚠️ Đang nạp thư viện PDF, thử lại sau 2 giây'); return; }
+        showToast('Đang tạo tệp PDF Nhật Ký & Ảnh Hiện Trường khổ A4...');
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        for (let i = 0; i < filtered.length; i++) {
+          const log = filtered[i];
+          if (i > 0) doc.addPage('a4', 'portrait');
+          const canvas = document.createElement('canvas');
+          canvas.width = 1240; canvas.height = 1754;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 1240, 1754);
+          let y = 58;
+          ctx.fillStyle = '#EA580C'; ctx.font = 'bold 26px Be Vietnam Pro, Arial, sans-serif';
+          ctx.fillText('TGKA KHỞI AN — NHẬT KÝ THI CÔNG & CHẤM CÔNG', 64, y + 20);
+          ctx.fillStyle = '#475569'; ctx.font = '15px Be Vietnam Pro, Arial, sans-serif';
+          ctx.fillText('Công trình: ' + log.project + '  •  Ngày thi công: ' + formatShortVNDate(log.date) + '  •  Người lập: ' + (log.staff || ''), 64, y + 48);
+          y += 66;
+          ctx.strokeStyle = '#EA580C'; ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.moveTo(64, y); ctx.lineTo(1176, y); ctx.stroke();
+          y += 34;
+          const shifts = [
+            { title: '1. CA SÁNG (' + ((log.morningWorkers || []).length * 0.5) + ' công)', work: log.morningWork || 'Không ghi nhận', workers: (log.morningWorkers || []).join(', ') || 'Không có', photos: log.morningPhotos || [] },
+            { title: '2. CA CHIỀU (' + ((log.afternoonWorkers || []).length * 0.5) + ' công)', work: log.afternoonWork || 'Không ghi nhận', workers: (log.afternoonWorkers || []).join(', ') || 'Không có', photos: log.afternoonPhotos || [] }
+          ];
+          for (const sh of shifts) {
+            ctx.fillStyle = '#FFF7ED'; ctx.fillRect(64, y, 1112, 38);
+            ctx.fillStyle = '#9A3412'; ctx.font = 'bold 16px Be Vietnam Pro, Arial, sans-serif';
+            ctx.fillText(sh.title, 78, y + 25);
+            y += 52;
+            ctx.fillStyle = '#0F172A'; ctx.font = '15px Be Vietnam Pro, Arial, sans-serif';
+            ctx.fillText('• Nội dung công việc: ' + sh.work.slice(0, 95), 78, y); y += 26;
+            ctx.fillStyle = '#334155';
+            ctx.fillText('• Đội thợ chấm công: ' + sh.workers.slice(0, 95), 78, y); y += 24;
+            if (sh.photos.length) {
+              const boxW = 345, boxH = 240, gap = 22;
+              for (let pIdx = 0; pIdx < Math.min(sh.photos.length, 3); pIdx++) {
+                const imgEl = await loadImageSafeForPdf(sh.photos[pIdx]);
+                const bx = 78 + pIdx * (boxW + gap);
+                ctx.strokeStyle = '#CBD5E1'; ctx.strokeRect(bx, y, boxW, boxH);
+                if (imgEl) ctx.drawImage(imgEl, bx + 2, y + 2, boxW - 4, boxH - 4);
+              }
+              y += boxH + 28;
+            } else { y += 16; }
+          }
+          y = Math.max(y + 20, 1520);
+          ['Kỹ thuật lập nhật ký', 'Quản lý thi công', 'Chủ đầu tư / Giám đốc'].forEach((sg, si) => {
+            const sx = 64 + si * 370 + 185;
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#0F172A'; ctx.font = 'bold 15px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(sg, sx, y);
+            ctx.fillStyle = '#64748B'; ctx.font = 'italic 13px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText('(Ký, ghi rõ họ tên)', sx, y + 22);
+          });
+          ctx.textAlign = 'left';
+          doc.addImage(canvas.toDataURL('image/jpeg', 0.90), 'JPEG', 0, 0, 210, 297);
+        }
+        doc.save('NhatKy_CongTrinh_TGKA_A4_' + Date.now() + '.pdf');
+        showToast('Đã tải xuống PDF Nhật ký A4');
+      }
+
+      function classifyWorkerRoleByRate(rate, name) {
+        const r = Number(rate) || 0;
+        const n = String(name || '').trim().toUpperCase();
+        if (n === 'QUYỂN' || n === 'QUYEN' || n === 'QUYỂN KA') return 'Chỉ huy trưởng';
+        if (r >= 500000) return 'Thợ chủ chốt';
+        if (r >= 380000) return 'Thợ chính';
+        return 'Thợ phụ';
+      }
+
+      const DEFAULT_WORKERS_22_V159 = [
+        { id: 'wk_ka_01', name: 'Mây',     dailyRate: 390000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_02', name: 'Hưng Q',  dailyRate: 420000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_03', name: 'Quyển',   dailyRate: 500000, bhxh: 0, hasBhxh: false, auditNote: 'Chỉ huy trưởng' },
+        { id: 'wk_ka_04', name: 'Ngoan',   dailyRate: 370000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_05', name: 'Duẩn',    dailyRate: 580000, bhxh: 0, hasBhxh: true,  auditNote: 'Công ty đóng 100% BHXH' },
+        { id: 'wk_ka_06', name: 'Hường',   dailyRate: 480000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_07', name: 'Đặng',    dailyRate: 380000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_08', name: 'Hương',   dailyRate: 380000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_09', name: 'Điệp',    dailyRate: 580000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_10', name: 'Phùng',   dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_11', name: 'Toan',    dailyRate: 500000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_12', name: 'A Chinh', dailyRate: 440000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_13', name: 'Hoàng',   dailyRate: 510000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_14', name: 'Hiển',    dailyRate: 350000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_15', name: 'Bắc',     dailyRate: 470000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_16', name: 'Triển',   dailyRate: 350000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_17', name: 'Cơ',      dailyRate: 470000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_18', name: 'Linh',    dailyRate: 540000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_19', name: 'An',      dailyRate: 520000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_20', name: 'Hiệu',    dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_21', name: 'Hùng',    dailyRate: 360000, bhxh: 0, hasBhxh: false, auditNote: '' },
+        { id: 'wk_ka_22', name: 'Thông',   dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' }
+      ].map(w => ({ ...w, role: classifyWorkerRoleByRate(w.dailyRate, w.name), baseRate2025: w.dailyRate, days2025: 0, advance: 0, quyenDays: null }));
+
+      let officeStaff = JSON.parse(localStorage.getItem('tgka_office_staff_v159') || 'null') || [
+        { id: 'vp_viet',  name: 'Việt KA',  role: 'Giám đốc',           baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
+        { id: 'vp_quyen', name: 'Quyển KA', role: 'Chỉ huy trưởng',     baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
+        { id: 'vp_hieu',  name: 'Hiếu KA',  role: 'Kỹ thuật / Nhật ký', baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
+        { id: 'vp_sen',   name: 'Sen KA',   role: 'Kế toán',            baseNov2026: 6000000,  monthlyStep: 0,      hasBhxh: false, bhxhAmount: 0 }
+      ];
+      let officePayrollMonth = '2026-11';
+
+      function saveOfficeStaffLocal() { localStorage.setItem('tgka_office_staff_v159', JSON.stringify(officeStaff)); }
+
+      if (!Array.isArray(workers) || workers.length === 0) {
+        workers = JSON.parse(JSON.stringify(DEFAULT_WORKERS_22_V159));
+        saveAllLocal();
+      } else {
+        workers = workers.map(w => ({ ...w, role: classifyWorkerRoleByRate(w.dailyRate, w.name), hasBhxh: w.name === 'Duẩn' || (Number(w.bhxh) || 0) > 0 }));
+      }
+
+      function computeOfficeSalaryForMonth(staffObj, ymStr) {
+        const parts = String(ymStr || '2026-11').split('-');
+        const y = parseInt(parts[0], 10) || 2026, m = parseInt(parts[1], 10) || 11;
+        return Math.max(0, (Number(staffObj.baseNov2026) || 0) + ((y - 2026) * 12 + (m - 11)) * (Number(staffObj.monthlyStep) || 0));
+      }
+
+      function updateOfficeBhxh(id, rawVal) {
+        officeStaff = officeStaff.map(s => s.id === id ? { ...s, bhxhAmount: parseCurrencyInput(rawVal) } : s);
+        saveOfficeStaffLocal(); renderWorkerPayrollTable();
+      }
+
+      function updateDuanBhxh(rawVal) {
+        workers = workers.map(w => w.name === 'Duẩn' ? { ...w, bhxh: parseCurrencyInput(rawVal), hasBhxh: true } : w);
+        saveAllLocal(); renderWorkerPayrollTable(); showToast('Đã cập nhật BHXH Duẩn');
+      }
+
+      function recordMonthlyOfficePayrollToCashbook() {
+        const totalSal = officeStaff.reduce((s, st) => s + computeOfficeSalaryForMonth(st, officePayrollMonth), 0);
+        const totalVpBhxh = officeStaff.reduce((s, st) => s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0), 0);
+        const duanBhxh = Number(workers.find(w => w.name === 'Duẩn')?.bhxh) || 0;
+        const totalAllBhxh = totalVpBhxh + duanBhxh;
+        const payDate = officePayrollMonth + '-05';
+
+        transactions.unshift({ id: 'tx_vp_sal_' + Date.now(), date: payDate, type: 'Chi', staff: currentUserId || 'Việt KA', recipient: '', amount: totalSal, project: '', partner: '', category: 'Lương nhân viên văn phòng', internalGroup: 'Văn phòng & Tiếp khách', note: 'Trả lương VP tháng ' + officePayrollMonth + ' (Việt, Quyển, Hiếu, Sen)', photos: [], seenBy: [currentUserId || 'Việt KA'] });
+        if (totalAllBhxh > 0) {
+          transactions.unshift({ id: 'tx_bhxh_' + (Date.now() + 1), date: payDate, type: 'Chi', staff: currentUserId || 'Việt KA', recipient: '', amount: totalAllBhxh, project: '', partner: '', category: 'Tiền bảo hiểm xã hội (100% Cty đóng)', internalGroup: 'Văn phòng & Tiếp khách', note: 'Đóng 100% BHXH tháng ' + officePayrollMonth + ' (Việt, Quyển, Hiếu & Duẩn)', photos: [], seenBy: [currentUserId || 'Việt KA'] });
+        }
+        saveAllLocal(); renderDashboard(); playSuccessChime();
+        showToast('Đã ghi sổ chi lương VP' + (totalAllBhxh > 0 ? ' & BHXH' : '') + ' tháng ' + officePayrollMonth);
+        if (execUrl) runManualDeltaSync();
+      }
+
+      const _origSaveCatalogItem = saveCatalogItem;
+      saveCatalogItem = function() {
+        _origSaveCatalogItem();
+        workers = workers.map(w => ({ ...w, role: classifyWorkerRoleByRate(w.dailyRate, w.name), hasBhxh: w.name === 'Duẩn' || (Number(w.bhxh) || 0) > 0 }));
+        saveAllLocal();
+      };
+
+      const _origRenderWorkerPayrollTable = renderWorkerPayrollTable;
+      renderWorkerPayrollTable = function() {
+        _origRenderWorkerPayrollTable();
         const container = document.getElementById('worker-payroll-content') || document.getElementById('worker-payroll-body')?.closest('.space-y-3, .p-3, .px-3');
         if (!container) return;
         container.querySelectorAll('.v159-extra-panel').forEach(el => el.remove());
-        const duanBhxh = Number((window.workers || []).find(w => w.name === 'Duẩn')?.bhxh) || 0;
-        const totalSal = window.officeStaff.reduce((s, st) => s + window.computeOfficeSalaryForMonth(st, window.officePayrollMonth), 0);
-        const totalVpBhxh = window.officeStaff.reduce((s, st) => s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0), 0);
+
+        const duanBhxh = Number(workers.find(w => w.name === 'Duẩn')?.bhxh) || 0;
+        const totalSal = officeStaff.reduce((s, st) => s + computeOfficeSalaryForMonth(st, officePayrollMonth), 0);
+        const totalVpBhxh = officeStaff.reduce((s, st) => s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0), 0);
+
         const panel = document.createElement('div');
         panel.className = 'v159-extra-panel space-y-3 mt-3';
         panel.innerHTML = `
@@ -7311,8 +7166,8 @@ function readSiteLogs_() {
                 <div class="text-[10.5px] text-slate-500">Mốc T11/2026: Việt, Quyển, Hiếu 10,5tr (+100k/tháng mãi mãi) • Sen cố định 6tr</div>
               </div>
               <div class="flex items-center gap-2">
-                <input type="month" value="${window.officePayrollMonth}" onchange="window.officePayrollMonth=this.value; renderWorkerPayrollTable();" class="h-8 px-2.5 rounded-xl border border-slate-200 text-[11.5px] font-semibold text-slate-700"/>
-                <button type="button" onclick="recordMonthlyOfficePayrollToCashbook()" class="h-8 px-3 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Ghi Sổ Chi Lương T${window.officePayrollMonth.slice(5)}</button>
+                <input type="month" value="${officePayrollMonth}" onchange="officePayrollMonth=this.value; renderWorkerPayrollTable();" class="h-8 px-2.5 rounded-xl border border-slate-200 text-[11.5px] font-semibold text-slate-700"/>
+                <button type="button" onclick="recordMonthlyOfficePayrollToCashbook()" class="h-8 px-3 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Ghi Sổ Chi Lương T${officePayrollMonth.slice(5)}</button>
               </div>
             </div>
             <div class="overflow-x-auto">
@@ -7321,14 +7176,14 @@ function readSiteLogs_() {
                   <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
                     <th class="py-1.5 px-2 text-left">Nhân sự VP</th>
                     <th class="py-1.5 px-2 text-left">Chức vụ</th>
-                    <th class="py-1.5 px-2 text-right">Lương tháng ${window.officePayrollMonth.slice(5)}/${window.officePayrollMonth.slice(0,4)}</th>
+                    <th class="py-1.5 px-2 text-right">Lương tháng ${officePayrollMonth.slice(5)}/${officePayrollMonth.slice(0,4)}</th>
                     <th class="py-1.5 px-2 text-right">BHXH Cty đóng 100%</th>
                     <th class="py-1.5 px-2 text-right">Tổng chi phí</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100">
-                  ${window.officeStaff.map(st => {
-                    const sal = window.computeOfficeSalaryForMonth(st, window.officePayrollMonth);
+                  ${officeStaff.map(st => {
+                    const sal = computeOfficeSalaryForMonth(st, officePayrollMonth);
                     const bh = st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0;
                     return `<tr>
                       <td class="py-1.5 px-2 font-bold text-slate-800">${st.name}</td>
@@ -7353,12 +7208,93 @@ function readSiteLogs_() {
         `;
         container.insertBefore(panel, container.firstChild);
       };
-    }
 
-    if (window.execUrl && typeof pullAllDataFromSheets === 'function') {
-      setTimeout(() => { pullAllDataFromSheets(); }, 800);
-    }
-  });
-})();
-</script>
-</body>
+      function exportWorkerPayrollPdfA4() {
+        if (!(window.jspdf && window.jspdf.jsPDF)) { showToast('⚠️ Đang nạp thư viện PDF, thử lại sau 2 giây'); return; }
+        showToast('Đang xuất Bảng Tổng Hợp Công Thợ & Đối Chiếu Sổ Anh Quyển (A4)...');
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const canvas = document.createElement('canvas');
+        canvas.width = 1240; canvas.height = 1754;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 1240, 1754);
+        ctx.fillStyle = '#EA580C'; ctx.font = 'bold 25px Be Vietnam Pro, Arial, sans-serif';
+        ctx.fillText('CÔNG TY CP XÂY DỰNG KHỞI AN — BẢNG TỔNG HỢP CÔNG & LƯƠNG THỢ 2026', 54, 72);
+        ctx.fillStyle = '#475569'; ctx.font = '14px Be Vietnam Pro, Arial, sans-serif';
+        ctx.fillText('Đối chiếu Nhật ký kỹ thuật (Hiếu KA) & Sổ theo dõi Chỉ huy trưởng (Anh Quyển) • Đơn giá chốt đồng nhất cả năm', 54, 98);
+        let y = 132;
+        ctx.fillStyle = '#FFF7ED'; ctx.fillRect(54, y, 1132, 38); ctx.strokeStyle = '#CBD5E1'; ctx.strokeRect(54, y, 1132, 38);
+        ctx.fillStyle = '#9A3412'; ctx.font = 'bold 13px Be Vietnam Pro, Arial, sans-serif';
+        [{ t: 'STT', x: 64 }, { t: 'Họ tên thợ', x: 112 }, { t: 'Vai trò', x: 245 }, { t: 'Công App', x: 405 }, { t: 'Sổ A Quyển', x: 500 }, { t: 'Lệch', x: 605 }, { t: 'Đơn giá', x: 685 }, { t: 'Thành tiền', x: 810 }, { t: 'Đã ứng', x: 955 }, { t: 'Còn lĩnh', x: 1075 }].forEach(c => ctx.fillText(c.t, c.x, y + 24));
+        y += 38;
+        let sumAppDays = 0, sumQuyenDays = 0, sumMoney = 0, sumAdv = 0, sumNet = 0;
+        const duanBhxh = Number(workers.find(w => w.name === 'Duẩn')?.bhxh) || 0;
+        workers.forEach((w, idx) => {
+          const appDays = computeWorkerDaysFromLogs(w.name) + (Number(w.days2025) || 0);
+          const qDays = (w.quyenDays !== null && w.quyenDays !== undefined && w.quyenDays !== '') ? Number(w.quyenDays) : appDays;
+          const diff = qDays - appDays, rate = Number(w.dailyRate) || 0, gross = Math.round(appDays * rate), adv = Number(w.advance) || 0, net = gross - adv;
+          sumAppDays += appDays; sumQuyenDays += qDays; sumMoney += gross; sumAdv += adv; sumNet += net;
+          ctx.fillStyle = idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC'; ctx.fillRect(54, y, 1132, 34); ctx.strokeStyle = '#E2E8F0'; ctx.strokeRect(54, y, 1132, 34);
+          ctx.fillStyle = '#0F172A'; ctx.font = '13px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(String(idx + 1), 68, y + 22);
+          ctx.font = 'bold 13px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(w.name + (w.name === 'Duẩn' ? ' (BHXH)' : ''), 112, y + 22);
+          ctx.font = '12.5px Be Vietnam Pro, Arial, sans-serif'; ctx.fillStyle = '#475569'; ctx.fillText(classifyWorkerRoleByRate(rate, w.name), 245, y + 22);
+          ctx.fillStyle = '#0F172A'; ctx.fillText(appDays.toFixed(1), 415, y + 22); ctx.fillText(qDays.toFixed(1), 515, y + 22);
+          ctx.fillStyle = diff === 0 ? '#16A34A' : '#DC2626'; ctx.fillText((diff > 0 ? '+' : '') + diff.toFixed(1), 605, y + 22);
+          ctx.fillStyle = '#0F172A'; ctx.fillText(formatVND(rate).replace(' ₫', ''), 685, y + 22); ctx.fillText(formatVND(gross).replace(' ₫', ''), 810, y + 22); ctx.fillText(formatVND(adv).replace(' ₫', ''), 955, y + 22);
+          ctx.font = 'bold 13px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(formatVND(net).replace(' ₫', ''), 1075, y + 22);
+          y += 34;
+        });
+        ctx.fillStyle = '#FFF7ED'; ctx.fillRect(54, y, 1132, 40); ctx.strokeStyle = '#EA580C'; ctx.strokeRect(54, y, 1132, 40);
+        ctx.fillStyle = '#9A3412'; ctx.font = 'bold 13.5px Be Vietnam Pro, Arial, sans-serif';
+        ctx.fillText('TỔNG CỘNG (' + workers.length + ' THỢ)', 112, y + 25); ctx.fillText(sumAppDays.toFixed(1), 415, y + 25); ctx.fillText(sumQuyenDays.toFixed(1), 515, y + 25);
+        ctx.fillText(formatVND(sumMoney).replace(' ₫', ''), 810, y + 25); ctx.fillText(formatVND(sumAdv).replace(' ₫', ''), 955, y + 25); ctx.fillText(formatVND(sumNet).replace(' ₫', ''), 1075, y + 25);
+        y += 62;
+        ctx.fillStyle = '#334155'; ctx.font = 'italic 13px Be Vietnam Pro, Arial, sans-serif';
+        ctx.fillText('* Ghi chú: Khoản BHXH của thợ Duẩn (' + formatVND(duanBhxh) + ') do Công ty đóng 100%, không trừ vào lương thực lĩnh của thợ.', 54, y);
+        y += 56;
+        ['Kỹ thuật chấm công (Hiếu KA)', 'Chỉ huy trưởng (Anh Quyển)', 'Kế toán (Sen KA)', 'Giám đốc duyệt (Việt KA)'].forEach((sg, si) => {
+          const sx = 54 + si * 283 + 141; ctx.textAlign = 'center';
+          ctx.fillStyle = '#0F172A'; ctx.font = 'bold 13.5px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText(sg, sx, y);
+          ctx.fillStyle = '#64748B'; ctx.font = 'italic 12px Be Vietnam Pro, Arial, sans-serif'; ctx.fillText('(Ký, ghi rõ họ tên)', sx, y + 20);
+        });
+        doc.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 210, 297);
+        doc.save('Bang_Cong_Luong_Tho_TGKA_A4_' + Date.now() + '.pdf');
+        showToast('Đã tải xuống PDF Bảng Công Thợ A4');
+      }
+
+      async function importAndAuditLegacy2026Sheets() {
+        saveSyncUrl();
+        if (!execUrl) { showToast('⚠️ Vui lòng dán link Google Apps Script /exec trước'); return; }
+        const stEl = document.getElementById('sync-status-label');
+        if (stEl) stEl.textContent = 'Đang đọc & đối soát 5 sheet gốc 2026...';
+        try {
+          const sep = execUrl.includes('?') ? '&' : '?';
+          const res = await fetch(`${execUrl}${sep}action=importLegacy&t=${Date.now()}`);
+          const data = await res.json();
+          if (!data || !data.ok) throw new Error(data?.error || 'Lỗi đọc Sheets');
+          if (Array.isArray(data.projects)) projects = data.projects;
+          if (Array.isArray(data.partners)) partners = data.partners;
+          if (Array.isArray(data.workers) && data.workers.length) workers = data.workers;
+          if (Array.isArray(data.officeStaff) && data.officeStaff.length) { officeStaff = data.officeStaff; saveOfficeStaffLocal(); }
+          if (Array.isArray(data.transactions)) transactions = data.transactions;
+          if (Array.isArray(data.siteLogs)) siteLogs = data.siteLogs;
+          saveAllLocal(); renderDashboard(); playSuccessChime();
+          if (stEl) stEl.textContent = `Đã nạp chuẩn: ${transactions.length} GD • ${projects.length} CT`;
+          showToast(`Đã nạp chuẩn ${transactions.length} giao dịch & 22 thợ`);
+        } catch (err) {
+          if (stEl) stEl.textContent = 'Lỗi đọc sheet gốc (kiểm tra Mã.gs v1.59)';
+          showToast('⚠️ Hãy cập nhật Mã.gs v1.59 lên Apps Script trước');
+        }
+      }
+
+      function openAuditReconciliationModal() {
+        const staffRows = computeStaffBalances(transactions);
+        const getBal = (id) => (staffRows.find(s => s.staff === id)?.balance || 0);
+        const totalCash = staffRows.reduce((s, r) => s + r.balance, 0);
+        alert('BẢNG KIỂM TOÁN & ĐỐI SOÁT SỐ LIỆU 2026 (v1.59)\n----------------------------------------\n• Việt KA: ' + formatVND(getBal('Việt KA')) + '\n• Sen KA: ' + formatVND(getBal('Sen KA')) + '\n• Hiếu KA: ' + formatVND(getBal('Hiếu KA')) + '\n• Quyển KA: ' + formatVND(getBal('Quyển KA')) + '\n• TỔNG TỒN QUỸ: ' + formatVND(totalCash));
+      }
+
+      window.addEventListener('DOMContentLoaded', () => { if (execUrl) setTimeout(() => { pullAllDataFromSheets(); }, 800); });
+    </script>
+  </body>
+  </html>
