@@ -487,7 +487,7 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.50</button>
+            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.56</button>
             <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
               <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1128,26 +1128,23 @@
         <div class="tgka-modal-head px-4 py-3.5 flex items-center justify-between flex-shrink-0">
           <div>
             <div class="text-[14px] font-bold">Đồng Bộ Google Sheets</div>
-            <div id="sync-status-label" class="text-[10.5px] opacity-90">Sẵn sàng đồng bộ dữ liệu</div>
+            <div id="sync-status-label" class="text-[10.5px] opacity-90">Đồng bộ 2 chiều 5 trang tính TGKA</div>
           </div>
           <button onclick="closeModal('sync-modal')" class="w-8 h-8 rounded-full bg-white/15 text-white flex items-center justify-center">✕</button>
         </div>
-        <div class="p-4 space-y-3 bg-white">
+        <div class="p-4 space-y-2.5 bg-white">
           <div>
             <label class="block text-[11px] font-semibold text-slate-600 mb-1">Link Google Apps Script Web App (/exec)</label>
             <input id="sync-exec-url" type="url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full ios-touch-field" />
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="runManualDeltaSync()" class="h-10 rounded-xl bg-[#EA580C] text-white text-[12px] font-bold">Lưu & Đồng Bộ Ngay</button>
-            <button onclick="copyAppsScriptCode()" class="h-10 rounded-xl bg-slate-100 text-slate-700 text-[12px] font-semibold">Chép Mã.gs</button>
+            <button onclick="runManualDeltaSync()" class="h-10 rounded-xl bg-[#EA580C] text-white text-[12px] font-bold">Đẩy Lên Sheets</button>
+            <button id="btn-pull-from-sheets" onclick="pullAllDataFromSheets()" class="h-10 rounded-xl bg-emerald-600 text-white text-[12px] font-bold">Tải Từ Sheets Về</button>
           </div>
-          <button id="btn-sync-copy-index-html" onclick="copyFullHtmlBackup()" class="w-full h-10 rounded-xl bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[12px] font-bold inline-flex items-center justify-center gap-1.5 active:scale-[0.99] transition">
-            <svg class="svg-duo" width="13.5" height="13.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9">
-              <rect x="9" y="9" width="13" height="13" rx="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
-            <span>Sao chép index.html (Lưu bản dự phòng)</span>
-          </button>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="copyAppsScriptCode()" class="h-10 rounded-xl bg-slate-100 text-slate-700 text-[12px] font-semibold">Chép Mã.gs (v1.55)</button>
+            <button id="btn-sync-copy-index-html" onclick="copyFullHtmlBackup()" class="h-10 rounded-xl bg-[#FFF7ED] border border-[#FED7AA] text-[#C2410C] text-[11.5px] font-bold">Chép index.html</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1700,12 +1697,32 @@
           features: {
             lowerReportTopBelowDynamicIslandV154: true
           }
+        },
+        'v1.55': {
+          version: 'v1.55',
+          extends: 'v1.54',
+          date: '27/11/2026',
+          title: 'Đồng Bộ 2 Chiều Đầy Đủ 5 Trang Tính Google Sheets & Nút Tải Từ Sheets Về App',
+          summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.54; nâng cấp Mã.gs chuẩn v1.55 tự động đồng bộ 2 chiều đầy đủ 5 trang tính (GiaoDich, CongTrinh, DoiTac, ThoNuoiAn, NhatKyCongTrinh) và bổ sung nút Tải Từ Sheets Về để app và Google Sheets đã nhân bản đọc khớp 100% thông tin của nhau.',
+          features: {
+            twoWaySheetsSync5SheetsV155: true
+          }
+        },
+        'v1.56': {
+          version: 'v1.56',
+          extends: 'v1.55',
+          date: '27/11/2026',
+          title: 'Khởi Động Sạch Dữ Liệu Mẫu — An Toàn Đồng Bộ Google Sheets Mới',
+          summary: 'Giữ nguyên 100% giao diện chuẩn khóa v1.54–v1.55; loại bỏ toàn bộ giao dịch, công trình, đối tác và nhật ký mẫu ban đầu để bắt đầu sổ năm mới sạch 100% và chống đẩy nhầm số liệu mẫu lên Google Sheets nhân bản (giữ nguyên danh sách 4 nhân sự, 22 thợ nuôi ăn và hạng mục thu chi).',
+          features: {
+            cleanBlankStartNoSeedDataV156: true
+          }
         }
       };
 
       function resolveVersionConfig(verKey) {
         const chain = [];
-        let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.54';
+        let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.56';
         while (curr && RAW_VERSION_SPECS[curr]) {
           chain.unshift(RAW_VERSION_SPECS[curr]);
           curr = RAW_VERSION_SPECS[curr].extends;
@@ -1716,12 +1733,12 @@
         return { ...top, features: mergedFeatures };
       }
 
-      let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.54';
-      if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.54';
-      if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.54') {
-        ACTIVE_VERSION = 'v1.54';
-        localStorage.setItem('tgka_active_version', 'v1.54');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.54');
+      let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.56';
+      if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.56';
+      if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
+        ACTIVE_VERSION = 'v1.56';
+        localStorage.setItem('tgka_active_version', 'v1.56');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.56');
       }
 
       // =========================================================================
@@ -1883,13 +1900,16 @@
         }
       }
 
+      const _bootCfg = resolveVersionConfig(ACTIVE_VERSION);
+      const _useCleanBlankStart = !!_bootCfg.features.cleanBlankStartNoSeedDataV156;
+
       let accounts = loadJsonLocal('tgka_accounts_v1', DEFAULT_ACCOUNTS);
       let currentUserId = localStorage.getItem('tgka_current_user_v1') || 'Việt KA';
-      let projects = loadJsonLocal('tgka_projects_v1', DEFAULT_PROJECTS);
-      let partners = loadJsonLocal('tgka_partners_v1', DEFAULT_PARTNERS).map((pt, idx) =>
+      let projects = loadJsonLocal('tgka_projects_v1', _useCleanBlankStart ? [] : DEFAULT_PROJECTS);
+      let partners = loadJsonLocal('tgka_partners_v1', _useCleanBlankStart ? [] : DEFAULT_PARTNERS).map((pt, idx) =>
         typeof pt === 'string'
           ? { id: 'pt_legacy_' + idx, name: pt, project: '', category: 'Đối tác / Thầu phụ', baseContract: 0, note: '' }
-          : { id: pt.id || ('pt_' + idx), name: pt.name || '', project: pt.project || '', category: pt.category || 'Đối tác / Thầu phụ', baseContract: Number(pt.baseContract) || 0, note: pt.note || '' }
+          : { id: pt.id || ('pt_' + idx), name: pt.name || '', project: pt.project || '', category: pt.category || 'Đối tác / Thầu phụ', baseContract: Number(pt.baseContract) || 0, openingPaidPartner: Number(pt.openingPaidPartner) || 0, note: pt.note || '' }
       );
       let workers = loadJsonLocal('tgka_workers_v17', NAM_DINH_2025_WORKERS).map(w => ({
         ...w,
@@ -1901,43 +1921,9 @@
         quyenDays: (w.quyenDays === null || w.quyenDays === undefined || w.quyenDays === '') ? null : Number(w.quyenDays),
         auditNote: w.auditNote || ''
       }));
-      let transactions = loadJsonLocal('tgka_transactions_v1', DEFAULT_TRANSACTIONS);
-      let siteLogs = loadJsonLocal('tgka_sitelogs_v1', DEFAULT_SITELOGS);
+      let transactions = loadJsonLocal('tgka_transactions_v1', _useCleanBlankStart ? [] : DEFAULT_TRANSACTIONS);
+      let siteLogs = loadJsonLocal('tgka_sitelogs_v1', _useCleanBlankStart ? [] : DEFAULT_SITELOGS);
       let execUrl = localStorage.getItem('tgka_exec_url_v1') || '';
-
-      let periodMode = 'all';
-      let periodCursor = new Date('2026-11-26T00:00:00');
-      let privacyMasked = resolveVersionConfig(ACTIVE_VERSION).features.privacyDefaultMaskedCashbookHero !== false;
-      let soundEnabled = localStorage.getItem('tgka_sound_v1') !== '0';
-
-      let activeCashbookTab = 'overview';
-      let activeReportTab = 'projects';
-      let activeCatalogTab = 'projects';
-      let catalogProjectType = 'TG';
-      let reportProjectYearFilter = 'all';
-      let reportProjectStatusFilter = 'all';
-      let reportTimeFilterMode = 'sync';
-      let reportTimeFrom = '';
-      let reportTimeTo = '';
-      let pendingSettlementProjectCode = '';
-      let catalogWorkerRoleFilter = 'all';
-      let partnerProjectFilter = '';
-      let expandedReportPartnerKey = '';
-      let pendingDeleteAction = null;
-      let pendingRestoreTargetVersion = '';
-      let adminOverrideStaff = false;
-      let txDraftProofPhotos = [];
-      let hrFiltersCollapsed = false;
-
-      let activeSiteLogTab = 'create';
-      let activeSiteLogShift = 'morning';
-      let siteLogSelectedWorkers = new Set();
-      let siteLogDraftPhotos = [];
-      let siteLogHistoryFilterProject = '';
-
-      let lightboxPhotoItems = [];
-      let lightboxCurrentIndex = 0;
-      let lightboxTouchStartX = 0;
 
       function saveAllLocal() {
         try {
@@ -1948,11 +1934,55 @@
           localStorage.setItem('tgka_workers_v17', JSON.stringify(workers));
           localStorage.setItem('tgka_transactions_v1', JSON.stringify(transactions));
           localStorage.setItem('tgka_sitelogs_v1', JSON.stringify(siteLogs));
-          if (execUrl) localStorage.setItem('tgka_exec_url_v1', execUrl);
-        } catch (e) {
-          console.warn('LocalStorage quota warning:', e);
-        }
+          localStorage.setItem('tgka_exec_url_v1', execUrl);
+        } catch (e) {}
       }
+
+      if (_useCleanBlankStart && localStorage.getItem('tgka_v156_cleaned_seeds') !== '1') {
+        const seedProjCodes = new Set(DEFAULT_PROJECTS.map(p => p.code));
+        const seedPartnerIds = new Set(DEFAULT_PARTNERS.map(pt => pt.id));
+        const seedTxIds = new Set(DEFAULT_TRANSACTIONS.map(t => t.id));
+        const seedLogIds = new Set(DEFAULT_SITELOGS.map(l => l.id));
+
+        if (projects.length && projects.every(p => seedProjCodes.has(p.code))) projects = [];
+        if (partners.length && partners.every(pt => seedPartnerIds.has(pt.id))) partners = [];
+        if (transactions.length && transactions.every(t => seedTxIds.has(t.id))) transactions = [];
+        if (siteLogs.length && siteLogs.every(l => seedLogIds.has(l.id))) siteLogs = [];
+
+        localStorage.setItem('tgka_v156_cleaned_seeds', '1');
+        saveAllLocal();
+      }
+
+      let periodMode = 'all';
+      let periodCursor = new Date('2026-11-26T00:00:00');
+      let privacyMasked = _bootCfg.features.privacyDefaultMaskedCashbookHero !== false;
+      let soundEnabled = localStorage.getItem('tgka_sound_v1') !== '0';
+      let activeCashbookTab = 'overview';
+      let activeReportTab = 'projects';
+      let reportTimeFilterMode = 'sync';
+      let reportTimeFrom = '';
+      let reportTimeTo = '';
+      let reportProjectYearFilter = 'all';
+      let reportProjectStatusFilter = 'all';
+      let partnerProjectFilter = '';
+      let expandedReportPartnerKey = '';
+      let activeCatalogTab = 'projects';
+      let catalogProjectType = 'TG';
+      let catalogWorkerRoleFilter = 'all';
+      let pendingSettlementProjectCode = '';
+      let adminOverrideStaff = false;
+      let txDraftProofPhotos = [];
+      let pendingDeleteAction = null;
+      let hrFiltersCollapsed = false;
+      let activeSiteLogTab = 'create';
+      let activeSiteLogShift = 'morning';
+      let siteLogSelectedWorkers = new Set();
+      let siteLogDraftPhotos = [];
+      let siteLogHistoryFilterProject = '';
+      let lightboxPhotoItems = [];
+      let lightboxCurrentIndex = 0;
+      let lightboxTouchStartX = 0;
+      let pendingRestoreTargetVersion = '';
 
       // =========================================================================
       // 3. TIỆN ÍCH ĐỊNH DẠNG TIỀN TỆ, NGÀY THÁNG & ÂM THANH
@@ -2021,10 +2051,9 @@
           const now = ctx.currentTime + 0.01;
 
           if (cfg.features.vietinbankChimeAndBalancedHero) {
-            // Chuông thông báo biến động số dư kiểu VietinBank iPay ("Ting - Ting" 2 nốt chuông sáng trong trẻo B5 -> E6 + bồi âm)
             const notes = [
-              { freq: 987.77, overtone: 1975.53, start: now, dur: 0.24, gain: 0.22 },        // B5
-              { freq: 1318.51, overtone: 2637.02, start: now + 0.145, dur: 0.42, gain: 0.26 } // E6
+              { freq: 987.77, overtone: 1975.53, start: now, dur: 0.24, gain: 0.22 },
+              { freq: 1318.51, overtone: 2637.02, start: now + 0.145, dur: 0.42, gain: 0.26 }
             ];
             notes.forEach(n => {
               const osc1 = ctx.createOscillator();
@@ -2057,7 +2086,6 @@
             return;
           }
 
-          // Nhánh cũ (v1.37 trở về trước)
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
           osc.type = 'sine';
@@ -3362,7 +3390,6 @@
             }
           };
         }
-        // Mặc định 'sync': đồng bộ đúng theo kỳ đang chọn ở màn hình chính
         return {
           label: getPeriodDisplayLabel(),
           matchDate: (iso) => {
@@ -3402,7 +3429,6 @@
         const range = getReportFilteredDateRange();
         const filteredTxs = transactions.filter(t => range.matchDate(t.date));
 
-        // 1. Danh sách công trình: tên chủ đầu tư, mã khách hàng, năm, giá trị hợp đồng, tổng thu, tổng chi, công nợ + bảo hành
         const allProjectRows = projects.map(p => {
           const appThu = transactions.filter(t => t.type === 'Thu' && t.project === p.code).reduce((s, t) => s + (Number(t.amount) || 0), 0);
           const openingPaid = hasV153 ? (Number(p.openingPaid) || 0) : 0;
@@ -3441,10 +3467,8 @@
           return true;
         });
 
-        // 2. Đối tác: Tên đối tác, hạng mục, giá trị hđ, đã thanh toán, công nợ đối tác
         const partnerRows = buildPartnerProjectSummary(partnerProjectFilter);
 
-        // 3. Lương thợ: Tên thợ, vai trò, tổng công, đã ứng, còn lại (theo thời gian đã chọn)
         const isAllRange = reportTimeFilterMode === 'all' || (reportTimeFilterMode === 'sync' && periodMode === 'all');
         const payrollRows = workers.map(w => {
           const logDays = getWorkerSiteLogDaysByDatePredicate(w.name, range.matchDate);
@@ -3468,7 +3492,6 @@
           };
         });
 
-        // 4. Sổ quỹ: tổng thu, chi, quỹ thực cầm của tất cả nhân viên (theo thời gian đã chọn)
         const staffRows = computeStaffBalances(filteredTxs);
 
         return {
@@ -4014,7 +4037,6 @@
           };
         }
 
-        // Mặc định: Sổ quỹ nhân viên ('staff')
         const sumThu = ds.staffRows.reduce((s, r) => s + r.income, 0);
         const sumChi = ds.staffRows.reduce((s, r) => s + r.expense, 0);
         const sumTrIn = ds.staffRows.reduce((s, r) => s + r.transferIn, 0);
@@ -4112,7 +4134,6 @@
           y = 130;
         }
 
-        // 3 Ô KPI đầu trang
         const gap = 16;
         const boxW = (tableW - gap * 2) / 3;
         const boxH = 72;
@@ -4131,7 +4152,6 @@
         });
         y += boxH + 22;
 
-        // Kẻ bảng dữ liệu
         const colWidths = model.colRatios.map(r => Math.round(tableW * r));
         const widthDiff = tableW - colWidths.reduce((a, b) => a + b, 0);
         colWidths[colWidths.length - 1] += widthDiff;
@@ -4185,7 +4205,6 @@
           y += rowH;
         });
 
-        // Dòng Tổng Cộng
         ctx.fillStyle = '#FFFBEB';
         ctx.fillRect(mx, y, tableW, rowH);
         ctx.strokeStyle = '#94A3B8';
@@ -4529,7 +4548,6 @@
           return;
         }
 
-        // Xử lý thông minh: Tách / Phân bổ khoản Chi chung về công trình cụ thể (v1.46)
         const splitEnabled = !!cfg.features.v146ProfitGlossaryPreviewAndSplitCommon && !!editId && type === 'Chi' && !project && !!document.getElementById('manual-split-enable')?.checked;
         if (splitEnabled) {
           const targetProj = document.getElementById('manual-split-target-project')?.value || '';
@@ -4931,7 +4949,6 @@
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, width, height);
 
-        // Header cam thương hiệu TGKA
         ctx.fillStyle = '#EA580C';
         ctx.fillRect(0, 0, width, 118);
         ctx.fillStyle = '#FFFFFF';
@@ -4962,7 +4979,6 @@
         ctx.fillStyle = '#0F172A';
         ctx.fillText(`Chênh lệch: ${formatVND(diff)}`, 730, 172);
 
-        // Tiêu đề cột bảng
         const cols = [
           { label: 'STT', x: 38, w: 54 },
           { label: 'Ngày', x: 92, w: 112 },
@@ -5111,7 +5127,6 @@
       }
 
       function renderA4PdfPageCanvas(pageItems, pageIndex, totalPages, meta) {
-        // Khổ A4 dọc tỷ lệ 1 : 1.4142 (1240 x 1754 px @ 150 DPI sắc nét)
         const W = 1240;
         const H = 1754;
         const marginX = 64;
@@ -5126,7 +5141,6 @@
 
         let y = 58;
         if (pageIndex === 0) {
-          // Quốc hiệu / Tiêu đề công ty TGKA Khởi An
           ctx.fillStyle = '#EA580C';
           ctx.font = 'bold 26px Be Vietnam Pro, Arial, sans-serif';
           ctx.fillText('TGKA KHỞI AN', marginX, y + 22);
@@ -5162,7 +5176,6 @@
           ctx.textAlign = 'left';
 
           y += 24;
-          // 3 ô tổng hợp Thu / Chi / Chênh lệch
           const boxGap = 16;
           const boxW = (tableW - boxGap * 2) / 3;
           const boxH = 74;
@@ -5197,8 +5210,7 @@
           y += 34;
         }
 
-        // Kẻ đầu bảng 6 cột chuẩn khổ A4
-        const colWidths = [56, 118, 92, 230, 128, 328, 160]; // Tổng = 1112px (= 1240 - 128)
+        const colWidths = [56, 118, 92, 230, 128, 328, 160];
         const colTitles = ['STT', 'Ngày', 'Loại', 'Công trình / ĐT', 'Nhân viên', 'Nội dung giao dịch', 'Số tiền (VNĐ)'];
         const headH = 42;
 
@@ -5280,7 +5292,6 @@
           y += rowH;
         });
 
-        // Nếu là trang cuối, vẽ dòng tổng kết và 3 cột ký xác nhận A4
         if (pageIndex === totalPages - 1) {
           y += 28;
           ctx.fillStyle = '#0F172A';
@@ -5320,13 +5331,11 @@
         });
         const diff = totalThu - totalChi;
 
-        // Nhánh v1.32: Tạo và tải trực tiếp tệp .pdf chuẩn khổ A4 dọc xuống máy
         if (cfg.features.directPdfFileDownloadA4 && window.jspdf && window.jspdf.jsPDF) {
           showToast('Đang tạo tệp PDF khổ A4...');
           const { jsPDF } = window.jspdf;
           const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
-          // Chia trang: Trang 1 chứa 24 dòng (kèm tiêu đề + tổng hợp + ký tên nếu vừa), các trang sau 30 dòng/trang
           const pages = [];
           const firstPageCap = 24;
           const nextPageCap = 30;
@@ -5362,7 +5371,6 @@
           return;
         }
 
-        // Nhánh kế thừa v1.31 (khi khôi phục về v1.31)
         const rowsHtml = items.map((tx, idx) => {
           const typeStr = tx.type === 'Thu' ? 'Thu (+)' : (tx.type === 'Chi' ? 'Chi (-)' : (tx.type === 'ChuyenQuy' ? 'Ứng NV' : 'Chốt HĐ'));
           const actor = tx.type === 'ChuyenQuy' ? `${tx.staff} → ${tx.recipient}` : (tx.staff || '');
@@ -6408,7 +6416,14 @@
         if (!RAW_VERSION_SPECS[ver]) return;
         ACTIVE_VERSION = ver;
         localStorage.setItem('tgka_active_version', ver);
-        privacyMasked = resolveVersionConfig(ACTIVE_VERSION).features.privacyDefaultMaskedCashbookHero !== false;
+        const restoredCfg = resolveVersionConfig(ACTIVE_VERSION);
+        if (!restoredCfg.features.cleanBlankStartNoSeedDataV156 && projects.length === 0 && transactions.length === 0 && partners.length === 0) {
+          projects = [...DEFAULT_PROJECTS];
+          partners = DEFAULT_PARTNERS.map(pt => ({ ...pt, openingPaidPartner: 0 }));
+          transactions = [...DEFAULT_TRANSACTIONS];
+          siteLogs = [...DEFAULT_SITELOGS];
+        }
+        privacyMasked = restoredCfg.features.privacyDefaultMaskedCashbookHero !== false;
         closeModal('version-modal');
         renderDashboard();
         showToast('Đã khôi phục nguyên bản phiên bản ' + ver);
@@ -6427,7 +6442,6 @@
           }
         } catch (e) {}
 
-        // Bỏ qua cache trình duyệt và tải thẳng tệp index.html mới nhất trên GitHub Pages (giữ nguyên localStorage)
         const url = new URL(window.location.href);
         url.searchParams.set('v_sync', String(Date.now()));
         setTimeout(() => {
@@ -6436,8 +6450,11 @@
       }
 
       function openSyncModal() {
+        const cfg = resolveVersionConfig(ACTIVE_VERSION);
         const inp = document.getElementById('sync-exec-url');
         if (inp) inp.value = execUrl;
+        const pullBtn = document.getElementById('btn-pull-from-sheets');
+        if (pullBtn) pullBtn.classList.toggle('hidden', !cfg.features.twoWaySheetsSync5SheetsV155);
         openModal('sync-modal');
       }
 
@@ -6455,24 +6472,311 @@
           return;
         }
         const stEl = document.getElementById('sync-status-label');
-        if (stEl) stEl.textContent = 'Đang đồng bộ...';
+        if (stEl) stEl.textContent = 'Đang đẩy dữ liệu 5 trang tính lên Sheets...';
         try {
           await fetch(execUrl, {
             method: 'POST',
             mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'deltaSync', transactions, projects, partners, workers, siteLogs })
+            body: JSON.stringify({
+              action: 'syncAll5Sheets',
+              version: ACTIVE_VERSION,
+              transactions,
+              projects,
+              partners,
+              workers,
+              siteLogs
+            })
           });
-          if (stEl) stEl.textContent = 'Đã đồng bộ Sheets';
-          showToast('Đã đẩy dữ liệu lên Google Sheets');
+          if (stEl) stEl.textContent = 'Đã đồng bộ 5 trang tính lên Sheets';
+          renderDashboard();
+          playSuccessChime();
+          showToast('Đã đẩy đầy đủ 5 trang tính lên Google Sheets');
         } catch (e) {
           if (stEl) stEl.textContent = 'Chế độ cục bộ';
           showToast('Lỗi mạng, dữ liệu vẫn an toàn trên máy');
         }
       }
 
+      async function pullAllDataFromSheets() {
+        saveSyncUrl();
+        if (!execUrl) {
+          showToast('⚠️ Vui lòng dán link Google Apps Script /exec trước');
+          return;
+        }
+        const stEl = document.getElementById('sync-status-label');
+        if (stEl) stEl.textContent = 'Đang tải dữ liệu từ Google Sheets...';
+        try {
+          const sep = execUrl.includes('?') ? '&' : '?';
+          const res = await fetch(`${execUrl}${sep}action=loadAll&t=${Date.now()}`);
+          const data = await res.json();
+          if (!data || !data.ok) {
+            throw new Error(data?.error || 'Phản hồi không hợp lệ');
+          }
+          if (Array.isArray(data.projects)) projects = data.projects;
+          if (Array.isArray(data.partners)) partners = data.partners;
+          if (Array.isArray(data.workers)) workers = data.workers;
+          if (Array.isArray(data.transactions)) transactions = data.transactions;
+          if (Array.isArray(data.siteLogs)) siteLogs = data.siteLogs;
+
+          saveAllLocal();
+          renderDashboard();
+          if (stEl) stEl.textContent = `Đã tải về: ${transactions.length} GD • ${projects.length} CT`;
+          playSuccessChime();
+          showToast(`Đã tải đồng bộ từ Sheets (${transactions.length} GD, ${projects.length} CT)`);
+        } catch (err) {
+          if (stEl) stEl.textContent = 'Lỗi đọc Sheets (kiểm tra quyền Anyone)';
+          showToast('⚠️ Không đọc được từ Sheets. Hãy kiểm tra Mã.gs v1.55 và quyền truy cập Anyone');
+        }
+      }
+
       function copyAppsScriptCode() {
-        const code = `function doPost(e){var p=JSON.parse(e.postData.contents);return ContentService.createTextOutput(JSON.stringify({ok:true,ver:'TGKA-v1.36'})).setMimeType(ContentService.MimeType.JSON);}`;
+        const cfg = resolveVersionConfig(ACTIVE_VERSION);
+        const code = cfg.features.twoWaySheetsSync5SheetsV155
+          ? `// =========================================================================
+// MÃ GOOGLE APPS SCRIPT ĐỒNG BỘ 2 CHIỀU 5 TRANG TÍNH - TGKA KHỞI AN (v1.55)
+// Trang tính: GiaoDich | CongTrinh | DoiTac | ThoNuoiAn | NhatKyCongTrinh
+// =========================================================================
+
+function doGet(e) {
+  var action = (e && e.parameter && e.parameter.action) || 'loadAll';
+  if (action === 'ping') {
+    return jsonResponse_({ ok: true, status: 'TGKA Khởi An Ready (v1.55)' });
+  }
+  return jsonResponse_({
+    ok: true,
+    version: 'TGKA-v1.55',
+    transactions: readTransactions_(),
+    projects: readProjects_(),
+    partners: readPartners_(),
+    workers: readWorkers_(),
+    siteLogs: readSiteLogs_()
+  });
+}
+
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    if (Array.isArray(body.transactions)) writeTransactions_(body.transactions);
+    if (Array.isArray(body.projects)) writeProjects_(body.projects);
+    if (Array.isArray(body.partners)) writePartners_(body.partners);
+    if (Array.isArray(body.workers)) writeWorkers_(body.workers);
+    if (Array.isArray(body.siteLogs)) writeSiteLogs_(body.siteLogs);
+    return jsonResponse_({ ok: true, version: 'TGKA-v1.55' });
+  } catch (err) {
+    return jsonResponse_({ ok: false, error: String(err) });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function jsonResponse_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function getOrCreateSheet_(name, headers) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(name) || ss.insertSheet(name);
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(headers);
+    sh.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#FFF7ED');
+  }
+  return sh;
+}
+
+function fmtDate_(val) {
+  if (!val) return '';
+  if (val instanceof Date) return Utilities.formatDate(val, 'Asia/Ho_Chi_Minh', 'yyyy-MM-dd');
+  return String(val).slice(0, 10);
+}
+
+// 1. GIAO DỊCH THU CHI & ỨNG QUỸ NỘI BỘ
+function writeTransactions_(list) {
+  var headers = ['ID', 'Ngày', 'Loại GD', 'Nhân viên', 'Người nhận ứng', 'Số tiền', 'Công trình', 'Đối tác', 'Hạng mục', 'Nhóm chi nội bộ', 'Nội dung'];
+  var sh = getOrCreateSheet_('GiaoDich', headers);
+  sh.clearContents();
+  sh.appendRow(headers);
+  if (!list.length) return;
+  var rows = list.map(function(t) {
+    return [t.id || '', t.date || '', t.type || 'Chi', t.staff || '', t.recipient || '', Number(t.amount) || 0, t.project || '', t.partner || '', t.category || '', t.internalGroup || '', t.note || ''];
+  });
+  sh.getRange(2, 1, rows.length, headers.length).setValues(rows);
+}
+
+function readTransactions_() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('GiaoDich');
+  if (!sh || sh.getLastRow() <= 1) return [];
+  var vals = sh.getDataRange().getValues();
+  var out = [];
+  for (var i = 1; i < vals.length; i++) {
+    var r = vals[i];
+    if (!r[0]) continue;
+    out.push({
+      id: String(r[0]),
+      date: fmtDate_(r[1]),
+      type: String(r[2] || 'Chi'),
+      staff: String(r[3] || ''),
+      recipient: String(r[4] || ''),
+      amount: Number(r[5]) || 0,
+      project: String(r[6] || ''),
+      partner: String(r[7] || ''),
+      category: String(r[8] || ''),
+      internalGroup: String(r[9] || ''),
+      note: String(r[10] || ''),
+      photos: [],
+      seenBy: []
+    });
+  }
+  return out;
+}
+
+// 2. CÔNG TRÌNH (BAO GỒM MÃ TG-/N-, NỢ CŨ ĐẦU KỲ, NGHIỆM THU & BẢO HÀNH)
+function writeProjects_(list) {
+  var headers = ['Mã CT', 'Chủ đầu tư', 'Địa chỉ', 'Năm', 'Giá trị HĐ gốc', 'Giá trị HĐ quyết toán', 'Đã thu năm trước', 'Trạng thái', 'Ngày bàn giao BH', 'Ghi chú quyết toán'];
+  var sh = getOrCreateSheet_('CongTrinh', headers);
+  sh.clearContents();
+  sh.appendRow(headers);
+  if (!list.length) return;
+  var rows = list.map(function(p) {
+    return [p.code || '', p.customer || '', p.address || '', Number(p.year) || 2026, Number(p.contractValue) || 0, Number(p.finalContractValue) || 0, Number(p.openingPaid) || 0, p.status || 'Đang thi công', p.handoverDate || '', p.settlementNote || ''];
+  });
+  sh.getRange(2, 1, rows.length, headers.length).setValues(rows);
+}
+
+function readProjects_() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('CongTrinh');
+  if (!sh || sh.getLastRow() <= 1) return [];
+  var vals = sh.getDataRange().getValues();
+  var out = [];
+  for (var i = 1; i < vals.length; i++) {
+    var r = vals[i];
+    if (!r[0]) continue;
+    out.push({
+      code: String(r[0]),
+      customer: String(r[1] || ''),
+      address: String(r[2] || ''),
+      year: Number(r[3]) || 2026,
+      contractValue: Number(r[4]) || 0,
+      finalContractValue: Number(r[5]) || 0,
+      openingPaid: Number(r[6]) || 0,
+      status: String(r[7] || 'Đang thi công'),
+      handoverDate: fmtDate_(r[8]),
+      settlementNote: String(r[9] || '')
+    });
+  }
+  return out;
+}
+
+// 3. HỢP ĐỒNG ĐỐI TÁC (BAO GỒM ĐÃ TRẢ NĂM TRƯỚC)
+function writePartners_(list) {
+  var headers = ['ID', 'Tên đối tác', 'Công trình', 'Hạng mục', 'Giá trị HĐ', 'Đã trả năm trước', 'Ghi chú'];
+  var sh = getOrCreateSheet_('DoiTac', headers);
+  sh.clearContents();
+  sh.appendRow(headers);
+  if (!list.length) return;
+  var rows = list.map(function(pt) {
+    return [pt.id || '', pt.name || '', pt.project || '', pt.category || '', Number(pt.baseContract) || 0, Number(pt.openingPaidPartner) || 0, pt.note || ''];
+  });
+  sh.getRange(2, 1, rows.length, headers.length).setValues(rows);
+}
+
+function readPartners_() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('DoiTac');
+  if (!sh || sh.getLastRow() <= 1) return [];
+  var vals = sh.getDataRange().getValues();
+  var out = [];
+  for (var i = 1; i < vals.length; i++) {
+    var r = vals[i];
+    if (!r[1]) continue;
+    out.push({
+      id: String(r[0] || ('pt_' + i)),
+      name: String(r[1] || ''),
+      project: String(r[2] || ''),
+      category: String(r[3] || 'Đối tác / Thầu phụ'),
+      baseContract: Number(r[4]) || 0,
+      openingPaidPartner: Number(r[5]) || 0,
+      note: String(r[6] || '')
+    });
+  }
+  return out;
+}
+
+// 4. THỢ NUÔI ĂN & ĐỐI SOÁT CÔNG
+function writeWorkers_(list) {
+  var headers = ['ID', 'Tên thợ', 'Vai trò', 'Đơn giá 2025', 'Lương công năm nay', 'Ngày công 2025', 'Đã tạm ứng', 'BHXH', 'Công sổ Anh Quyển', 'Ghi chú'];
+  var sh = getOrCreateSheet_('ThoNuoiAn', headers);
+  sh.clearContents();
+  sh.appendRow(headers);
+  if (!list.length) return;
+  var rows = list.map(function(w) {
+    return [w.id || '', w.name || '', w.role || '', Number(w.baseRate2025) || 0, Number(w.dailyRate) || 0, Number(w.days2025) || 0, Number(w.advance) || 0, Number(w.bhxh) || 0, (w.quyenDays === null || w.quyenDays === undefined) ? '' : Number(w.quyenDays), w.auditNote || ''];
+  });
+  sh.getRange(2, 1, rows.length, headers.length).setValues(rows);
+}
+
+function readWorkers_() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('ThoNuoiAn');
+  if (!sh || sh.getLastRow() <= 1) return [];
+  var vals = sh.getDataRange().getValues();
+  var out = [];
+  for (var i = 1; i < vals.length; i++) {
+    var r = vals[i];
+    if (!r[1]) continue;
+    out.push({
+      id: String(r[0] || ('wk_' + i)),
+      name: String(r[1] || ''),
+      role: String(r[2] || 'Thợ chính'),
+      baseRate2025: Number(r[3]) || 0,
+      dailyRate: Number(r[4]) || 0,
+      days2025: Number(r[5]) || 0,
+      advance: Number(r[6]) || 0,
+      bhxh: Number(r[7]) || 0,
+      quyenDays: (r[8] === '' || r[8] === null || r[8] === undefined) ? null : Number(r[8]),
+      auditNote: String(r[9] || '')
+    });
+  }
+  return out;
+}
+
+// 5. NHẬT KÝ CÔNG TRÌNH & CHẤM CÔNG SÁNG / CHIỀU
+function writeSiteLogs_(list) {
+  var headers = ['ID', 'Ngày', 'Công trình', 'Người ghi', 'Việc Ca Sáng', 'Thợ Ca Sáng', 'Việc Ca Chiều', 'Thợ Ca Chiều'];
+  var sh = getOrCreateSheet_('NhatKyCongTrinh', headers);
+  sh.clearContents();
+  sh.appendRow(headers);
+  if (!list.length) return;
+  var rows = list.map(function(l) {
+    return [l.id || '', l.date || '', l.project || '', l.staff || '', l.morningWork || '', (l.morningWorkers || []).join(', '), l.afternoonWork || '', (l.afternoonWorkers || []).join(', ')];
+  });
+  sh.getRange(2, 1, rows.length, headers.length).setValues(rows);
+}
+
+function readSiteLogs_() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('NhatKyCongTrinh');
+  if (!sh || sh.getLastRow() <= 1) return [];
+  var vals = sh.getDataRange().getValues();
+  var out = [];
+  for (var i = 1; i < vals.length; i++) {
+    var r = vals[i];
+    if (!r[2]) continue;
+    out.push({
+      id: String(r[0] || ('log_' + i)),
+      date: fmtDate_(r[1]),
+      project: String(r[2] || ''),
+      staff: String(r[3] || ''),
+      morningWork: String(r[4] || ''),
+      morningWorkers: String(r[5] || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean),
+      morningPhotos: [],
+      afternoonWork: String(r[6] || ''),
+      afternoonWorkers: String(r[7] || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean),
+      afternoonPhotos: []
+    });
+  }
+  return out;
+}`
+          : `function doPost(e){var p=JSON.parse(e.postData.contents);return ContentService.createTextOutput(JSON.stringify({ok:true,ver:'TGKA-v1.36'})).setMimeType(ContentService.MimeType.JSON);}`;
         const ta = document.createElement('textarea');
         ta.value = code;
         ta.style.position = 'fixed';
@@ -6481,7 +6785,7 @@
         ta.select();
         try {
           document.execCommand('copy');
-          showToast('Đã sao chép Mã.gs (TGKA v1.36)');
+          showToast(cfg.features.twoWaySheetsSync5SheetsV155 ? 'Đã sao chép Mã.gs (Đồng bộ 2 chiều 5 Sheet v1.55)' : 'Đã sao chép Mã.gs (TGKA v1.36)');
         } catch (e) {
           showToast('⚠️ Không thể sao chép tự động');
         }
