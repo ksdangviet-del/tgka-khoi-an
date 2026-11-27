@@ -326,6 +326,14 @@
         height: calc(100lvh - max(56px, calc(env(safe-area-inset-top, 44px) + 10px))) !important;
         max-height: calc(100lvh - max(56px, calc(env(safe-area-inset-top, 44px) + 10px))) !important;
       }
+      /* Chế độ v1.54: Hạ mép trên các bảng báo cáo xuống bằng đúng mép dưới cụm camera ẩn Dynamic Island để thao tác thuận tay */
+      body.report-flush-under-island-v154 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) {
+        padding-top: max(74px, calc(env(safe-area-inset-top, 59px) + 14px)) !important;
+      }
+      body.report-flush-under-island-v154 .modal-backdrop.modal-top-pinned:not(.entry-bottom-sheet) .modal-sheet {
+        height: calc(100lvh - max(74px, calc(env(safe-area-inset-top, 59px) + 14px))) !important;
+        max-height: calc(100lvh - max(74px, calc(env(safe-area-inset-top, 59px) + 14px))) !important;
+      }
       /* Chế độ v1.49: Cân đối nút Báo cáo LSGD & phóng to 3 nút nhập liệu ở thanh điều hướng đáy */
       body.main-polish-v149 #btn-history-header-action {
         height: 36px !important;
@@ -1682,12 +1690,22 @@
           features: {
             v153CarryoverDebtSettlementAndWarranty: true
           }
+        },
+        'v1.54': {
+          version: 'v1.54',
+          extends: 'v1.53',
+          date: '27/11/2026',
+          title: 'Hạ Mép Trên Bảng Báo Cáo Bằng Đúng Mép Dưới Camera Ẩn (Dynamic Island) iPhone',
+          summary: 'Giữ nguyên 100% khung giao diện chuẩn khóa v1.50–v1.53; hạ thêm khoảng cách đỉnh các bảng báo cáo (Báo Cáo Lịch Sử Giao Dịch, Báo Cáo Tài Chính, Danh Sách Công Trình, Đối Tác, Lương Thợ, Sổ Quỹ) xuống bằng đúng mép dưới cụm camera ẩn Dynamic Island để chạm thao tác thoải mái.',
+          features: {
+            lowerReportTopBelowDynamicIslandV154: true
+          }
         }
       };
 
       function resolveVersionConfig(verKey) {
         const chain = [];
-        let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.53';
+        let curr = RAW_VERSION_SPECS[verKey] ? verKey : 'v1.54';
         while (curr && RAW_VERSION_SPECS[curr]) {
           chain.unshift(RAW_VERSION_SPECS[curr]);
           curr = RAW_VERSION_SPECS[curr].extends;
@@ -1698,12 +1716,12 @@
         return { ...top, features: mergedFeatures };
       }
 
-      let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.53';
-      if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.53';
-      if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.53') {
-        ACTIVE_VERSION = 'v1.53';
-        localStorage.setItem('tgka_active_version', 'v1.53');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.53');
+      let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.54';
+      if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.54';
+      if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.54') {
+        ACTIVE_VERSION = 'v1.54';
+        localStorage.setItem('tgka_active_version', 'v1.54');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.54');
       }
 
       // =========================================================================
@@ -2474,6 +2492,7 @@
         document.body.classList.toggle('edge-to-edge-bottom-v148', !!f.edgeToEdgeBottomSafeAreaV148);
         document.body.classList.toggle('main-polish-v149', !!f.mainScreenPolishV149);
         document.body.classList.toggle('report-below-island-v150', !!f.dynamicIslandClearReportTopV150);
+        document.body.classList.toggle('report-flush-under-island-v154', !!f.lowerReportTopBelowDynamicIslandV154);
       }
 
       function renderDashboard() {
