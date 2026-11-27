@@ -7373,4 +7373,94 @@ function readSiteLogs_() {
   }
 })();
 </script>
+<script>
+(function() {
+  function injectVpAndBhxhPanel() {
+    const headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+    const titleEl = headings.find(el => el.children.length === 0 && el.textContent && el.textContent.trim() === 'Bảng Chấm Công & Lương Thợ');
+    if (!titleEl) return;
+    const modal = titleEl.closest('.fixed') || titleEl.parentElement?.parentElement;
+    if (!modal || modal.offsetParent === null) return;
+    const scrollBox = modal.querySelector('.overflow-y-auto') || modal.querySelector('[class*="overflow-y"]');
+    if (!scrollBox) return;
+
+    let panel = scrollBox.querySelector('.v159-extra-panel');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.className = 'v159-extra-panel space-y-3 mb-3';
+      scrollBox.insertBefore(panel, scrollBox.firstChild);
+    }
+
+    const wkList = window.workers || [];
+    const duanBhxh = Number(wkList.find(w => w.name === 'Duẩn')?.bhxh) || 0;
+    const vpList = window.officeStaff || [];
+    const ym = window.officePayrollMonth || '2026-11';
+    const totalSal = vpList.reduce((s, st) => s + window.computeOfficeSalaryForMonth(st, ym), 0);
+    const totalVpBhxh = vpList.reduce((s, st) => s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0), 0);
+
+    panel.innerHTML = `
+      <div class="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div class="text-[12px] font-bold text-[#9A3412]">BHXH Thợ Duẩn (Cty đóng 100%) & In Đối Chiếu Sổ A Quyển</div>
+          <div class="text-[10.5px] text-slate-600">Tăng lương cuối năm áp dụng đồng nhất toàn bộ công trong năm</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-amber-200">
+            <span class="text-[10.5px] font-semibold text-slate-600">BHXH Duẩn:</span>
+            <input type="text" inputmode="numeric" value="${duanBhxh ? formatVND(duanBhxh).replace(' ₫','') : ''}" placeholder="Nhập số tiền" onchange="updateDuanBhxh(this.value)" class="w-24 text-right text-[11.5px] font-bold text-[#EA580C] outline-none"/>
+          </div>
+          <button type="button" onclick="exportWorkerPayrollPdfA4()" class="h-8 px-3 rounded-full bg-[#EA580C] text-white text-[11px] font-bold shadow-2xs">PDF A4 Công Thợ</button>
+        </div>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-2xs space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">
+          <div>
+            <div class="text-[12.5px] font-bold text-slate-800">Bảng Lương Văn Phòng & BHXH (Tự Tăng +100k/Tháng)</div>
+            <div class="text-[10.5px] text-slate-500">Mốc T11/2026: Việt, Quyển, Hiếu 10,5tr (+100k/tháng) • Sen cố định 6tr</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <input type="month" value="${ym}" onchange="window.officePayrollMonth=this.value; window.refreshVpPanelV159();" class="h-8 px-2.5 rounded-xl border border-slate-200 text-[11.5px] font-semibold text-slate-700"/>
+            <button type="button" onclick="recordMonthlyOfficePayrollToCashbook()" class="h-8 px-3 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Ghi Sổ Chi Lương & BHXH</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-[11px] border-collapse">
+            <thead>
+              <tr class="bg-slate-50 text-slate-600 border-b border-slate-200">
+                <th class="py-1.5 px-2 text-left">Nhân sự VP</th>
+                <th class="py-1.5 px-2 text-right">Lương T${ym.slice(5)}/${ym.slice(0,4)}</th>
+                <th class="py-1.5 px-2 text-right">BHXH Cty đóng 100%</th>
+                <th class="py-1.5 px-2 text-right">Tổng chi</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              ${vpList.map(st => {
+                const sal = window.computeOfficeSalaryForMonth(st, ym);
+                const bh = st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0;
+                return `<tr>
+                  <td class="py-1.5 px-2"><div class="font-bold text-slate-800">${st.name}</div><div class="text-[9.5px] text-slate-400">${st.role}</div></td>
+                  <td class="py-1.5 px-2 text-right font-semibold text-slate-800">${formatVND(sal)}</td>
+                  <td class="py-1.5 px-2 text-right">${st.hasBhxh ? `<input type="text" inputmode="numeric" value="${bh ? formatVND(bh).replace(' ₫','') : ''}" placeholder="Nhập BHXH" onchange="updateOfficeBhxh('${st.id}', this.value); window.refreshVpPanelV159();" class="w-24 text-right px-1.5 py-1 rounded border border-sky-200 bg-sky-50/40 font-semibold text-sky-700"/>` : '<span class="text-slate-400 italic">Không đóng</span>'}</td>
+                  <td class="py-1.5 px-2 text-right font-bold text-[#EA580C]">${formatVND(sal + bh)}</td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+            <tfoot>
+              <tr class="bg-amber-50/70 font-bold text-slate-900 border-t border-slate-200">
+                <td class="py-1.5 px-2">TỔNG VP (+ BHXH Duẩn: ${formatVND(duanBhxh)})</td>
+                <td class="py-1.5 px-2 text-right">${formatVND(totalSal)}</td>
+                <td class="py-1.5 px-2 text-right text-sky-700">${formatVND(totalVpBhxh + duanBhxh)}</td>
+                <td class="py-1.5 px-2 text-right text-[#EA580C]">${formatVND(totalSal + totalVpBhxh + duanBhxh)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+  window.refreshVpPanelV159 = injectVpAndBhxhPanel;
+  setInterval(injectVpAndBhxhPanel, 600);
+})();
+</script>
 </body>
