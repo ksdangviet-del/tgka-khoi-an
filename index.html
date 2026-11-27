@@ -1,6 +1,7 @@
 <!DOCTYPE html>
   <html lang="vi">
   <head>
+<script>localStorage.setItem('tgka_active_version','v1.59');localStorage.setItem('tgka_latest_seen_ver','v1.59');if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}</script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1741,7 +1742,7 @@
         return { ...top, features: mergedFeatures };
       }
 
-      let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.59';
+      let ACTIVE_VERSION = 'v1.59';
       if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.56';
       if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
         ACTIVE_VERSION = 'v1.56';
@@ -3287,7 +3288,8 @@
 
         const excelDoc = `
           <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-          <head><meta charset="UTF-8" /></head>
+          <head>
+<script>localStorage.setItem('tgka_active_version','v1.59');localStorage.setItem('tgka_latest_seen_ver','v1.59');if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}</script><meta charset="UTF-8" /></head>
           <body>
             <table border="1" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:11pt;">
               <tr><td colspan="9" style="font-size:14pt;font-weight:bold;background:#EA580C;color:#FFFFFF;height:32px;">TGKA KHỞI AN — BÁO CÁO TÀI CHÍNH TỔNG HỢP (${getPeriodDisplayLabel()})</td></tr>
@@ -4302,7 +4304,8 @@
 
         const excelDoc = `
           <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-          <head><meta charset="UTF-8" /></head>
+          <head>
+<script>localStorage.setItem('tgka_active_version','v1.59');localStorage.setItem('tgka_latest_seen_ver','v1.59');if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}</script><meta charset="UTF-8" /></head>
           <body>
             <table border="1" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:11pt;">
               <tr><td colspan="${colCount}" style="font-size:14pt;font-weight:bold;background:#EA580C;color:#FFFFFF;height:32px;">TGKA KHỞI AN — ${model.title}</td></tr>
@@ -5098,7 +5101,8 @@
 
         const excelDoc = `
           <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
-          <head><meta charset="UTF-8" /></head>
+          <head>
+<script>localStorage.setItem('tgka_active_version','v1.59');localStorage.setItem('tgka_latest_seen_ver','v1.59');if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}</script><meta charset="UTF-8" /></head>
           <body>
             <table border="1" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:11pt;">
               <tr><td colspan="9" style="font-size:14pt;font-weight:bold;background:#EA580C;color:#FFFFFF;height:32px;">TGKA KHỞI AN — BÁO CÁO LỊCH SỬ GIAO DỊCH</td></tr>
@@ -5406,6 +5410,7 @@
           <!DOCTYPE html>
           <html lang="vi">
           <head>
+<script>localStorage.setItem('tgka_active_version','v1.59');localStorage.setItem('tgka_latest_seen_ver','v1.59');if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));}if('caches' in window){caches.keys().then(ks=>ks.forEach(k=>caches.delete(k)));}</script>
             <meta charset="UTF-8" />
             <title>Báo Cáo Lịch Sử Giao Dịch - TGKA Khởi An (Khổ A4)</title>
             <style>
