@@ -1037,7 +1037,7 @@
                 <circle cx="8.5" cy="8.5" r="1.5" stroke="#EA580C" fill="#EA580C"/>
                 <polyline points="21 15 16 10 5 21" stroke="#EA580C"/>
               </svg>
-              <span>+ Thêm ảnh hiện trường (Bắt buộc ≥ 1 ảnh) *</span>
+              <span>+ Thêm ảnh hiện trường</span>
               <input type="file" accept="image/*" multiple onchange="handleSiteLogPhotosSelected(event)" class="hidden" />
             </label>
             <div id="sitelog-photo-preview-grid" class="hidden grid grid-cols-4 gap-2"></div>
@@ -1283,6 +1283,14 @@
       // 1. SỔ ĐĂNG KÝ PHIÊN BẢN & ĐÓNG BĂNG CẤU HÌNH (v1.0 -> v1.46)
       // =========================================================================
       const RAW_VERSION_SPECS = {
+        'v1.59': {
+          version: 'v1.59',
+          extends: 'v1.56',
+          date: '27/11/2026',
+          title: 'Bản Vận Hành Chuẩn v1.59: 22 Thợ Phân Vai Theo Lương, BHXH & Lương VP +100k/Tháng',
+          summary: 'Nạp chuẩn 22 thợ phân vai theo lương, chốt lương đồng nhất cả năm, quản lý BHXH 100% Cty đóng cho Duẩn & 3 nhân sự VP (Việt, Quyển, Hiếu), lương VP tự tăng +100k/tháng (Sen cố định 6tr), lưu ảnh Drive và xuất PDF A4.',
+          features: { cleanBlankStartNoSeedDataV156: true }
+        },
         'v1.0': {
           version: 'v1.0',
           extends: null,
@@ -1733,10 +1741,10 @@
         return { ...top, features: mergedFeatures };
       }
 
-      let ACTIVE_VERSION = localStorage.getItem('tgka_active_version') || 'v1.56';
-      if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.56';
+      localStorage.setItem('tgka_active_version', 'v1.59'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
+      if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.59';
       if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
-        ACTIVE_VERSION = 'v1.56';
+        ACTIVE_VERSION = 'v1.59';
         localStorage.setItem('tgka_active_version', 'v1.56');
         localStorage.setItem('tgka_latest_seen_ver', 'v1.56');
       }
@@ -7046,271 +7054,253 @@ function readSiteLogs_() {
     </script>
   <script>
 (function() {
-try {
-localStorage.setItem('tgka_active_version', 'v1.59');
-localStorage.setItem('tgka_latest_seen_ver', 'v1.59');
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(rs) { rs.forEach(function(r) { r.unregister(); }); });
-}
-if ('caches' in window) {
-  caches.keys().then(function(ks) { ks.forEach(function(k) { caches.delete(k); }); });
-}
-
-if (typeof RAW_VERSION_SPECS !== 'undefined') {
-  RAW_VERSION_SPECS['v1.59'] = {
-    version: 'v1.59',
-    extends: 'v1.56',
-    date: '27/11/2026',
-    title: 'Bản Vận Hành Chuẩn v1.59: 22 Thợ Phân Vai Theo Lương, BHXH & Lương VP +100k/Tháng',
-    summary: 'Nạp chuẩn 22 thợ phân vai theo lương, chốt lương đồng nhất cả năm, quản lý BHXH 100% Cty đóng cho Duẩn & 3 nhân sự VP (Việt, Quyển, Hiếu), lương VP tự tăng +100k/tháng (Sen cố định 6tr), lưu ảnh Drive và xuất PDF A4.',
-    features: { cleanBlankStartNoSeedDataV156: true }
-  };
-}
-
-window.classifyWorkerRoleByRate = function(rate, name) {
-  var r = Number(rate) || 0;
-  var n = String(name || '').trim().toUpperCase();
-  if (n === 'QUYỂN' || n === 'QUYEN' || n === 'QUYỂN KA') return 'Chỉ huy trưởng';
-  if (r >= 500000) return 'Thợ chủ chốt';
-  if (r >= 380000) return 'Thợ chính';
-  return 'Thợ phụ';
-};
-
-var DEFAULT_WORKERS_22_V159 = [
-  { id: 'wk_ka_01', name: 'Mây',     dailyRate: 390000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_02', name: 'Hưng Q',  dailyRate: 420000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_03', name: 'Quyển',   dailyRate: 500000, bhxh: 0, hasBhxh: false, auditNote: 'Chỉ huy trưởng' },
-  { id: 'wk_ka_04', name: 'Ngoan',   dailyRate: 370000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_05', name: 'Duẩn',    dailyRate: 580000, bhxh: 0, hasBhxh: true,  auditNote: 'Công ty đóng 100% BHXH' },
-  { id: 'wk_ka_06', name: 'Hường',   dailyRate: 480000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_07', name: 'Đặng',    dailyRate: 380000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_08', name: 'Hương',   dailyRate: 380000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_09', name: 'Điệp',    dailyRate: 580000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_10', name: 'Phùng',   dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_11', name: 'Toan',    dailyRate: 500000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_12', name: 'A Chinh', dailyRate: 440000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_13', name: 'Hoàng',   dailyRate: 510000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_14', name: 'Hiển',    dailyRate: 350000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_15', name: 'Bắc',     dailyRate: 470000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_16', name: 'Triển',   dailyRate: 350000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_17', name: 'Cơ',      dailyRate: 470000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_18', name: 'Linh',    dailyRate: 540000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_19', name: 'An',      dailyRate: 520000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_20', name: 'Hiệu',    dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_21', name: 'Hùng',    dailyRate: 360000, bhxh: 0, hasBhxh: false, auditNote: '' },
-  { id: 'wk_ka_22', name: 'Thông',   dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' }
-].map(function(w) {
-  return Object.assign({}, w, {
-    role: window.classifyWorkerRoleByRate(w.dailyRate, w.name),
-    baseRate2025: w.dailyRate,
-    days2025: 0,
-    advance: 0,
-    quyenDays: null
-  });
-});
-
-window.officeStaff = JSON.parse(localStorage.getItem('tgka_office_staff_v159') || 'null') || [
-  { id: 'vp_viet',  name: 'Việt KA',  role: 'Giám đốc',           baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
-  { id: 'vp_quyen', name: 'Quyển KA', role: 'Chỉ huy trưởng',     baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
-  { id: 'vp_hieu',  name: 'Hiếu KA',  role: 'Kỹ thuật / Nhật ký', baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
-  { id: 'vp_sen',   name: 'Sen KA',   role: 'Kế toán',            baseNov2026: 6000000,  monthlyStep: 0,      hasBhxh: false, bhxhAmount: 0 }
-];
-window.officePayrollMonth = '2026-11';
-window.saveOfficeStaffLocal = function() {
-  localStorage.setItem('tgka_office_staff_v159', JSON.stringify(window.officeStaff));
-};
-
-window.computeOfficeSalaryForMonth = function(staffObj, ymStr) {
-  var parts = String(ymStr || '2026-11').split('-');
-  var y = parseInt(parts[0], 10) || 2026;
-  var m = parseInt(parts[1], 10) || 11;
-  return Math.max(0, (Number(staffObj.baseNov2026) || 0) + ((y - 2026) * 12 + (m - 11)) * (Number(staffObj.monthlyStep) || 0));
-};
-
-window.updateOfficeBhxh = function(id, rawVal) {
-  var val = typeof parseCurrencyInput === 'function' ? parseCurrencyInput(rawVal) : (Number(String(rawVal || '').replace(/[^\d]/g, '')) || 0);
-  window.officeStaff = window.officeStaff.map(function(s) { return s.id === id ? Object.assign({}, s, { bhxhAmount: val }) : s; });
-  window.saveOfficeStaffLocal();
-  if (typeof window.refreshVpPanelV159 === 'function') window.refreshVpPanelV159();
-};
-
-window.updateDuanBhxh = function(rawVal) {
-  var val = typeof parseCurrencyInput === 'function' ? parseCurrencyInput(rawVal) : (Number(String(rawVal || '').replace(/[^\d]/g, '')) || 0);
-  if (Array.isArray(window.workers)) {
-    window.workers = window.workers.map(function(w) { return w.name === 'Duẩn' ? Object.assign({}, w, { bhxh: val, hasBhxh: true }) : w; });
-    if (typeof saveAllLocal === 'function') saveAllLocal();
-    if (typeof window.refreshVpPanelV159 === 'function') window.refreshVpPanelV159();
-    if (typeof showToast === 'function') showToast('Đã cập nhật BHXH Duẩn');
-  }
-};
-
-window.recordMonthlyOfficePayrollToCashbook = function() {
-  var ym = window.officePayrollMonth || '2026-11';
-  var totalSal = window.officeStaff.reduce(function(s, st) { return s + window.computeOfficeSalaryForMonth(st, ym); }, 0);
-  var totalVpBhxh = window.officeStaff.reduce(function(s, st) { return s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0); }, 0);
-  var duanObj = (window.workers || []).find(function(w) { return w.name === 'Duẩn'; });
-  var duanBhxh = Number(duanObj && duanObj.bhxh) || 0;
-  var totalAllBhxh = totalVpBhxh + duanBhxh;
-  var payDate = ym + '-05';
-  var uid = window.currentUserId || 'Việt KA';
-
-  if (Array.isArray(window.transactions)) {
-    window.transactions.unshift({
-      id: 'tx_vp_sal_' + Date.now(), date: payDate, type: 'Chi', staff: uid, recipient: '',
-      amount: totalSal, project: '', partner: '', category: 'Lương nhân viên văn phòng',
-      internalGroup: 'Văn phòng & Tiếp khách', note: 'Trả lương VP tháng ' + ym + ' (Việt, Quyển, Hiếu, Sen)',
-      photos: [], seenBy: [uid]
-    });
-    if (totalAllBhxh > 0) {
-      window.transactions.unshift({
-        id: 'tx_bhxh_' + (Date.now() + 1), date: payDate, type: 'Chi', staff: uid, recipient: '',
-        amount: totalAllBhxh, project: '', partner: '', category: 'Tiền bảo hiểm xã hội (100% Cty đóng)',
-        internalGroup: 'Văn phòng & Tiếp khách', note: 'Đóng 100% BHXH tháng ' + ym + ' (Việt, Quyển, Hiếu & Duẩn)',
-        photos: [], seenBy: [uid]
-      });
-    }
-  }
-  if (typeof saveAllLocal === 'function') saveAllLocal();
-  if (typeof renderDashboard === 'function') renderDashboard();
-  if (typeof playSuccessChime === 'function') playSuccessChime();
-  if (typeof showToast === 'function') showToast('Đã ghi sổ chi lương VP' + (totalAllBhxh > 0 ? ' & BHXH' : '') + ' tháng ' + ym);
-  if (window.execUrl && typeof runManualDeltaSync === 'function') runManualDeltaSync();
-};
-
-window.importAndAuditLegacy2026Sheets = async function() {
-  if (typeof saveSyncUrl === 'function') saveSyncUrl();
-  if (!window.execUrl) { if (typeof showToast === 'function') showToast('⚠️ Vui lòng dán link Google Apps Script /exec trước'); return; }
-  var stEl = document.getElementById('sync-status-label');
-  if (stEl) stEl.textContent = 'Đang đọc & đối soát 5 sheet gốc 2026...';
   try {
-    var sep = window.execUrl.indexOf('?') !== -1 ? '&' : '?';
-    var res = await fetch(window.execUrl + sep + 'action=importLegacy&t=' + Date.now());
-    var data = await res.json();
-    if (!data || !data.ok) throw new Error((data && data.error) || 'Lỗi đọc Sheets');
-    if (Array.isArray(data.projects)) window.projects = data.projects;
-    if (Array.isArray(data.partners)) window.partners = data.partners;
-    if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
-    if (Array.isArray(data.officeStaff) && data.officeStaff.length) { window.officeStaff = data.officeStaff; window.saveOfficeStaffLocal(); }
-    if (Array.isArray(data.transactions)) window.transactions = data.transactions;
-    if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
-    if (typeof saveAllLocal === 'function') saveAllLocal();
-    if (typeof renderDashboard === 'function') renderDashboard();
-    if (typeof playSuccessChime === 'function') playSuccessChime();
-    if (stEl) stEl.textContent = 'Đã nạp chuẩn: ' + window.transactions.length + ' GD • ' + window.projects.length + ' CT';
-    if (typeof showToast === 'function') showToast('Đã nạp chuẩn ' + window.transactions.length + ' giao dịch & 22 thợ');
-  } catch (err) {
-    if (stEl) stEl.textContent = 'Lỗi đọc sheet gốc (kiểm tra Mã.gs v1.59)';
-    if (typeof showToast === 'function') showToast('⚠️ Hãy cập nhật Mã.gs v1.59 lên Apps Script trước');
-  }
-};
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(rs) { rs.forEach(function(r) { r.unregister(); }); });
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(ks) { ks.forEach(function(k) { caches.delete(k); }); });
+    }
 
-window.openAuditReconciliationModal = function() {
-  var staffRows = typeof computeStaffBalances === 'function' ? computeStaffBalances(window.transactions || []) : [];
-  var getBal = function(id) { var f = staffRows.find(function(s) { return s.staff === id; }); return f ? f.balance : 0; };
-  var totalCash = staffRows.reduce(function(s, r) { return s + r.balance; }, 0);
-  alert('BẢNG KIỂM TOÁN & ĐỐI SOÁT SỐ LIỆU 2026 (v1.59)\n----------------------------------------\n• Việt KA: ' + formatVND(getBal('Việt KA')) + '\n• Sen KA: ' + formatVND(getBal('Sen KA')) + '\n• Hiếu KA: ' + formatVND(getBal('Hiếu KA')) + '\n• Quyển KA: ' + formatVND(getBal('Quyển KA')) + '\n• TỔNG TỒN QUỸ: ' + formatVND(totalCash));
-};
+    window.classifyWorkerRoleByRate = function(rate, name) {
+      var r = Number(rate) || 0;
+      var n = String(name || '').trim().toUpperCase();
+      if (n === 'QUYỂN' || n === 'QUYEN' || n === 'QUYỂN KA') return 'Chỉ huy trưởng';
+      if (r >= 500000) return 'Thợ chủ chốt';
+      if (r >= 380000) return 'Thợ chính';
+      return 'Thợ phụ';
+    };
 
-function injectVpAndBhxhPanel() {
-  var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
-  var titleEl = headings.find(function(el) { return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Bảng Chấm Công & Lương Thợ'; });
-  if (!titleEl) return;
-  var modal = titleEl.closest('.fixed') || (titleEl.parentElement && titleEl.parentElement.parentElement);
-  if (!modal || modal.offsetParent === null) return;
-  var scrollBox = modal.querySelector('.overflow-y-auto') || modal.querySelector('[class*="overflow-y"]');
-  if (!scrollBox) return;
-
-  var panel = scrollBox.querySelector('.v159-extra-panel');
-  if (!panel) {
-    panel = document.createElement('div');
-    panel.className = 'v159-extra-panel space-y-3 mb-3';
-    scrollBox.insertBefore(panel, scrollBox.firstChild);
-  }
-  if (panel.contains(document.activeElement)) return;
-
-  var wkList = window.workers || [];
-  var duanObj = wkList.find(function(w) { return w.name === 'Duẩn'; });
-  var duanBhxh = Number(duanObj && duanObj.bhxh) || 0;
-  var vpList = window.officeStaff || [];
-  var ym = window.officePayrollMonth || '2026-11';
-  var totalSal = vpList.reduce(function(s, st) { return s + window.computeOfficeSalaryForMonth(st, ym); }, 0);
-  var totalVpBhxh = vpList.reduce(function(s, st) { return s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0); }, 0);
-
-  var rowsHtml = vpList.map(function(st) {
-    var sal = window.computeOfficeSalaryForMonth(st, ym);
-    var bh = st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0;
-    var bhCell = st.hasBhxh
-      ? '<input type="text" inputmode="numeric" value="' + (bh ? formatVND(bh).replace(' ₫', '') : '') + '" placeholder="Nhập BHXH" onchange="updateOfficeBhxh(\'' + st.id + '\', this.value)" class="w-24 text-right px-1.5 py-1 rounded border border-sky-200 bg-sky-50/40 font-semibold text-sky-700"/>'
-      : '<span class="text-slate-400 italic">Không đóng</span>';
-    return '<tr>' +
-      '<td class="py-1.5 px-2"><div class="font-bold text-slate-800">' + st.name + '</div><div class="text-[9.5px] text-slate-400">' + st.role + '</div></td>' +
-      '<td class="py-1.5 px-2 text-right font-semibold text-slate-800">' + formatVND(sal) + '</td>' +
-      '<td class="py-1.5 px-2 text-right">' + bhCell + '</td>' +
-      '<td class="py-1.5 px-2 text-right font-bold text-[#EA580C]">' + formatVND(sal + bh) + '</td>' +
-    '</tr>';
-  }).join('');
-
-  panel.innerHTML =
-    '<div class="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2">' +
-      '<div>' +
-        '<div class="text-[12px] font-bold text-[#9A3412]">BHXH Thợ Duẩn (Cty đóng 100%) & Chốt Lương Năm</div>' +
-        '<div class="text-[10.5px] text-slate-600">Tăng lương cuối năm áp dụng đồng nhất toàn bộ công trong năm</div>' +
-      '</div>' +
-      '<div class="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-amber-200">' +
-        '<span class="text-[10.5px] font-semibold text-slate-600">BHXH Duẩn:</span>' +
-        '<input type="text" inputmode="numeric" value="' + (duanBhxh ? formatVND(duanBhxh).replace(' ₫', '') : '') + '" placeholder="Nhập số tiền" onchange="updateDuanBhxh(this.value)" class="w-24 text-right text-[11.5px] font-bold text-[#EA580C] outline-none"/>' +
-      '</div>' +
-    '</div>' +
-    '<div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-2xs space-y-2.5">' +
-      '<div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">' +
-        '<div>' +
-          '<div class="text-[12.5px] font-bold text-slate-800">Bảng Lương Văn Phòng & BHXH (Tự Tăng +100k/Tháng)</div>' +
-          '<div class="text-[10.5px] text-slate-500">Mốc T11/2026: Việt, Quyển, Hiếu 10,5tr (+100k/tháng) • Sen cố định 6tr</div>' +
-        '</div>' +
-        '<div class="flex items-center gap-2">' +
-          '<input type="month" value="' + ym + '" onchange="window.officePayrollMonth=this.value; window.refreshVpPanelV159();" class="h-8 px-2.5 rounded-xl border border-slate-200 text-[11.5px] font-semibold text-slate-700"/>' +
-          '<button type="button" onclick="recordMonthlyOfficePayrollToCashbook()" class="h-8 px-3 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Ghi Sổ Chi Lương & BHXH</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="overflow-x-auto">' +
-        '<table class="w-full text-[11px] border-collapse">' +
-          '<thead><tr class="bg-slate-50 text-slate-600 border-b border-slate-200">' +
-            '<th class="py-1.5 px-2 text-left">Nhân sự VP</th>' +
-            '<th class="py-1.5 px-2 text-right">Lương T' + ym.slice(5) + '/' + ym.slice(0, 4) + '</th>' +
-            '<th class="py-1.5 px-2 text-right">BHXH Cty đóng 100%</th>' +
-            '<th class="py-1.5 px-2 text-right">Tổng chi</th>' +
-          '</tr></thead>' +
-          '<tbody class="divide-y divide-slate-100">' + rowsHtml + '</tbody>' +
-          '<tfoot><tr class="bg-amber-50/70 font-bold text-slate-900 border-t border-slate-200">' +
-            '<td class="py-1.5 px-2">TỔNG VP (+ BHXH Duẩn: ' + formatVND(duanBhxh) + ')</td>' +
-            '<td class="py-1.5 px-2 text-right">' + formatVND(totalSal) + '</td>' +
-            '<td class="py-1.5 px-2 text-right text-sky-700">' + formatVND(totalVpBhxh + duanBhxh) + '</td>' +
-            '<td class="py-1.5 px-2 text-right text-[#EA580C]">' + formatVND(totalSal + totalVpBhxh + duanBhxh) + '</td>' +
-          '</tr></tfoot>' +
-        '</table>' +
-      '</div>' +
-    '</div>';
-}
-window.refreshVpPanelV159 = injectVpAndBhxhPanel;
-setInterval(injectVpAndBhxhPanel, 700);
-
-window.addEventListener('DOMContentLoaded', function() {
-  if (!Array.isArray(window.workers) || window.workers.length === 0) {
-    window.workers = JSON.parse(JSON.stringify(DEFAULT_WORKERS_22_V159));
-    if (typeof saveAllLocal === 'function') saveAllLocal();
-  } else {
-    window.workers = window.workers.map(function(w) {
+    var DEFAULT_WORKERS_22_V159 = [
+      { id: 'wk_ka_01', name: 'Mây',     dailyRate: 390000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_02', name: 'Hưng Q',  dailyRate: 420000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_03', name: 'Quyển',   dailyRate: 500000, bhxh: 0, hasBhxh: false, auditNote: 'Chỉ huy trưởng' },
+      { id: 'wk_ka_04', name: 'Ngoan',   dailyRate: 370000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_05', name: 'Duẩn',    dailyRate: 580000, bhxh: 0, hasBhxh: true,  auditNote: 'Công ty đóng 100% BHXH' },
+      { id: 'wk_ka_06', name: 'Hường',   dailyRate: 480000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_07', name: 'Đặng',    dailyRate: 380000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_08', name: 'Hương',   dailyRate: 380000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_09', name: 'Điệp',    dailyRate: 580000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_10', name: 'Phùng',   dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_11', name: 'Toan',    dailyRate: 500000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_12', name: 'A Chinh', dailyRate: 440000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_13', name: 'Hoàng',   dailyRate: 510000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_14', name: 'Hiển',    dailyRate: 350000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_15', name: 'Bắc',     dailyRate: 470000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_16', name: 'Triển',   dailyRate: 350000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_17', name: 'Cơ',      dailyRate: 470000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_18', name: 'Linh',    dailyRate: 540000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_19', name: 'An',      dailyRate: 520000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_20', name: 'Hiệu',    dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_21', name: 'Hùng',    dailyRate: 360000, bhxh: 0, hasBhxh: false, auditNote: '' },
+      { id: 'wk_ka_22', name: 'Thông',   dailyRate: 460000, bhxh: 0, hasBhxh: false, auditNote: '' }
+    ].map(function(w) {
       return Object.assign({}, w, {
         role: window.classifyWorkerRoleByRate(w.dailyRate, w.name),
-        hasBhxh: w.name === 'Duẩn' || (Number(w.bhxh) || 0) > 0
+        baseRate2025: w.dailyRate, days2025: 0, advance: 0, quyenDays: null
       });
     });
+
+    window.officeStaff = JSON.parse(localStorage.getItem('tgka_office_staff_v159') || 'null') || [
+      { id: 'vp_viet',  name: 'Việt KA',  role: 'Giám đốc',           baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
+      { id: 'vp_quyen', name: 'Quyển KA', role: 'Chỉ huy trưởng',     baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
+      { id: 'vp_hieu',  name: 'Hiếu KA',  role: 'Kỹ thuật / Nhật ký', baseNov2026: 10500000, monthlyStep: 100000, hasBhxh: true,  bhxhAmount: 0 },
+      { id: 'vp_sen',   name: 'Sen KA',   role: 'Kế toán',            baseNov2026: 6000000,  monthlyStep: 0,      hasBhxh: false, bhxhAmount: 0 }
+    ];
+    window.officePayrollMonth = '2026-11';
+    window.saveOfficeStaffLocal = function() { localStorage.setItem('tgka_office_staff_v159', JSON.stringify(window.officeStaff)); };
+
+    window.computeOfficeSalaryForMonth = function(staffObj, ymStr) {
+      var parts = String(ymStr || '2026-11').split('-');
+      var y = parseInt(parts[0], 10) || 2026;
+      var m = parseInt(parts[1], 10) || 11;
+      return Math.max(0, (Number(staffObj.baseNov2026) || 0) + ((y - 2026) * 12 + (m - 11)) * (Number(staffObj.monthlyStep) || 0));
+    };
+
+    window.updateOfficeBhxh = function(id, rawVal) {
+      var val = typeof parseCurrencyInput === 'function' ? parseCurrencyInput(rawVal) : (Number(String(rawVal || '').replace(/[^\d]/g, '')) || 0);
+      window.officeStaff = window.officeStaff.map(function(s) { return s.id === id ? Object.assign({}, s, { bhxhAmount: val }) : s; });
+      window.saveOfficeStaffLocal();
+      if (typeof window.refreshVpPanelV159 === 'function') window.refreshVpPanelV159();
+    };
+
+    window.updateDuanBhxh = function(rawVal) {
+      var val = typeof parseCurrencyInput === 'function' ? parseCurrencyInput(rawVal) : (Number(String(rawVal || '').replace(/[^\d]/g, '')) || 0);
+      if (Array.isArray(window.workers)) {
+        window.workers = window.workers.map(function(w) { return w.name === 'Duẩn' ? Object.assign({}, w, { bhxh: val, hasBhxh: true }) : w; });
+        if (typeof saveAllLocal === 'function') saveAllLocal();
+        if (typeof window.refreshVpPanelV159 === 'function') window.refreshVpPanelV159();
+        if (typeof showToast === 'function') showToast('Đã cập nhật BHXH Duẩn');
+      }
+    };
+
+    window.recordMonthlyOfficePayrollToCashbook = function() {
+      var ym = window.officePayrollMonth || '2026-11';
+      var totalSal = window.officeStaff.reduce(function(s, st) { return s + window.computeOfficeSalaryForMonth(st, ym); }, 0);
+      var totalVpBhxh = window.officeStaff.reduce(function(s, st) { return s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0); }, 0);
+      var duanObj = (window.workers || []).find(function(w) { return w.name === 'Duẩn'; });
+      var duanBhxh = Number(duanObj && duanObj.bhxh) || 0;
+      var totalAllBhxh = totalVpBhxh + duanBhxh;
+      var payDate = ym + '-05';
+      var uid = window.currentUserId || 'Việt KA';
+
+      if (Array.isArray(window.transactions)) {
+        window.transactions.unshift({
+          id: 'tx_vp_sal_' + Date.now(), date: payDate, type: 'Chi', staff: uid, recipient: '',
+          amount: totalSal, project: '', partner: '', category: 'Lương nhân viên văn phòng',
+          internalGroup: 'Văn phòng & Tiếp khách', note: 'Trả lương VP tháng ' + ym + ' (Việt, Quyển, Hiếu, Sen)',
+          photos: [], seenBy: [uid]
+        });
+        if (totalAllBhxh > 0) {
+          window.transactions.unshift({
+            id: 'tx_bhxh_' + (Date.now() + 1), date: payDate, type: 'Chi', staff: uid, recipient: '',
+            amount: totalAllBhxh, project: '', partner: '', category: 'Tiền bảo hiểm xã hội (100% Cty đóng)',
+            internalGroup: 'Văn phòng & Tiếp khách', note: 'Đóng 100% BHXH tháng ' + ym + ' (Việt, Quyển, Hiếu & Duẩn)',
+            photos: [], seenBy: [uid]
+          });
+        }
+      }
+      if (typeof saveAllLocal === 'function') saveAllLocal();
+      if (typeof renderDashboard === 'function') renderDashboard();
+      if (typeof playSuccessChime === 'function') playSuccessChime();
+      if (typeof showToast === 'function') showToast('Đã ghi sổ chi lương VP' + (totalAllBhxh > 0 ? ' & BHXH' : '') + ' tháng ' + ym);
+      if (window.execUrl && typeof runManualDeltaSync === 'function') runManualDeltaSync();
+    };
+
+    window.importAndAuditLegacy2026Sheets = async function() {
+      if (typeof saveSyncUrl === 'function') saveSyncUrl();
+      if (!window.execUrl) { if (typeof showToast === 'function') showToast('⚠️ Vui lòng dán link Google Apps Script /exec trước'); return; }
+      var stEl = document.getElementById('sync-status-label');
+      if (stEl) stEl.textContent = 'Đang đọc & đối soát 5 sheet gốc 2026...';
+      try {
+        var sep = window.execUrl.indexOf('?') !== -1 ? '&' : '?';
+        var res = await fetch(window.execUrl + sep + 'action=importLegacy&t=' + Date.now());
+        var data = await res.json();
+        if (!data || !data.ok) throw new Error((data && data.error) || 'Lỗi đọc Sheets');
+        if (Array.isArray(data.projects)) window.projects = data.projects;
+        if (Array.isArray(data.partners)) window.partners = data.partners;
+        if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
+        if (Array.isArray(data.officeStaff) && data.officeStaff.length) { window.officeStaff = data.officeStaff; window.saveOfficeStaffLocal(); }
+        if (Array.isArray(data.transactions)) window.transactions = data.transactions;
+        if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
+        if (typeof saveAllLocal === 'function') saveAllLocal();
+        if (typeof renderDashboard === 'function') renderDashboard();
+        if (typeof playSuccessChime === 'function') playSuccessChime();
+        if (stEl) stEl.textContent = 'Đã nạp chuẩn: ' + window.transactions.length + ' GD • ' + window.projects.length + ' CT';
+        if (typeof showToast === 'function') showToast('Đã nạp chuẩn ' + window.transactions.length + ' giao dịch & 22 thợ');
+      } catch (err) {
+        if (stEl) stEl.textContent = 'Lỗi đọc sheet gốc (kiểm tra Mã.gs v1.59)';
+        if (typeof showToast === 'function') showToast('⚠️ Hãy cập nhật Mã.gs v1.59 lên Apps Script trước');
+      }
+    };
+
+    window.openAuditReconciliationModal = function() {
+      var staffRows = typeof computeStaffBalances === 'function' ? computeStaffBalances(window.transactions || []) : [];
+      var getBal = function(id) { var f = staffRows.find(function(s) { return s.staff === id; }); return f ? f.balance : 0; };
+      var totalCash = staffRows.reduce(function(s, r) { return s + r.balance; }, 0);
+      alert('BẢNG KIỂM TOÁN & ĐỐI SOÁT SỐ LIỆU 2026 (v1.59)\n----------------------------------------\n• Việt KA: ' + formatVND(getBal('Việt KA')) + '\n• Sen KA: ' + formatVND(getBal('Sen KA')) + '\n• Hiếu KA: ' + formatVND(getBal('Hiếu KA')) + '\n• Quyển KA: ' + formatVND(getBal('Quyển KA')) + '\n• TỔNG TỒN QUỸ: ' + formatVND(totalCash));
+    };
+
+    function injectVpAndBhxhPanel() {
+      var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+      var titleEl = headings.find(function(el) { return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Bảng Chấm Công & Lương Thợ'; });
+      if (!titleEl) return;
+      var modal = titleEl.closest('.fixed') || (titleEl.parentElement && titleEl.parentElement.parentElement);
+      if (!modal || modal.offsetParent === null) return;
+      var scrollBox = modal.querySelector('.overflow-y-auto') || modal.querySelector('[class*="overflow-y"]');
+      if (!scrollBox) return;
+
+      var panel = scrollBox.querySelector('.v159-extra-panel');
+      if (!panel) {
+        panel = document.createElement('div');
+        panel.className = 'v159-extra-panel space-y-3 mb-3';
+        scrollBox.insertBefore(panel, scrollBox.firstChild);
+      }
+      if (panel.contains(document.activeElement)) return;
+
+      var wkList = window.workers || [];
+      var duanObj = wkList.find(function(w) { return w.name === 'Duẩn'; });
+      var duanBhxh = Number(duanObj && duanObj.bhxh) || 0;
+      var vpList = window.officeStaff || [];
+      var ym = window.officePayrollMonth || '2026-11';
+      var totalSal = vpList.reduce(function(s, st) { return s + window.computeOfficeSalaryForMonth(st, ym); }, 0);
+      var totalVpBhxh = vpList.reduce(function(s, st) { return s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0); }, 0);
+
+      var rowsHtml = vpList.map(function(st) {
+        var sal = window.computeOfficeSalaryForMonth(st, ym);
+        var bh = st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0;
+        var bhCell = st.hasBhxh
+          ? '<input type="text" inputmode="numeric" value="' + (bh ? formatVND(bh).replace(' ₫', '') : '') + '" placeholder="Nhập BHXH" onchange="updateOfficeBhxh(\'' + st.id + '\', this.value)" class="w-24 text-right px-1.5 py-1 rounded border border-sky-200 bg-sky-50/40 font-semibold text-sky-700"/>'
+          : '<span class="text-slate-400 italic">Không đóng</span>';
+        return '<tr>' +
+          '<td class="py-1.5 px-2"><div class="font-bold text-slate-800">' + st.name + '</div><div class="text-[9.5px] text-slate-400">' + st.role + '</div></td>' +
+          '<td class="py-1.5 px-2 text-right font-semibold text-slate-800">' + formatVND(sal) + '</td>' +
+          '<td class="py-1.5 px-2 text-right">' + bhCell + '</td>' +
+          '<td class="py-1.5 px-2 text-right font-bold text-[#EA580C]">' + formatVND(sal + bh) + '</td>' +
+        '</tr>';
+      }).join('');
+
+      panel.innerHTML =
+        '<div class="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2">' +
+          '<div>' +
+            '<div class="text-[12px] font-bold text-[#9A3412]">BHXH Thợ Duẩn (Cty đóng 100%) & Chốt Lương Năm</div>' +
+            '<div class="text-[10.5px] text-slate-600">Tăng lương cuối năm áp dụng đồng nhất toàn bộ công trong năm</div>' +
+          '</div>' +
+          '<div class="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-amber-200">' +
+            '<span class="text-[10.5px] font-semibold text-slate-600">BHXH Duẩn:</span>' +
+            '<input type="text" inputmode="numeric" value="' + (duanBhxh ? formatVND(duanBhxh).replace(' ₫', '') : '') + '" placeholder="Nhập số tiền" onchange="updateDuanBhxh(this.value)" class="w-24 text-right text-[11.5px] font-bold text-[#EA580C] outline-none"/>' +
+          '</div>' +
+        '</div>' +
+        '<div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-2xs space-y-2.5">' +
+          '<div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">' +
+            '<div>' +
+              '<div class="text-[12.5px] font-bold text-slate-800">Bảng Lương Văn Phòng & BHXH (Tự Tăng +100k/Tháng)</div>' +
+              '<div class="text-[10.5px] text-slate-500">Mốc T11/2026: Việt, Quyển, Hiếu 10,5tr (+100k/tháng) • Sen cố định 6tr</div>' +
+            '</div>' +
+            '<div class="flex items-center gap-2">' +
+              '<input type="month" value="' + ym + '" onchange="window.officePayrollMonth=this.value; window.refreshVpPanelV159();" class="h-8 px-2.5 rounded-xl border border-slate-200 text-[11.5px] font-semibold text-slate-700"/>' +
+              '<button type="button" onclick="recordMonthlyOfficePayrollToCashbook()" class="h-8 px-3 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Ghi Sổ Chi Lương & BHXH</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="overflow-x-auto">' +
+            '<table class="w-full text-[11px] border-collapse">' +
+              '<thead><tr class="bg-slate-50 text-slate-600 border-b border-slate-200">' +
+                '<th class="py-1.5 px-2 text-left">Nhân sự VP</th>' +
+                '<th class="py-1.5 px-2 text-right">Lương T' + ym.slice(5) + '/' + ym.slice(0, 4) + '</th>' +
+                '<th class="py-1.5 px-2 text-right">BHXH Cty đóng 100%</th>' +
+                '<th class="py-1.5 px-2 text-right">Tổng chi</th>' +
+              '</tr></thead>' +
+              '<tbody class="divide-y divide-slate-100">' + rowsHtml + '</tbody>' +
+              '<tfoot><tr class="bg-amber-50/70 font-bold text-slate-900 border-t border-slate-200">' +
+                '<td class="py-1.5 px-2">TỔNG VP (+ BHXH Duẩn: ' + formatVND(duanBhxh) + ')</td>' +
+                '<td class="py-1.5 px-2 text-right">' + formatVND(totalSal) + '</td>' +
+                '<td class="py-1.5 px-2 text-right text-sky-700">' + formatVND(totalVpBhxh + duanBhxh) + '</td>' +
+                '<td class="py-1.5 px-2 text-right text-[#EA580C]">' + formatVND(totalSal + totalVpBhxh + duanBhxh) + '</td>' +
+              '</tr></tfoot>' +
+            '</table>' +
+          '</div>' +
+        '</div>';
+    }
+    window.refreshVpPanelV159 = injectVpAndBhxhPanel;
+    setInterval(injectVpAndBhxhPanel, 700);
+
+    window.addEventListener('DOMContentLoaded', function() {
+      if (!Array.isArray(window.workers) || window.workers.length === 0) {
+        window.workers = JSON.parse(JSON.stringify(DEFAULT_WORKERS_22_V159));
+        if (typeof saveAllLocal === 'function') saveAllLocal();
+      } else {
+        window.workers = window.workers.map(function(w) {
+          return Object.assign({}, w, {
+            role: window.classifyWorkerRoleByRate(w.dailyRate, w.name),
+            hasBhxh: w.name === 'Duẩn' || (Number(w.bhxh) || 0) > 0
+          });
+        });
+      }
+      if (typeof renderDashboard === 'function') renderDashboard();
+    });
+  } catch (e) {
+    console.error('TGKA v1.59 init:', e);
   }
-  if (typeof renderDashboard === 'function') renderDashboard();
-});
-} catch (e) {
-console.error('TGKA v1.59 init:', e);
-}
 })();
 </script>
 </body>
