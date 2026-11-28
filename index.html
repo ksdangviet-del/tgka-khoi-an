@@ -487,7 +487,7 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.59</button>
+            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.60</button>
             <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
               <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -3307,7 +3307,253 @@
               </tr>
               ${projRowsHtml}
             </table>
-          </body>
+          <!-- V160_ADDON_START -->
+<script>
+(function() {
+  var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
+  var DEFAULT_AVATAR_META = {
+    'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
+    'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
+    'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
+    'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
+  };
+
+  function loadStaffAvatars() {
+    try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+  function saveStaffAvatars(map) {
+    try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+
+  function parseTxDateScore(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return 0;
+    var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
+    var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
+    return 0;
+  }
+
+  function getRowSeqScore(id) {
+    var m = String(id || '').match(/(\d+)$/);
+    return m ? Number(m[1]) : 0;
+  }
+
+  // 1. Sắp xếp giao dịch mới nhất lên đầu danh sách
+  window.sortTransactionsNewestFirst = function(forceRender) {
+    if (!Array.isArray(window.transactions) || window.transactions.length < 2) return;
+    var firstScore = parseTxDateScore(window.transactions[0].date);
+    var lastScore = parseTxDateScore(window.transactions[window.transactions.length - 1].date);
+    if (!forceRender && firstScore >= lastScore && window._v160SortedLen === window.transactions.length) return;
+
+    window.transactions.sort(function(a, b) {
+      var da = parseTxDateScore(a.date);
+      var db = parseTxDateScore(b.date);
+      if (db !== da) return db - da;
+      var idA = String(a.id || '');
+      var idB = String(b.id || '');
+      var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      if (isImpB !== isImpA) return isImpB - isImpA;
+      return getRowSeqScore(idB) - getRowSeqScore(idA);
+    });
+    window._v160SortedLen = window.transactions.length;
+    if (typeof renderDashboard === 'function') renderDashboard();
+  };
+
+  // 2. Ảnh đại diện nhân viên
+  function makeAvatarHtml(staffName, sizePx) {
+    var name = String(staffName || '').trim();
+    var meta = DEFAULT_AVATAR_META[name];
+    if (!meta) return '';
+    var saved = loadStaffAvatars()[name];
+    var sz = sizePx || 20;
+    if (saved) {
+      return '<img src="' + saved + '" alt="' + name + '" class="v160-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;vertical-align:middle;"/>';
+    }
+    return '<span class="v160-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.46) + 'px;line-height:1;">' + meta.initials + '</span>';
+  }
+
+  function decorateStaffBadgesWithAvatars() {
+    var candidates = document.querySelectorAll('span, div, button');
+    for (var i = 0; i < candidates.length; i++) {
+      var el = candidates[i];
+      if (el.querySelector('.v160-staff-avatar')) continue;
+      if (el.children.length > 1) continue;
+      var txt = (el.textContent || '').trim();
+      if (!DEFAULT_AVATAR_META[txt]) continue;
+      if (el.tagName === 'OPTION' || el.closest('select') || el.closest('table')) continue;
+      if (el.textContent.indexOf('Quỹ đầu kỳ') !== -1) continue;
+
+      var isHeaderPill = !!el.closest('header') || el.className.indexOf('rounded-full') !== -1;
+      var avatarHtml = makeAvatarHtml(txt, isHeaderPill ? 22 : 18);
+      if (avatarHtml) {
+        el.style.display = 'inline-flex';
+        el.style.alignItems = 'center';
+        el.insertAdjacentHTML('afterbegin', avatarHtml);
+      }
+    }
+  }
+
+  window.openStaffAvatarModal = function() {
+    var old = document.getElementById('v160-avatar-modal');
+    if (old) old.remove();
+    var saved = loadStaffAvatars();
+    var staffList = ['Việt KA', 'Sen KA', 'Hiếu KA', 'Quyển KA'];
+
+    var rows = staffList.map(function(st) {
+      var meta = DEFAULT_AVATAR_META[st];
+      var preview = saved[st]
+        ? '<img src="' + saved[st] + '" class="w-11 h-11 rounded-full object-cover border border-slate-200"/>'
+        : '<div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm" style="background:' + meta.bg + ';color:#fff;">' + meta.initials + '</div>';
+      return '<div class="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-slate-200 bg-slate-50/60">' +
+        '<div class="flex items-center gap-2.5">' + preview + '<div class="font-bold text-slate-800 text-[13px]">' + st + '</div></div>' +
+        '<div class="flex items-center gap-1.5">' +
+          '<label class="px-3 py-1.5 rounded-xl bg-[#EA580C] text-white text-[11.5px] font-bold cursor-pointer">Chọn ảnh' +
+            '<input type="file" accept="image/*" class="hidden" onchange="handleStaffAvatarUpload(\'' + st + '\', this)"/>' +
+          '</label>' +
+          (saved[st] ? '<button type="button" onclick="removeStaffAvatar(\'' + st + '\')" class="px-2.5 py-1.5 rounded-xl bg-slate-200 text-slate-700 text-[11px] font-semibold">Xóa</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var wrap = document.createElement('div');
+    wrap.id = 'v160-avatar-modal';
+    wrap.className = 'fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4';
+    wrap.innerHTML =
+      '<div class="bg-white rounded-3xl max-w-md w-full p-4 space-y-3 shadow-xl">' +
+        '<div class="flex items-center justify-between border-b border-slate-100 pb-2.5">' +
+          '<div class="font-bold text-slate-800 text-[15px]">Ảnh Đại Diện Nhân Viên (v1.60)</div>' +
+          '<button type="button" onclick="document.getElementById(\'v160-avatar-modal\').remove()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>' +
+        '</div>' +
+        '<div class="space-y-2">' + rows + '</div>' +
+        '<div class="text-[11px] text-slate-500">Ảnh tự động nén gọn và hiển thị ngay trên Lịch sử giao dịch.</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+  };
+
+  window.handleStaffAvatarUpload = function(staffName, input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 96; canvas.height = 96;
+        var ctx = canvas.getContext('2d');
+        var minSide = Math.min(img.width, img.height);
+        var sx = (img.width - minSide) / 2;
+        var sy = (img.height - minSide) / 2;
+        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 96, 96);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        var map = loadStaffAvatars();
+        map[staffName] = dataUrl;
+        saveStaffAvatars(map);
+        document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+        decorateStaffBadgesWithAvatars();
+        window.openStaffAvatarModal();
+        if (typeof showToast === 'function') showToast('Đã cập nhật ảnh đại diện cho ' + staffName);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.removeStaffAvatar = function(staffName) {
+    var map = loadStaffAvatars();
+    delete map[staffName];
+    saveStaffAvatars(map);
+    document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+    decorateStaffBadgesWithAvatars();
+    window.openStaffAvatarModal();
+  };
+
+  function injectAvatarSettingTrigger() {
+    var labels = Array.from(document.querySelectorAll('div, span, h2, h3'));
+    var histEl = labels.find(function(el) {
+      return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Lịch sử giao dịch';
+    });
+    if (histEl && histEl.parentElement && !histEl.parentElement.querySelector('.v160-avatar-btn')) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'v160-avatar-btn ml-1.5 px-2 py-0.5 rounded-full bg-orange-100 text-[#EA580C] text-[10.5px] font-bold hover:bg-orange-200 transition';
+      btn.textContent = 'Ảnh ĐD';
+      btn.title = 'Cài đặt ảnh đại diện nhân viên';
+      btn.onclick = window.openStaffAvatarModal;
+      histEl.parentElement.appendChild(btn);
+    }
+  }
+
+  // 3. Tự động tải dữ liệu ngầm mỗi 15 giây từ Google Sheets (thời gian thực)
+  var _v160Syncing = false;
+  function buildDataFingerprint(txs, projs, pts, wks) {
+    var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+    var firstId = (txs && txs[0]) ? txs[0].id : '';
+    var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
+    return [
+      (txs || []).length, txSum, firstId, lastId,
+      (projs || []).length, (pts || []).length, (wks || []).length
+    ].join('|');
+  }
+
+  window.silentBackgroundPullFromSheets = function() {
+    if (_v160Syncing) return;
+    if (!window.execUrl || String(window.execUrl).indexOf('http') !== 0) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    if (document.visibilityState === 'hidden') return;
+
+    // Không làm gián đoạn khi người dùng đang nhập liệu
+    var act = document.activeElement;
+    if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
+
+    _v160Syncing = true;
+    var sep = window.execUrl.indexOf('?') === -1 ? '?' : '&';
+    var pullUrl = window.execUrl + sep + 'action=loadAll&t=' + Date.now();
+
+    fetch(pullUrl, { method: 'GET', redirect: 'follow' })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
+
+        var oldCount = (window.transactions || []).length;
+        var oldFp = buildDataFingerprint(window.transactions, window.projects, window.partners, window.workers);
+        var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers);
+        if (oldFp === newFp) return;
+
+        window.transactions = data.transactions;
+        if (Array.isArray(data.projects) && data.projects.length) window.projects = data.projects;
+        if (Array.isArray(data.partners) && data.partners.length) window.partners = data.partners;
+        if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
+        if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
+
+        window.sortTransactionsNewestFirst(true);
+        if (typeof saveAllLocal === 'function') saveAllLocal();
+        if (typeof renderDashboard === 'function') renderDashboard();
+
+        var diff = window.transactions.length - oldCount;
+        if (diff > 0 && typeof showToast === 'function') {
+          showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
+        }
+      })
+      .catch(function() {})
+      .finally(function() { _v160Syncing = false; });
+  };
+
+  setInterval(function() {
+    window.sortTransactionsNewestFirst(false);
+    injectAvatarSettingTrigger();
+    decorateStaffBadgesWithAvatars();
+  }, 500);
+
+  // Chạy kiểm tra ngầm mỗi 15 giây
+  setInterval(window.silentBackgroundPullFromSheets, 15000);
+})();
+</script>
+<!-- V160_ADDON_END -->
+</body>
           </html>
         `;
 
@@ -4311,7 +4557,253 @@
               ${bodyRows}
               <tr style="font-weight:bold;background:#FFFBEB;">${totalCells}</tr>
             </table>
-          </body>
+          <!-- V160_ADDON_START -->
+<script>
+(function() {
+  var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
+  var DEFAULT_AVATAR_META = {
+    'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
+    'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
+    'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
+    'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
+  };
+
+  function loadStaffAvatars() {
+    try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+  function saveStaffAvatars(map) {
+    try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+
+  function parseTxDateScore(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return 0;
+    var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
+    var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
+    return 0;
+  }
+
+  function getRowSeqScore(id) {
+    var m = String(id || '').match(/(\d+)$/);
+    return m ? Number(m[1]) : 0;
+  }
+
+  // 1. Sắp xếp giao dịch mới nhất lên đầu danh sách
+  window.sortTransactionsNewestFirst = function(forceRender) {
+    if (!Array.isArray(window.transactions) || window.transactions.length < 2) return;
+    var firstScore = parseTxDateScore(window.transactions[0].date);
+    var lastScore = parseTxDateScore(window.transactions[window.transactions.length - 1].date);
+    if (!forceRender && firstScore >= lastScore && window._v160SortedLen === window.transactions.length) return;
+
+    window.transactions.sort(function(a, b) {
+      var da = parseTxDateScore(a.date);
+      var db = parseTxDateScore(b.date);
+      if (db !== da) return db - da;
+      var idA = String(a.id || '');
+      var idB = String(b.id || '');
+      var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      if (isImpB !== isImpA) return isImpB - isImpA;
+      return getRowSeqScore(idB) - getRowSeqScore(idA);
+    });
+    window._v160SortedLen = window.transactions.length;
+    if (typeof renderDashboard === 'function') renderDashboard();
+  };
+
+  // 2. Ảnh đại diện nhân viên
+  function makeAvatarHtml(staffName, sizePx) {
+    var name = String(staffName || '').trim();
+    var meta = DEFAULT_AVATAR_META[name];
+    if (!meta) return '';
+    var saved = loadStaffAvatars()[name];
+    var sz = sizePx || 20;
+    if (saved) {
+      return '<img src="' + saved + '" alt="' + name + '" class="v160-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;vertical-align:middle;"/>';
+    }
+    return '<span class="v160-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.46) + 'px;line-height:1;">' + meta.initials + '</span>';
+  }
+
+  function decorateStaffBadgesWithAvatars() {
+    var candidates = document.querySelectorAll('span, div, button');
+    for (var i = 0; i < candidates.length; i++) {
+      var el = candidates[i];
+      if (el.querySelector('.v160-staff-avatar')) continue;
+      if (el.children.length > 1) continue;
+      var txt = (el.textContent || '').trim();
+      if (!DEFAULT_AVATAR_META[txt]) continue;
+      if (el.tagName === 'OPTION' || el.closest('select') || el.closest('table')) continue;
+      if (el.textContent.indexOf('Quỹ đầu kỳ') !== -1) continue;
+
+      var isHeaderPill = !!el.closest('header') || el.className.indexOf('rounded-full') !== -1;
+      var avatarHtml = makeAvatarHtml(txt, isHeaderPill ? 22 : 18);
+      if (avatarHtml) {
+        el.style.display = 'inline-flex';
+        el.style.alignItems = 'center';
+        el.insertAdjacentHTML('afterbegin', avatarHtml);
+      }
+    }
+  }
+
+  window.openStaffAvatarModal = function() {
+    var old = document.getElementById('v160-avatar-modal');
+    if (old) old.remove();
+    var saved = loadStaffAvatars();
+    var staffList = ['Việt KA', 'Sen KA', 'Hiếu KA', 'Quyển KA'];
+
+    var rows = staffList.map(function(st) {
+      var meta = DEFAULT_AVATAR_META[st];
+      var preview = saved[st]
+        ? '<img src="' + saved[st] + '" class="w-11 h-11 rounded-full object-cover border border-slate-200"/>'
+        : '<div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm" style="background:' + meta.bg + ';color:#fff;">' + meta.initials + '</div>';
+      return '<div class="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-slate-200 bg-slate-50/60">' +
+        '<div class="flex items-center gap-2.5">' + preview + '<div class="font-bold text-slate-800 text-[13px]">' + st + '</div></div>' +
+        '<div class="flex items-center gap-1.5">' +
+          '<label class="px-3 py-1.5 rounded-xl bg-[#EA580C] text-white text-[11.5px] font-bold cursor-pointer">Chọn ảnh' +
+            '<input type="file" accept="image/*" class="hidden" onchange="handleStaffAvatarUpload(\'' + st + '\', this)"/>' +
+          '</label>' +
+          (saved[st] ? '<button type="button" onclick="removeStaffAvatar(\'' + st + '\')" class="px-2.5 py-1.5 rounded-xl bg-slate-200 text-slate-700 text-[11px] font-semibold">Xóa</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var wrap = document.createElement('div');
+    wrap.id = 'v160-avatar-modal';
+    wrap.className = 'fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4';
+    wrap.innerHTML =
+      '<div class="bg-white rounded-3xl max-w-md w-full p-4 space-y-3 shadow-xl">' +
+        '<div class="flex items-center justify-between border-b border-slate-100 pb-2.5">' +
+          '<div class="font-bold text-slate-800 text-[15px]">Ảnh Đại Diện Nhân Viên (v1.60)</div>' +
+          '<button type="button" onclick="document.getElementById(\'v160-avatar-modal\').remove()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>' +
+        '</div>' +
+        '<div class="space-y-2">' + rows + '</div>' +
+        '<div class="text-[11px] text-slate-500">Ảnh tự động nén gọn và hiển thị ngay trên Lịch sử giao dịch.</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+  };
+
+  window.handleStaffAvatarUpload = function(staffName, input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 96; canvas.height = 96;
+        var ctx = canvas.getContext('2d');
+        var minSide = Math.min(img.width, img.height);
+        var sx = (img.width - minSide) / 2;
+        var sy = (img.height - minSide) / 2;
+        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 96, 96);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        var map = loadStaffAvatars();
+        map[staffName] = dataUrl;
+        saveStaffAvatars(map);
+        document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+        decorateStaffBadgesWithAvatars();
+        window.openStaffAvatarModal();
+        if (typeof showToast === 'function') showToast('Đã cập nhật ảnh đại diện cho ' + staffName);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.removeStaffAvatar = function(staffName) {
+    var map = loadStaffAvatars();
+    delete map[staffName];
+    saveStaffAvatars(map);
+    document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+    decorateStaffBadgesWithAvatars();
+    window.openStaffAvatarModal();
+  };
+
+  function injectAvatarSettingTrigger() {
+    var labels = Array.from(document.querySelectorAll('div, span, h2, h3'));
+    var histEl = labels.find(function(el) {
+      return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Lịch sử giao dịch';
+    });
+    if (histEl && histEl.parentElement && !histEl.parentElement.querySelector('.v160-avatar-btn')) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'v160-avatar-btn ml-1.5 px-2 py-0.5 rounded-full bg-orange-100 text-[#EA580C] text-[10.5px] font-bold hover:bg-orange-200 transition';
+      btn.textContent = 'Ảnh ĐD';
+      btn.title = 'Cài đặt ảnh đại diện nhân viên';
+      btn.onclick = window.openStaffAvatarModal;
+      histEl.parentElement.appendChild(btn);
+    }
+  }
+
+  // 3. Tự động tải dữ liệu ngầm mỗi 15 giây từ Google Sheets (thời gian thực)
+  var _v160Syncing = false;
+  function buildDataFingerprint(txs, projs, pts, wks) {
+    var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+    var firstId = (txs && txs[0]) ? txs[0].id : '';
+    var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
+    return [
+      (txs || []).length, txSum, firstId, lastId,
+      (projs || []).length, (pts || []).length, (wks || []).length
+    ].join('|');
+  }
+
+  window.silentBackgroundPullFromSheets = function() {
+    if (_v160Syncing) return;
+    if (!window.execUrl || String(window.execUrl).indexOf('http') !== 0) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    if (document.visibilityState === 'hidden') return;
+
+    // Không làm gián đoạn khi người dùng đang nhập liệu
+    var act = document.activeElement;
+    if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
+
+    _v160Syncing = true;
+    var sep = window.execUrl.indexOf('?') === -1 ? '?' : '&';
+    var pullUrl = window.execUrl + sep + 'action=loadAll&t=' + Date.now();
+
+    fetch(pullUrl, { method: 'GET', redirect: 'follow' })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
+
+        var oldCount = (window.transactions || []).length;
+        var oldFp = buildDataFingerprint(window.transactions, window.projects, window.partners, window.workers);
+        var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers);
+        if (oldFp === newFp) return;
+
+        window.transactions = data.transactions;
+        if (Array.isArray(data.projects) && data.projects.length) window.projects = data.projects;
+        if (Array.isArray(data.partners) && data.partners.length) window.partners = data.partners;
+        if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
+        if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
+
+        window.sortTransactionsNewestFirst(true);
+        if (typeof saveAllLocal === 'function') saveAllLocal();
+        if (typeof renderDashboard === 'function') renderDashboard();
+
+        var diff = window.transactions.length - oldCount;
+        if (diff > 0 && typeof showToast === 'function') {
+          showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
+        }
+      })
+      .catch(function() {})
+      .finally(function() { _v160Syncing = false; });
+  };
+
+  setInterval(function() {
+    window.sortTransactionsNewestFirst(false);
+    injectAvatarSettingTrigger();
+    decorateStaffBadgesWithAvatars();
+  }, 500);
+
+  // Chạy kiểm tra ngầm mỗi 15 giây
+  setInterval(window.silentBackgroundPullFromSheets, 15000);
+})();
+</script>
+<!-- V160_ADDON_END -->
+</body>
           </html>
         `;
         const blob = new Blob(['\ufeff', excelDoc], { type: 'application/vnd.ms-excel;charset=utf-8' });
@@ -5120,7 +5612,253 @@
                 <td style="text-align:right;mso-number-format:'#,##0';">${totalThu - totalChi}</td>
               </tr>
             </table>
-          </body>
+          <!-- V160_ADDON_START -->
+<script>
+(function() {
+  var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
+  var DEFAULT_AVATAR_META = {
+    'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
+    'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
+    'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
+    'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
+  };
+
+  function loadStaffAvatars() {
+    try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+  function saveStaffAvatars(map) {
+    try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+
+  function parseTxDateScore(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return 0;
+    var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
+    var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
+    return 0;
+  }
+
+  function getRowSeqScore(id) {
+    var m = String(id || '').match(/(\d+)$/);
+    return m ? Number(m[1]) : 0;
+  }
+
+  // 1. Sắp xếp giao dịch mới nhất lên đầu danh sách
+  window.sortTransactionsNewestFirst = function(forceRender) {
+    if (!Array.isArray(window.transactions) || window.transactions.length < 2) return;
+    var firstScore = parseTxDateScore(window.transactions[0].date);
+    var lastScore = parseTxDateScore(window.transactions[window.transactions.length - 1].date);
+    if (!forceRender && firstScore >= lastScore && window._v160SortedLen === window.transactions.length) return;
+
+    window.transactions.sort(function(a, b) {
+      var da = parseTxDateScore(a.date);
+      var db = parseTxDateScore(b.date);
+      if (db !== da) return db - da;
+      var idA = String(a.id || '');
+      var idB = String(b.id || '');
+      var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      if (isImpB !== isImpA) return isImpB - isImpA;
+      return getRowSeqScore(idB) - getRowSeqScore(idA);
+    });
+    window._v160SortedLen = window.transactions.length;
+    if (typeof renderDashboard === 'function') renderDashboard();
+  };
+
+  // 2. Ảnh đại diện nhân viên
+  function makeAvatarHtml(staffName, sizePx) {
+    var name = String(staffName || '').trim();
+    var meta = DEFAULT_AVATAR_META[name];
+    if (!meta) return '';
+    var saved = loadStaffAvatars()[name];
+    var sz = sizePx || 20;
+    if (saved) {
+      return '<img src="' + saved + '" alt="' + name + '" class="v160-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;vertical-align:middle;"/>';
+    }
+    return '<span class="v160-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.46) + 'px;line-height:1;">' + meta.initials + '</span>';
+  }
+
+  function decorateStaffBadgesWithAvatars() {
+    var candidates = document.querySelectorAll('span, div, button');
+    for (var i = 0; i < candidates.length; i++) {
+      var el = candidates[i];
+      if (el.querySelector('.v160-staff-avatar')) continue;
+      if (el.children.length > 1) continue;
+      var txt = (el.textContent || '').trim();
+      if (!DEFAULT_AVATAR_META[txt]) continue;
+      if (el.tagName === 'OPTION' || el.closest('select') || el.closest('table')) continue;
+      if (el.textContent.indexOf('Quỹ đầu kỳ') !== -1) continue;
+
+      var isHeaderPill = !!el.closest('header') || el.className.indexOf('rounded-full') !== -1;
+      var avatarHtml = makeAvatarHtml(txt, isHeaderPill ? 22 : 18);
+      if (avatarHtml) {
+        el.style.display = 'inline-flex';
+        el.style.alignItems = 'center';
+        el.insertAdjacentHTML('afterbegin', avatarHtml);
+      }
+    }
+  }
+
+  window.openStaffAvatarModal = function() {
+    var old = document.getElementById('v160-avatar-modal');
+    if (old) old.remove();
+    var saved = loadStaffAvatars();
+    var staffList = ['Việt KA', 'Sen KA', 'Hiếu KA', 'Quyển KA'];
+
+    var rows = staffList.map(function(st) {
+      var meta = DEFAULT_AVATAR_META[st];
+      var preview = saved[st]
+        ? '<img src="' + saved[st] + '" class="w-11 h-11 rounded-full object-cover border border-slate-200"/>'
+        : '<div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm" style="background:' + meta.bg + ';color:#fff;">' + meta.initials + '</div>';
+      return '<div class="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-slate-200 bg-slate-50/60">' +
+        '<div class="flex items-center gap-2.5">' + preview + '<div class="font-bold text-slate-800 text-[13px]">' + st + '</div></div>' +
+        '<div class="flex items-center gap-1.5">' +
+          '<label class="px-3 py-1.5 rounded-xl bg-[#EA580C] text-white text-[11.5px] font-bold cursor-pointer">Chọn ảnh' +
+            '<input type="file" accept="image/*" class="hidden" onchange="handleStaffAvatarUpload(\'' + st + '\', this)"/>' +
+          '</label>' +
+          (saved[st] ? '<button type="button" onclick="removeStaffAvatar(\'' + st + '\')" class="px-2.5 py-1.5 rounded-xl bg-slate-200 text-slate-700 text-[11px] font-semibold">Xóa</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var wrap = document.createElement('div');
+    wrap.id = 'v160-avatar-modal';
+    wrap.className = 'fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4';
+    wrap.innerHTML =
+      '<div class="bg-white rounded-3xl max-w-md w-full p-4 space-y-3 shadow-xl">' +
+        '<div class="flex items-center justify-between border-b border-slate-100 pb-2.5">' +
+          '<div class="font-bold text-slate-800 text-[15px]">Ảnh Đại Diện Nhân Viên (v1.60)</div>' +
+          '<button type="button" onclick="document.getElementById(\'v160-avatar-modal\').remove()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>' +
+        '</div>' +
+        '<div class="space-y-2">' + rows + '</div>' +
+        '<div class="text-[11px] text-slate-500">Ảnh tự động nén gọn và hiển thị ngay trên Lịch sử giao dịch.</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+  };
+
+  window.handleStaffAvatarUpload = function(staffName, input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 96; canvas.height = 96;
+        var ctx = canvas.getContext('2d');
+        var minSide = Math.min(img.width, img.height);
+        var sx = (img.width - minSide) / 2;
+        var sy = (img.height - minSide) / 2;
+        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 96, 96);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        var map = loadStaffAvatars();
+        map[staffName] = dataUrl;
+        saveStaffAvatars(map);
+        document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+        decorateStaffBadgesWithAvatars();
+        window.openStaffAvatarModal();
+        if (typeof showToast === 'function') showToast('Đã cập nhật ảnh đại diện cho ' + staffName);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.removeStaffAvatar = function(staffName) {
+    var map = loadStaffAvatars();
+    delete map[staffName];
+    saveStaffAvatars(map);
+    document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+    decorateStaffBadgesWithAvatars();
+    window.openStaffAvatarModal();
+  };
+
+  function injectAvatarSettingTrigger() {
+    var labels = Array.from(document.querySelectorAll('div, span, h2, h3'));
+    var histEl = labels.find(function(el) {
+      return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Lịch sử giao dịch';
+    });
+    if (histEl && histEl.parentElement && !histEl.parentElement.querySelector('.v160-avatar-btn')) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'v160-avatar-btn ml-1.5 px-2 py-0.5 rounded-full bg-orange-100 text-[#EA580C] text-[10.5px] font-bold hover:bg-orange-200 transition';
+      btn.textContent = 'Ảnh ĐD';
+      btn.title = 'Cài đặt ảnh đại diện nhân viên';
+      btn.onclick = window.openStaffAvatarModal;
+      histEl.parentElement.appendChild(btn);
+    }
+  }
+
+  // 3. Tự động tải dữ liệu ngầm mỗi 15 giây từ Google Sheets (thời gian thực)
+  var _v160Syncing = false;
+  function buildDataFingerprint(txs, projs, pts, wks) {
+    var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+    var firstId = (txs && txs[0]) ? txs[0].id : '';
+    var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
+    return [
+      (txs || []).length, txSum, firstId, lastId,
+      (projs || []).length, (pts || []).length, (wks || []).length
+    ].join('|');
+  }
+
+  window.silentBackgroundPullFromSheets = function() {
+    if (_v160Syncing) return;
+    if (!window.execUrl || String(window.execUrl).indexOf('http') !== 0) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    if (document.visibilityState === 'hidden') return;
+
+    // Không làm gián đoạn khi người dùng đang nhập liệu
+    var act = document.activeElement;
+    if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
+
+    _v160Syncing = true;
+    var sep = window.execUrl.indexOf('?') === -1 ? '?' : '&';
+    var pullUrl = window.execUrl + sep + 'action=loadAll&t=' + Date.now();
+
+    fetch(pullUrl, { method: 'GET', redirect: 'follow' })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
+
+        var oldCount = (window.transactions || []).length;
+        var oldFp = buildDataFingerprint(window.transactions, window.projects, window.partners, window.workers);
+        var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers);
+        if (oldFp === newFp) return;
+
+        window.transactions = data.transactions;
+        if (Array.isArray(data.projects) && data.projects.length) window.projects = data.projects;
+        if (Array.isArray(data.partners) && data.partners.length) window.partners = data.partners;
+        if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
+        if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
+
+        window.sortTransactionsNewestFirst(true);
+        if (typeof saveAllLocal === 'function') saveAllLocal();
+        if (typeof renderDashboard === 'function') renderDashboard();
+
+        var diff = window.transactions.length - oldCount;
+        if (diff > 0 && typeof showToast === 'function') {
+          showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
+        }
+      })
+      .catch(function() {})
+      .finally(function() { _v160Syncing = false; });
+  };
+
+  setInterval(function() {
+    window.sortTransactionsNewestFirst(false);
+    injectAvatarSettingTrigger();
+    decorateStaffBadgesWithAvatars();
+  }, 500);
+
+  // Chạy kiểm tra ngầm mỗi 15 giây
+  setInterval(window.silentBackgroundPullFromSheets, 15000);
+})();
+</script>
+<!-- V160_ADDON_END -->
+</body>
           </html>
         `;
 
@@ -5424,7 +6162,253 @@
               <tbody>${rowsHtml}</tbody>
             </table>
             <script>setTimeout(function(){ window.print(); }, 350);<\/script>
-          </body>
+          <!-- V160_ADDON_START -->
+<script>
+(function() {
+  var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
+  var DEFAULT_AVATAR_META = {
+    'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
+    'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
+    'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
+    'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
+  };
+
+  function loadStaffAvatars() {
+    try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+  function saveStaffAvatars(map) {
+    try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+
+  function parseTxDateScore(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return 0;
+    var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
+    var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
+    return 0;
+  }
+
+  function getRowSeqScore(id) {
+    var m = String(id || '').match(/(\d+)$/);
+    return m ? Number(m[1]) : 0;
+  }
+
+  // 1. Sắp xếp giao dịch mới nhất lên đầu danh sách
+  window.sortTransactionsNewestFirst = function(forceRender) {
+    if (!Array.isArray(window.transactions) || window.transactions.length < 2) return;
+    var firstScore = parseTxDateScore(window.transactions[0].date);
+    var lastScore = parseTxDateScore(window.transactions[window.transactions.length - 1].date);
+    if (!forceRender && firstScore >= lastScore && window._v160SortedLen === window.transactions.length) return;
+
+    window.transactions.sort(function(a, b) {
+      var da = parseTxDateScore(a.date);
+      var db = parseTxDateScore(b.date);
+      if (db !== da) return db - da;
+      var idA = String(a.id || '');
+      var idB = String(b.id || '');
+      var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      if (isImpB !== isImpA) return isImpB - isImpA;
+      return getRowSeqScore(idB) - getRowSeqScore(idA);
+    });
+    window._v160SortedLen = window.transactions.length;
+    if (typeof renderDashboard === 'function') renderDashboard();
+  };
+
+  // 2. Ảnh đại diện nhân viên
+  function makeAvatarHtml(staffName, sizePx) {
+    var name = String(staffName || '').trim();
+    var meta = DEFAULT_AVATAR_META[name];
+    if (!meta) return '';
+    var saved = loadStaffAvatars()[name];
+    var sz = sizePx || 20;
+    if (saved) {
+      return '<img src="' + saved + '" alt="' + name + '" class="v160-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;vertical-align:middle;"/>';
+    }
+    return '<span class="v160-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.46) + 'px;line-height:1;">' + meta.initials + '</span>';
+  }
+
+  function decorateStaffBadgesWithAvatars() {
+    var candidates = document.querySelectorAll('span, div, button');
+    for (var i = 0; i < candidates.length; i++) {
+      var el = candidates[i];
+      if (el.querySelector('.v160-staff-avatar')) continue;
+      if (el.children.length > 1) continue;
+      var txt = (el.textContent || '').trim();
+      if (!DEFAULT_AVATAR_META[txt]) continue;
+      if (el.tagName === 'OPTION' || el.closest('select') || el.closest('table')) continue;
+      if (el.textContent.indexOf('Quỹ đầu kỳ') !== -1) continue;
+
+      var isHeaderPill = !!el.closest('header') || el.className.indexOf('rounded-full') !== -1;
+      var avatarHtml = makeAvatarHtml(txt, isHeaderPill ? 22 : 18);
+      if (avatarHtml) {
+        el.style.display = 'inline-flex';
+        el.style.alignItems = 'center';
+        el.insertAdjacentHTML('afterbegin', avatarHtml);
+      }
+    }
+  }
+
+  window.openStaffAvatarModal = function() {
+    var old = document.getElementById('v160-avatar-modal');
+    if (old) old.remove();
+    var saved = loadStaffAvatars();
+    var staffList = ['Việt KA', 'Sen KA', 'Hiếu KA', 'Quyển KA'];
+
+    var rows = staffList.map(function(st) {
+      var meta = DEFAULT_AVATAR_META[st];
+      var preview = saved[st]
+        ? '<img src="' + saved[st] + '" class="w-11 h-11 rounded-full object-cover border border-slate-200"/>'
+        : '<div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm" style="background:' + meta.bg + ';color:#fff;">' + meta.initials + '</div>';
+      return '<div class="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-slate-200 bg-slate-50/60">' +
+        '<div class="flex items-center gap-2.5">' + preview + '<div class="font-bold text-slate-800 text-[13px]">' + st + '</div></div>' +
+        '<div class="flex items-center gap-1.5">' +
+          '<label class="px-3 py-1.5 rounded-xl bg-[#EA580C] text-white text-[11.5px] font-bold cursor-pointer">Chọn ảnh' +
+            '<input type="file" accept="image/*" class="hidden" onchange="handleStaffAvatarUpload(\'' + st + '\', this)"/>' +
+          '</label>' +
+          (saved[st] ? '<button type="button" onclick="removeStaffAvatar(\'' + st + '\')" class="px-2.5 py-1.5 rounded-xl bg-slate-200 text-slate-700 text-[11px] font-semibold">Xóa</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var wrap = document.createElement('div');
+    wrap.id = 'v160-avatar-modal';
+    wrap.className = 'fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4';
+    wrap.innerHTML =
+      '<div class="bg-white rounded-3xl max-w-md w-full p-4 space-y-3 shadow-xl">' +
+        '<div class="flex items-center justify-between border-b border-slate-100 pb-2.5">' +
+          '<div class="font-bold text-slate-800 text-[15px]">Ảnh Đại Diện Nhân Viên (v1.60)</div>' +
+          '<button type="button" onclick="document.getElementById(\'v160-avatar-modal\').remove()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>' +
+        '</div>' +
+        '<div class="space-y-2">' + rows + '</div>' +
+        '<div class="text-[11px] text-slate-500">Ảnh tự động nén gọn và hiển thị ngay trên Lịch sử giao dịch.</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+  };
+
+  window.handleStaffAvatarUpload = function(staffName, input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 96; canvas.height = 96;
+        var ctx = canvas.getContext('2d');
+        var minSide = Math.min(img.width, img.height);
+        var sx = (img.width - minSide) / 2;
+        var sy = (img.height - minSide) / 2;
+        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 96, 96);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        var map = loadStaffAvatars();
+        map[staffName] = dataUrl;
+        saveStaffAvatars(map);
+        document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+        decorateStaffBadgesWithAvatars();
+        window.openStaffAvatarModal();
+        if (typeof showToast === 'function') showToast('Đã cập nhật ảnh đại diện cho ' + staffName);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.removeStaffAvatar = function(staffName) {
+    var map = loadStaffAvatars();
+    delete map[staffName];
+    saveStaffAvatars(map);
+    document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+    decorateStaffBadgesWithAvatars();
+    window.openStaffAvatarModal();
+  };
+
+  function injectAvatarSettingTrigger() {
+    var labels = Array.from(document.querySelectorAll('div, span, h2, h3'));
+    var histEl = labels.find(function(el) {
+      return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Lịch sử giao dịch';
+    });
+    if (histEl && histEl.parentElement && !histEl.parentElement.querySelector('.v160-avatar-btn')) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'v160-avatar-btn ml-1.5 px-2 py-0.5 rounded-full bg-orange-100 text-[#EA580C] text-[10.5px] font-bold hover:bg-orange-200 transition';
+      btn.textContent = 'Ảnh ĐD';
+      btn.title = 'Cài đặt ảnh đại diện nhân viên';
+      btn.onclick = window.openStaffAvatarModal;
+      histEl.parentElement.appendChild(btn);
+    }
+  }
+
+  // 3. Tự động tải dữ liệu ngầm mỗi 15 giây từ Google Sheets (thời gian thực)
+  var _v160Syncing = false;
+  function buildDataFingerprint(txs, projs, pts, wks) {
+    var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+    var firstId = (txs && txs[0]) ? txs[0].id : '';
+    var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
+    return [
+      (txs || []).length, txSum, firstId, lastId,
+      (projs || []).length, (pts || []).length, (wks || []).length
+    ].join('|');
+  }
+
+  window.silentBackgroundPullFromSheets = function() {
+    if (_v160Syncing) return;
+    if (!window.execUrl || String(window.execUrl).indexOf('http') !== 0) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    if (document.visibilityState === 'hidden') return;
+
+    // Không làm gián đoạn khi người dùng đang nhập liệu
+    var act = document.activeElement;
+    if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
+
+    _v160Syncing = true;
+    var sep = window.execUrl.indexOf('?') === -1 ? '?' : '&';
+    var pullUrl = window.execUrl + sep + 'action=loadAll&t=' + Date.now();
+
+    fetch(pullUrl, { method: 'GET', redirect: 'follow' })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
+
+        var oldCount = (window.transactions || []).length;
+        var oldFp = buildDataFingerprint(window.transactions, window.projects, window.partners, window.workers);
+        var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers);
+        if (oldFp === newFp) return;
+
+        window.transactions = data.transactions;
+        if (Array.isArray(data.projects) && data.projects.length) window.projects = data.projects;
+        if (Array.isArray(data.partners) && data.partners.length) window.partners = data.partners;
+        if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
+        if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
+
+        window.sortTransactionsNewestFirst(true);
+        if (typeof saveAllLocal === 'function') saveAllLocal();
+        if (typeof renderDashboard === 'function') renderDashboard();
+
+        var diff = window.transactions.length - oldCount;
+        if (diff > 0 && typeof showToast === 'function') {
+          showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
+        }
+      })
+      .catch(function() {})
+      .finally(function() { _v160Syncing = false; });
+  };
+
+  setInterval(function() {
+    window.sortTransactionsNewestFirst(false);
+    injectAvatarSettingTrigger();
+    decorateStaffBadgesWithAvatars();
+  }, 500);
+
+  // Chạy kiểm tra ngầm mỗi 15 giây
+  setInterval(window.silentBackgroundPullFromSheets, 15000);
+})();
+</script>
+<!-- V160_ADDON_END -->
+</body>
           </html>
         `);
         printWin.document.close();
@@ -7363,4 +8347,250 @@ _v159Obs.observe(document.body, { childList: true, subtree: true });
   }
 })();
 </script>
+<!-- V160_ADDON_START -->
+<script>
+(function() {
+  var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
+  var DEFAULT_AVATAR_META = {
+    'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
+    'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
+    'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
+    'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
+  };
+
+  function loadStaffAvatars() {
+    try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
+    catch (e) { return {}; }
+  }
+  function saveStaffAvatars(map) {
+    try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
+  }
+
+  function parseTxDateScore(raw) {
+    var s = String(raw || '').trim();
+    if (!s) return 0;
+    var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
+    var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+    if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
+    return 0;
+  }
+
+  function getRowSeqScore(id) {
+    var m = String(id || '').match(/(\d+)$/);
+    return m ? Number(m[1]) : 0;
+  }
+
+  // 1. Sắp xếp giao dịch mới nhất lên đầu danh sách
+  window.sortTransactionsNewestFirst = function(forceRender) {
+    if (!Array.isArray(window.transactions) || window.transactions.length < 2) return;
+    var firstScore = parseTxDateScore(window.transactions[0].date);
+    var lastScore = parseTxDateScore(window.transactions[window.transactions.length - 1].date);
+    if (!forceRender && firstScore >= lastScore && window._v160SortedLen === window.transactions.length) return;
+
+    window.transactions.sort(function(a, b) {
+      var da = parseTxDateScore(a.date);
+      var db = parseTxDateScore(b.date);
+      if (db !== da) return db - da;
+      var idA = String(a.id || '');
+      var idB = String(b.id || '');
+      var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
+      if (isImpB !== isImpA) return isImpB - isImpA;
+      return getRowSeqScore(idB) - getRowSeqScore(idA);
+    });
+    window._v160SortedLen = window.transactions.length;
+    if (typeof renderDashboard === 'function') renderDashboard();
+  };
+
+  // 2. Ảnh đại diện nhân viên
+  function makeAvatarHtml(staffName, sizePx) {
+    var name = String(staffName || '').trim();
+    var meta = DEFAULT_AVATAR_META[name];
+    if (!meta) return '';
+    var saved = loadStaffAvatars()[name];
+    var sz = sizePx || 20;
+    if (saved) {
+      return '<img src="' + saved + '" alt="' + name + '" class="v160-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;vertical-align:middle;"/>';
+    }
+    return '<span class="v160-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.46) + 'px;line-height:1;">' + meta.initials + '</span>';
+  }
+
+  function decorateStaffBadgesWithAvatars() {
+    var candidates = document.querySelectorAll('span, div, button');
+    for (var i = 0; i < candidates.length; i++) {
+      var el = candidates[i];
+      if (el.querySelector('.v160-staff-avatar')) continue;
+      if (el.children.length > 1) continue;
+      var txt = (el.textContent || '').trim();
+      if (!DEFAULT_AVATAR_META[txt]) continue;
+      if (el.tagName === 'OPTION' || el.closest('select') || el.closest('table')) continue;
+      if (el.textContent.indexOf('Quỹ đầu kỳ') !== -1) continue;
+
+      var isHeaderPill = !!el.closest('header') || el.className.indexOf('rounded-full') !== -1;
+      var avatarHtml = makeAvatarHtml(txt, isHeaderPill ? 22 : 18);
+      if (avatarHtml) {
+        el.style.display = 'inline-flex';
+        el.style.alignItems = 'center';
+        el.insertAdjacentHTML('afterbegin', avatarHtml);
+      }
+    }
+  }
+
+  window.openStaffAvatarModal = function() {
+    var old = document.getElementById('v160-avatar-modal');
+    if (old) old.remove();
+    var saved = loadStaffAvatars();
+    var staffList = ['Việt KA', 'Sen KA', 'Hiếu KA', 'Quyển KA'];
+
+    var rows = staffList.map(function(st) {
+      var meta = DEFAULT_AVATAR_META[st];
+      var preview = saved[st]
+        ? '<img src="' + saved[st] + '" class="w-11 h-11 rounded-full object-cover border border-slate-200"/>'
+        : '<div class="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm" style="background:' + meta.bg + ';color:#fff;">' + meta.initials + '</div>';
+      return '<div class="flex items-center justify-between gap-2 p-2.5 rounded-2xl border border-slate-200 bg-slate-50/60">' +
+        '<div class="flex items-center gap-2.5">' + preview + '<div class="font-bold text-slate-800 text-[13px]">' + st + '</div></div>' +
+        '<div class="flex items-center gap-1.5">' +
+          '<label class="px-3 py-1.5 rounded-xl bg-[#EA580C] text-white text-[11.5px] font-bold cursor-pointer">Chọn ảnh' +
+            '<input type="file" accept="image/*" class="hidden" onchange="handleStaffAvatarUpload(\'' + st + '\', this)"/>' +
+          '</label>' +
+          (saved[st] ? '<button type="button" onclick="removeStaffAvatar(\'' + st + '\')" class="px-2.5 py-1.5 rounded-xl bg-slate-200 text-slate-700 text-[11px] font-semibold">Xóa</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var wrap = document.createElement('div');
+    wrap.id = 'v160-avatar-modal';
+    wrap.className = 'fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4';
+    wrap.innerHTML =
+      '<div class="bg-white rounded-3xl max-w-md w-full p-4 space-y-3 shadow-xl">' +
+        '<div class="flex items-center justify-between border-b border-slate-100 pb-2.5">' +
+          '<div class="font-bold text-slate-800 text-[15px]">Ảnh Đại Diện Nhân Viên (v1.60)</div>' +
+          '<button type="button" onclick="document.getElementById(\'v160-avatar-modal\').remove()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold">✕</button>' +
+        '</div>' +
+        '<div class="space-y-2">' + rows + '</div>' +
+        '<div class="text-[11px] text-slate-500">Ảnh tự động nén gọn và hiển thị ngay trên Lịch sử giao dịch.</div>' +
+      '</div>';
+    document.body.appendChild(wrap);
+  };
+
+  window.handleStaffAvatarUpload = function(staffName, input) {
+    var file = input.files && input.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = 96; canvas.height = 96;
+        var ctx = canvas.getContext('2d');
+        var minSide = Math.min(img.width, img.height);
+        var sx = (img.width - minSide) / 2;
+        var sy = (img.height - minSide) / 2;
+        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 96, 96);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        var map = loadStaffAvatars();
+        map[staffName] = dataUrl;
+        saveStaffAvatars(map);
+        document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+        decorateStaffBadgesWithAvatars();
+        window.openStaffAvatarModal();
+        if (typeof showToast === 'function') showToast('Đã cập nhật ảnh đại diện cho ' + staffName);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.removeStaffAvatar = function(staffName) {
+    var map = loadStaffAvatars();
+    delete map[staffName];
+    saveStaffAvatars(map);
+    document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
+    decorateStaffBadgesWithAvatars();
+    window.openStaffAvatarModal();
+  };
+
+  function injectAvatarSettingTrigger() {
+    var labels = Array.from(document.querySelectorAll('div, span, h2, h3'));
+    var histEl = labels.find(function(el) {
+      return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Lịch sử giao dịch';
+    });
+    if (histEl && histEl.parentElement && !histEl.parentElement.querySelector('.v160-avatar-btn')) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'v160-avatar-btn ml-1.5 px-2 py-0.5 rounded-full bg-orange-100 text-[#EA580C] text-[10.5px] font-bold hover:bg-orange-200 transition';
+      btn.textContent = 'Ảnh ĐD';
+      btn.title = 'Cài đặt ảnh đại diện nhân viên';
+      btn.onclick = window.openStaffAvatarModal;
+      histEl.parentElement.appendChild(btn);
+    }
+  }
+
+  // 3. Tự động tải dữ liệu ngầm mỗi 15 giây từ Google Sheets (thời gian thực)
+  var _v160Syncing = false;
+  function buildDataFingerprint(txs, projs, pts, wks) {
+    var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+    var firstId = (txs && txs[0]) ? txs[0].id : '';
+    var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
+    return [
+      (txs || []).length, txSum, firstId, lastId,
+      (projs || []).length, (pts || []).length, (wks || []).length
+    ].join('|');
+  }
+
+  window.silentBackgroundPullFromSheets = function() {
+    if (_v160Syncing) return;
+    if (!window.execUrl || String(window.execUrl).indexOf('http') !== 0) return;
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+    if (document.visibilityState === 'hidden') return;
+
+    // Không làm gián đoạn khi người dùng đang nhập liệu
+    var act = document.activeElement;
+    if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
+
+    _v160Syncing = true;
+    var sep = window.execUrl.indexOf('?') === -1 ? '?' : '&';
+    var pullUrl = window.execUrl + sep + 'action=loadAll&t=' + Date.now();
+
+    fetch(pullUrl, { method: 'GET', redirect: 'follow' })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
+
+        var oldCount = (window.transactions || []).length;
+        var oldFp = buildDataFingerprint(window.transactions, window.projects, window.partners, window.workers);
+        var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers);
+        if (oldFp === newFp) return;
+
+        window.transactions = data.transactions;
+        if (Array.isArray(data.projects) && data.projects.length) window.projects = data.projects;
+        if (Array.isArray(data.partners) && data.partners.length) window.partners = data.partners;
+        if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
+        if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
+
+        window.sortTransactionsNewestFirst(true);
+        if (typeof saveAllLocal === 'function') saveAllLocal();
+        if (typeof renderDashboard === 'function') renderDashboard();
+
+        var diff = window.transactions.length - oldCount;
+        if (diff > 0 && typeof showToast === 'function') {
+          showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
+        }
+      })
+      .catch(function() {})
+      .finally(function() { _v160Syncing = false; });
+  };
+
+  setInterval(function() {
+    window.sortTransactionsNewestFirst(false);
+    injectAvatarSettingTrigger();
+    decorateStaffBadgesWithAvatars();
+  }, 500);
+
+  // Chạy kiểm tra ngầm mỗi 15 giây
+  setInterval(window.silentBackgroundPullFromSheets, 15000);
+})();
+</script>
+<!-- V160_ADDON_END -->
 </body>
