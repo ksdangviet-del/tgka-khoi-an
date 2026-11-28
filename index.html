@@ -487,7 +487,7 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.60</button>
+            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.61</button>
             <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
               <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1741,7 +1741,7 @@
         return { ...top, features: mergedFeatures };
       }
 
-      localStorage.setItem('tgka_active_version', 'v1.60'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
+      localStorage.setItem('tgka_active_version', 'v1.61'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
       if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.59';
       if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
         ACTIVE_VERSION = 'v1.59';
@@ -6538,884 +6538,1109 @@
         }
       }
 
-        // =========================================================================
-  // MODULE NÂNG CẤP v1.60 (CHẠY TRỰC TIẾP TRONG SCOPE DỮ LIỆU CHÍNH)
-  // =========================================================================
-  (function initV160Module() {
-    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.60']) {
-      RAW_VERSION_SPECS['v1.60'] = {
-        version: 'v1.60',
-        extends: 'v1.59',
-        date: '28/11/2026',
-        title: 'Sửa & Xuất Báo Cáo A4 Nhật Ký (Ảnh/Excel/PDF), Thẻ GD Đầy Đủ & Đồng Bộ 15s',
-        summary: 'Thêm nút Sửa/Xóa nhật ký tự động lưu lên tab NhatKyCongTrinh của Google Sheets TEST APP, xuất báo cáo khổ A4 chuyên nghiệp (Ảnh PNG, Excel, PDF) theo từng công trình, thiết kế lại thẻ Lịch sử giao dịch đầy đủ thông tin chống đè chữ và tự động tải giao dịch mới mỗi 15 giây.',
-        features: { v160ProSuite: true }
-      };
-      ACTIVE_VERSION = 'v1.60';
-      try {
-        localStorage.setItem('tgka_active_version', 'v1.60');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.60');
-      } catch (e) {}
-    }
-
-    var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
-    var DEFAULT_AVATAR_META = {
-      'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
-      'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
-      'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
-      'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
-    };
-
-    function escHtml(str) {
-      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    function loadStaffAvatars() {
-      try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
-      catch (e) { return {}; }
-    }
-    function saveStaffAvatars(map) {
-      try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
-    }
-
-    function makeAvatarHtml(staffName, sizePx, extraStyle) {
-      var name = String(staffName || '').trim();
-      var meta = DEFAULT_AVATAR_META[name];
-      if (!meta) return '';
-      var saved = loadStaffAvatars()[name];
-      var sz = sizePx || 18;
-      var st = extraStyle || 'margin-right:5px;';
-      if (saved) {
-        return '<img src="' + saved + '" alt="' + escHtml(name) + '" class="v160-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;' + st + '"/>';
-      }
-      return '<span class="v160-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.44) + 'px;line-height:1;' + st + '">' + meta.initials + '</span>';
-    }
-
-    function parseTxDateScore(raw) {
-      var s = String(raw || '').trim();
-      if (!s) return 0;
-      var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-      if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
-      var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-      if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
-      return 0;
-    }
-
-    function formatDisplayDate(raw) {
-      var s = String(raw || '').trim();
-      var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-      if (iso) return iso[3].padStart(2, '0') + '/' + iso[2].padStart(2, '0') + '/' + iso[1];
-      return s;
-    }
-
-    function getRowSeqScore(id) {
-      var m = String(id || '').match(/(\d+)$/);
-      return m ? Number(m[1]) : 0;
-    }
-
-    // 1. SẮP XẾP GIAO DỊCH MỚI NHẤT LÊN ĐẦU DANH SÁCH (TRUY CẬP TRỰC TIẾP BIẾN transactions)
-    window.sortTransactionsNewestFirst = function(forceRender) {
-      if (typeof transactions === 'undefined' || !Array.isArray(transactions) || transactions.length < 2) return;
-      var firstScore = parseTxDateScore(transactions[0].date);
-      var lastScore = parseTxDateScore(transactions[transactions.length - 1].date);
-      if (!forceRender && firstScore >= lastScore && window._v160SortedLen === transactions.length) return;
-
-      transactions.sort(function(a, b) {
-        var da = parseTxDateScore(a.date);
-        var db = parseTxDateScore(b.date);
-        if (db !== da) return db - da;
-        var idA = String(a.id || '');
-        var idB = String(b.id || '');
-        var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
-        var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
-        if (isImpB !== isImpA) return isImpB - isImpA;
-        return getRowSeqScore(idB) - getRowSeqScore(idA);
-      });
-      window._v160SortedLen = transactions.length;
-      if (typeof renderDashboard === 'function') renderDashboard();
-    };
-
-    // 2. THIẾT KẾ LẠI THẺ LỊCH SỬ GIAO DỊCH ĐẦY ĐỦ THÔNG TIN & CHỐNG ĐÈ CHỮ
-    function enrichTransactionCards() {
-      if (typeof transactions === 'undefined' || !Array.isArray(transactions) || !transactions.length) return;
-      var txById = {};
-      transactions.forEach(function(t) { if (t && t.id) txById[String(t.id)] = t; });
-
-      var allBtns = document.querySelectorAll('button');
-      for (var i = 0; i < allBtns.length; i++) {
-        var btn = allBtns[i];
-        if ((btn.textContent || '').trim() !== 'Sửa') continue;
-        var oc = btn.getAttribute('onclick') || '';
-        var m = oc.match(/['"]([^'"]+)['"]/);
-        if (!m) continue;
-        var tx = txById[m[1]];
-        if (!tx) continue;
-
-        var card = btn.parentElement;
-        while (card && card !== document.body) {
-          if (card.className && (card.className.indexOf('rounded-2xl') !== -1 || card.className.indexOf('rounded-xl') !== -1) && card.clientHeight >= 55 && card.clientHeight <= 260) {
-            break;
-          }
-          card = card.parentElement;
-        }
-        if (!card || card === document.body) continue;
-
-        var isMasked = (card.textContent || '').indexOf('***') !== -1;
-        var renderKey = [tx.id, tx.date, tx.type, tx.staff, tx.recipient, tx.amount, tx.project, tx.partner, tx.category, tx.internalGroup, tx.note, isMasked ? 'M' : 'V'].join('|');
-        if (card.getAttribute('data-v160-key') === renderKey) continue;
-
-        var delBtn = Array.from(card.querySelectorAll('button')).find(function(b) { return (b.textContent || '').trim() === 'Xóa'; });
-        var delOnclick = delBtn ? delBtn.getAttribute('onclick') : '';
-        var editOnclick = btn.getAttribute('onclick');
-
-        var isThu = tx.type === 'Thu';
-        var isTransfer = tx.type === 'ChuyenQuy';
-        var badgeBg = isThu ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (isTransfer ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-rose-50 text-rose-700 border-rose-200');
-        var badgeText = isThu ? 'THU' : (isTransfer ? 'CHUYỂN QUỸ' : 'CHI');
-        var amountColor = isThu ? 'text-emerald-600' : (isTransfer ? 'text-blue-600' : 'text-rose-600');
-        var sign = isThu ? '+' : (isTransfer ? '⇄ ' : '-');
-        var amtFormatted = isMasked ? '*** *** đ' : (sign + Number(tx.amount || 0).toLocaleString('vi-VN') + ' đ');
-
-        var staffDisplay = escHtml(tx.staff || 'Việt KA');
-        if (isTransfer && tx.recipient) staffDisplay += ' → ' + escHtml(tx.recipient);
-
-        var titleText = escHtml(tx.note || tx.category || (isThu ? 'Thu tiền hợp đồng' : 'Chi phí công trình'));
-        var tagsHtml = '';
-        if (tx.project) {
-          tagsHtml += '<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:700;" class="bg-orange-50 text-[#C2410C] border border-orange-200">🏗️ ' + escHtml(tx.project) + '</span>';
-        }
-        if (tx.partner) {
-          tagsHtml += '<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:700;" class="bg-indigo-50 text-indigo-700 border border-indigo-200">🤝 ' + escHtml(tx.partner) + '</span>';
-        }
-        if (tx.category && tx.category !== tx.note) {
-          tagsHtml += '<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:600;" class="bg-slate-100 text-slate-700 border border-slate-200">🏷️ ' + escHtml(tx.category) + '</span>';
-        }
-        if (tx.internalGroup) {
-          tagsHtml += '<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:600;" class="bg-amber-50 text-amber-800 border border-amber-200">📂 ' + escHtml(tx.internalGroup) + '</span>';
+            // === V161_CORE_START ===
+      (function initV161Suite() {
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.61']) {
+          RAW_VERSION_SPECS['v1.61'] = {
+            version: 'v1.61',
+            extends: 'v1.59',
+            date: '28/11/2026',
+            title: 'Chi Phí Nội Bộ 4 Nhóm (STT 1–229), Thẻ GD Có Đối Tác & Nhật Ký Nhiều Năm A4',
+            summary: 'Kế thừa bản khóa chuẩn v1.59: bổ sung khối Chi phí nội bộ 4 nhóm vào Báo cáo tài chính (tách rõ Lương thợ & Sinh hoạt trong Nhà thợ), thiết kế lại thẻ Lịch sử giao dịch hiện đầy đủ Đối tác không lặp tên công trình, ẩn công trình hoàn thành khi ghi nhật ký mới và tìm kiếm/xuất báo cáo A4 (Ảnh/Excel/PDF).',
+            features: { v161Suite: true }
+          };
+          ACTIVE_VERSION = 'v1.61';
+          try {
+            localStorage.setItem('tgka_active_version', 'v1.61');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.61');
+          } catch (e) {}
         }
 
-        card.setAttribute('data-v160-key', renderKey);
-        card.innerHTML =
-          '<div class="flex items-start justify-between gap-2">' +
-            '<div class="flex items-center flex-wrap gap-1.5 min-w-0">' +
-              '<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-[#9A3412] text-[11px] font-bold whitespace-nowrap">' +
-                makeAvatarHtml(tx.staff, 17, 'margin-right:4px;') + staffDisplay +
-              '</span>' +
-              '<span class="px-2 py-0.5 rounded-md border text-[10px] font-extrabold tracking-wide whitespace-nowrap ' + badgeBg + '">' + badgeText + '</span>' +
-            '</div>' +
-            '<div class="font-extrabold text-[13.5px] whitespace-nowrap shrink-0 tabular-nums ' + amountColor + '">' + amtFormatted + '</div>' +
-          '</div>' +
-          '<div class="mt-1.5 text-[13px] font-bold text-slate-800 leading-snug break-words">' + titleText + '</div>' +
-          (tagsHtml ? '<div class="mt-1.5 flex flex-wrap gap-1.5">' + tagsHtml + '</div>' : '') +
-          '<div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">' +
-            '<div class="text-[11px] font-medium text-slate-500 whitespace-nowrap">📅 ' + escHtml(formatDisplayDate(tx.date)) + '</div>' +
-            '<div class="flex items-center gap-1.5 shrink-0">' +
-              '<button type="button" onclick="' + escHtml(editOnclick) + '" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold">Sửa</button>' +
-              (delOnclick ? '<button type="button" onclick="' + escHtml(delOnclick) + '" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold">Xóa</button>' : '') +
-            '</div>' +
-          '</div>';
-      }
-    }
-
-    // 3. ĐỒNG BỘ TỰ ĐỘNG TAB NhatKyCongTrinh LÊN SHEETS TEST APP + SỬA + XUẤT A4 (ẢNH / EXCEL / PDF)
-    window.syncSiteLogsOnlyToSheets = function(showNotify) {
-      if (typeof execUrl === 'undefined' || !execUrl || String(execUrl).indexOf('http') !== 0) return;
-      var list = (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) ? siteLogs : [];
-      fetch(execUrl, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ siteLogs: list })
-      }).then(function() {
-        if (showNotify && typeof showToast === 'function') {
-          showToast('☁️ Đã đồng bộ ' + list.length + ' ngày nhật ký lên tab NhatKyCongTrinh');
-        }
-      }).catch(function() {});
-    };
-
-    // Tự động đẩy siteLogs lên Sheets mỗi khi saveAllLocal được gọi và số lượng/nội dung siteLogs thay đổi
-    var _lastSiteLogsSig = '';
-    if (typeof saveAllLocal === 'function') {
-      var _origSaveAllLocal = saveAllLocal;
-      saveAllLocal = function() {
-        _origSaveAllLocal.apply(this, arguments);
-        if (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) {
-          var sig = JSON.stringify(siteLogs.map(function(l) {
-            return [l.id, l.date, l.project, l.morningWork, (l.morningWorkers || []).length, l.afternoonWork, (l.afternoonWorkers || []).length];
-          }));
-          if (sig !== _lastSiteLogsSig) {
-            _lastSiteLogsSig = sig;
-            window.syncSiteLogsOnlyToSheets(false);
-          }
-        }
-      };
-    }
-
-    function calcLogShiftDays(workersArr) {
-      return (Array.isArray(workersArr) && workersArr.length) ? (workersArr.length * 0.5) : 0;
-    }
-
-    function getFilteredSiteLogs() {
-      var logs = (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) ? siteLogs.slice() : [];
-      var sel = document.querySelector('.v160-log-proj-filter');
-      var projFilter = sel ? sel.value : '';
-      if (projFilter) {
-        logs = logs.filter(function(l) { return String(l.project || '').trim() === projFilter; });
-      }
-      logs.sort(function(a, b) { return parseTxDateScore(b.date) - parseTxDateScore(a.date); });
-      return { logs: logs, projectCode: projFilter };
-    }
-
-    window.openEditSiteLogModal = function(logId) {
-      if (typeof siteLogs === 'undefined' || !Array.isArray(siteLogs)) return;
-      var log = siteLogs.find(function(l) { return String(l.id) === String(logId); });
-      if (!log) return;
-
-      var old = document.getElementById('v160-edit-log-modal');
-      if (old) old.remove();
-
-      var allProjects = (typeof projects !== 'undefined' && Array.isArray(projects)) ? projects : [];
-      var projOpts = allProjects.map(function(p) {
-        var sel = String(p.code) === String(log.project) ? 'selected' : '';
-        return '<option value="' + escHtml(p.code) + '" ' + sel + '>' + escHtml(p.code + (p.customer && p.customer !== p.code ? ' - ' + p.customer : '')) + '</option>';
-      }).join('');
-      if (log.project && !allProjects.some(function(p) { return String(p.code) === String(log.project); })) {
-        projOpts = '<option value="' + escHtml(log.project) + '" selected>' + escHtml(log.project) + '</option>' + projOpts;
-      }
-
-      var allWorkers = (typeof workers !== 'undefined' && Array.isArray(workers) && workers.length)
-        ? workers.map(function(w) { return w.name; })
-        : Array.from(new Set([].concat(log.morningWorkers || [], log.afternoonWorkers || [])));
-
-      var makeWorkerCheckboxes = function(prefix, selectedList) {
-        var set = new Set((selectedList || []).map(function(x) { return String(x).trim(); }));
-        if (!allWorkers.length) return '<div class="text-[11px] text-slate-400">Chưa có danh sách thợ</div>';
-        return allWorkers.map(function(name) {
-          var chk = set.has(name) ? 'checked' : '';
-          return '<label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-[11.5px] font-medium cursor-pointer">' +
-            '<input type="checkbox" class="' + prefix + '-chk accent-[#EA580C]" value="' + escHtml(name) + '" ' + chk + '/>' +
-            '<span>' + escHtml(name) + '</span>' +
-          '</label>';
-        }).join('');
-      };
-
-      var wrap = document.createElement('div');
-      wrap.id = 'v160-edit-log-modal';
-      wrap.className = 'fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-3';
-      wrap.innerHTML =
-        '<div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">' +
-          '<div class="bg-[#EA580C] text-white px-4 py-3 flex items-center justify-between">' +
-            '<div class="font-bold text-[15px]">Sửa Nhật Ký Công Trình & Chấm Công</div>' +
-            '<button type="button" onclick="document.getElementById(\'v160-edit-log-modal\').remove()" class="w-8 h-8 rounded-full bg-white/20 text-white font-bold">✕</button>' +
-          '</div>' +
-          '<div class="p-4 overflow-y-auto space-y-3 text-[12.5px]">' +
-            '<div class="grid grid-cols-2 gap-2.5">' +
-              '<div><label class="block font-bold text-slate-700 mb-1">Ngày thi công</label>' +
-                '<input id="v160-elog-date" type="date" value="' + escHtml(log.date || '') + '" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold"/>' +
-              '</div>' +
-              '<div><label class="block font-bold text-slate-700 mb-1">Công trình</label>' +
-                '<select id="v160-elog-proj" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold">' + projOpts + '</select>' +
-              '</div>' +
-            '</div>' +
-            '<div class="p-3 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2">' +
-              '<div class="font-bold text-amber-900">☀️ Ca Sáng</div>' +
-              '<textarea id="v160-elog-mwork" rows="2" placeholder="Nội dung công việc ca sáng..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">' + escHtml(log.morningWork || '') + '</textarea>' +
-              '<div class="text-[11px] font-bold text-slate-600">Chấm công thợ Ca Sáng (0.5 công/người):</div>' +
-              '<div class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">' + makeWorkerCheckboxes('v160-mw', log.morningWorkers) + '</div>' +
-            '</div>' +
-            '<div class="p-3 rounded-2xl bg-sky-50/70 border border-sky-200 space-y-2">' +
-              '<div class="font-bold text-sky-900">🌤️ Ca Chiều</div>' +
-              '<textarea id="v160-elog-awork" rows="2" placeholder="Nội dung công việc ca chiều..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">' + escHtml(log.afternoonWork || '') + '</textarea>' +
-              '<div class="text-[11px] font-bold text-slate-600">Chấm công thợ Ca Chiều (0.5 công/người):</div>' +
-              '<div class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">' + makeWorkerCheckboxes('v160-aw', log.afternoonWorkers) + '</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="px-4 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-2">' +
-            '<button type="button" onclick="document.getElementById(\'v160-edit-log-modal\').remove()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 font-bold text-[12.5px]">Hủy</button>' +
-            '<button type="button" onclick="saveEditedSiteLog(\'' + escHtml(log.id) + '\')" class="px-4 py-2 rounded-xl bg-[#EA580C] text-white font-bold text-[12.5px] shadow">Lưu & Đồng Bộ Sheets</button>' +
-          '</div>' +
-        '</div>';
-      document.body.appendChild(wrap);
-    };
-
-    window.saveEditedSiteLog = function(logId) {
-      if (typeof siteLogs === 'undefined' || !Array.isArray(siteLogs)) return;
-      var idx = siteLogs.findIndex(function(l) { return String(l.id) === String(logId); });
-      if (idx < 0) return;
-      var log = siteLogs[idx];
-      log.date = document.getElementById('v160-elog-date').value || log.date;
-      log.project = document.getElementById('v160-elog-proj').value || log.project;
-      log.morningWork = document.getElementById('v160-elog-mwork').value.trim();
-      log.afternoonWork = document.getElementById('v160-elog-awork').value.trim();
-      log.morningWorkers = Array.from(document.querySelectorAll('.v160-mw-chk:checked')).map(function(c) { return c.value; });
-      log.afternoonWorkers = Array.from(document.querySelectorAll('.v160-aw-chk:checked')).map(function(c) { return c.value; });
-
-      if (typeof saveAllLocal === 'function') saveAllLocal();
-      window.syncSiteLogsOnlyToSheets(true);
-      var m = document.getElementById('v160-edit-log-modal');
-      if (m) m.remove();
-      renderEnhancedSiteLogList();
-    };
-
-    window.deleteSiteLogItem = function(logId) {
-      if (!confirm('Bạn có chắc muốn xóa ngày nhật ký thi công này không?')) return;
-      if (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) {
-        siteLogs = siteLogs.filter(function(l) { return String(l.id) !== String(logId); });
-      }
-      if (typeof saveAllLocal === 'function') saveAllLocal();
-      window.syncSiteLogsOnlyToSheets(true);
-      renderEnhancedSiteLogList();
-    };
-
-    function buildSiteLogReportData() {
-      var res = getFilteredSiteLogs();
-      var logs = res.logs;
-      var projCode = res.projectCode || (logs[0] ? logs[0].project : 'TẤT CẢ CÔNG TRÌNH');
-      var projList = (typeof projects !== 'undefined' && Array.isArray(projects)) ? projects : [];
-      var projObj = projList.find(function(p) { return String(p.code) === String(projCode); }) || {};
-      var workerTotals = {};
-      var grandTotalDays = 0;
-
-      logs.forEach(function(l) {
-        var mList = Array.isArray(l.morningWorkers) ? l.morningWorkers : [];
-        var aList = Array.isArray(l.afternoonWorkers) ? l.afternoonWorkers : [];
-        grandTotalDays += (mList.length + aList.length) * 0.5;
-        mList.forEach(function(w) { workerTotals[w] = (workerTotals[w] || 0) + 0.5; });
-        aList.forEach(function(w) { workerTotals[w] = (workerTotals[w] || 0) + 0.5; });
-      });
-
-      return {
-        logs: logs,
-        projCode: projCode || 'TẤT CẢ CÔNG TRÌNH',
-        customer: projObj.customer || projCode || 'Chủ đầu tư',
-        address: projObj.address || 'Hà An',
-        workerTotals: workerTotals,
-        grandTotalDays: grandTotalDays
-      };
-    }
-
-    window.exportSiteLogExcel = function() {
-      var d = buildSiteLogReportData();
-      if (!d.logs.length) { alert('Chưa có dữ liệu nhật ký để xuất!'); return; }
-
-      var rowsHtml = d.logs.map(function(l, idx) {
-        var mDays = calcLogShiftDays(l.morningWorkers);
-        var aDays = calcLogShiftDays(l.afternoonWorkers);
-        return '<tr>' +
-          '<td style="text-align:center;">' + (idx + 1) + '</td>' +
-          '<td style="text-align:center;">' + escHtml(formatDisplayDate(l.date)) + '</td>' +
-          '<td>' + escHtml(l.project) + '</td>' +
-          '<td>' + escHtml(l.staff || '') + '</td>' +
-          '<td>' + escHtml(l.morningWork || '-') + '</td>' +
-          '<td>' + escHtml((l.morningWorkers || []).join(', ')) + ' (' + mDays + ' công)</td>' +
-          '<td>' + escHtml(l.afternoonWork || '-') + '</td>' +
-          '<td>' + escHtml((l.afternoonWorkers || []).join(', ')) + ' (' + aDays + ' công)</td>' +
-          '<td style="text-align:center;font-weight:bold;">' + (mDays + aDays) + '</td>' +
-        '</tr>';
-      }).join('');
-
-      var workerSummaryRows = Object.keys(d.workerTotals).map(function(w, i) {
-        return '<tr><td style="text-align:center;">' + (i + 1) + '</td><td>' + escHtml(w) + '</td><td style="text-align:center;font-weight:bold;">' + d.workerTotals[w] + '</td></tr>';
-      }).join('');
-
-      var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"/></head><body>' +
-        '<h2>BÁO CÁO NHẬT KÝ THI CÔNG & CHẤM CÔNG - CÔNG TY XÂY DỰNG TRỌN GÓI KHỞI AN</h2>' +
-        '<p><b>Công trình:</b> ' + escHtml(d.projCode) + ' | <b>Chủ đầu tư:</b> ' + escHtml(d.customer) + ' | <b>Địa chỉ:</b> ' + escHtml(d.address) + '</p>' +
-        '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;">' +
-          '<tr style="background:#EA580C;color:#FFFFFF;font-weight:bold;">' +
-            '<th>STT</th><th>Ngày</th><th>Mã Công Trình</th><th>Người Ghi</th><th>Nội Dung Ca Sáng</th><th>Thợ Ca Sáng</th><th>Nội Dung Ca Chiều</th><th>Thợ Ca Chiều</th><th>Tổng Công</th>' +
-          '</tr>' + rowsHtml +
-          '<tr style="background:#FFF7ED;font-weight:bold;"><td colspan="8" style="text-align:right;">TỔNG CỘNG NGÀY CÔNG TOÀN ĐỢT:</td><td style="text-align:center;">' + d.grandTotalDays + '</td></tr>' +
-        '</table><br/>' +
-        '<h3>BẢNG TỔNG HỢP CÔNG TỪNG THỢ</h3>' +
-        '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;">' +
-          '<tr style="background:#1E293B;color:#FFFFFF;font-weight:bold;"><th>STT</th><th>Họ Tên Thợ</th><th>Tổng Số Công</th></tr>' + workerSummaryRows +
-        '</table></body></html>';
-
-      var blob = new Blob(['\ufeff', html], { type: 'application/vnd.ms-excel;charset=utf-8' });
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'NhatKy_ChamCong_' + d.projCode.replace(/[^a-zA-Z0-9_-]/g, '_') + '.xls';
-      a.click();
-      if (typeof showToast === 'function') showToast('📊 Đã xuất tệp Excel Nhật ký & Chấm công');
-    };
-
-    window.exportSiteLogPrintA4 = function() {
-      var d = buildSiteLogReportData();
-      if (!d.logs.length) { alert('Chưa có dữ liệu nhật ký để xuất PDF/In!'); return; }
-
-      var rowsHtml = d.logs.map(function(l, idx) {
-        var mDays = calcLogShiftDays(l.morningWorkers);
-        var aDays = calcLogShiftDays(l.afternoonWorkers);
-        return '<tr>' +
-          '<td style="text-align:center;">' + (idx + 1) + '</td>' +
-          '<td style="text-align:center;white-space:nowrap;">' + escHtml(formatDisplayDate(l.date)) + '<br/><small style="color:#64748b;">(' + escHtml(l.staff || '') + ')</small></td>' +
-          '<td><b>' + escHtml(l.project) + '</b><br/>' + escHtml(l.morningWork || '—') + '<br/><small style="color:#0369a1;">Thợ (' + mDays + 'c): ' + escHtml((l.morningWorkers || []).join(', ') || '—') + '</small></td>' +
-          '<td>' + escHtml(l.afternoonWork || '—') + '<br/><small style="color:#0369a1;">Thợ (' + aDays + 'c): ' + escHtml((l.afternoonWorkers || []).join(', ') || '—') + '</small></td>' +
-          '<td style="text-align:center;font-weight:bold;">' + (mDays + aDays) + '</td>' +
-        '</tr>';
-      }).join('');
-
-      var workerBadges = Object.keys(d.workerTotals).map(function(w) {
-        return '<span style="display:inline-block;margin:2px 4px 2px 0;padding:3px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:11px;"><b>' + escHtml(w) + ':</b> ' + d.workerTotals[w] + ' công</span>';
-      }).join('');
-
-      var w = window.open('', '_blank');
-      if (!w) { alert('Vui lòng cho phép trình duyệt mở cửa sổ in A4!'); return; }
-      w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Báo Cáo Nhật Ký Công Trình - ' + escHtml(d.projCode) + '</title>' +
-        '<style>@page{size:A4 portrait;margin:14mm;}body{font-family:"Segoe UI",Arial,sans-serif;color:#1e293b;font-size:12px;line-height:1.45;}' +
-        '.hdr{border-bottom:2px solid #EA580C;padding-bottom:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-end;}' +
-        'table{width:100%;border-collapse:collapse;margin-top:8px;}th,td{border:1px solid #cbd5e1;padding:6px 8px;vertical-align:top;}' +
-        'th{background:#f8fafc;color:#0f172a;font-weight:700;text-align:left;}' +
-        '.sign{margin-top:26px;display:flex;justify-content:space-between;text-align:center;}' +
-        '@media print{.no-print{display:none;}}</style></head><body>' +
-        '<div class="no-print" style="background:#FFF7ED;border:1px solid #FDBA74;padding:8px 12px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">' +
-          '<span>Bấm <b>In / Lưu PDF</b> để xuất bản báo cáo chuẩn khổ A4</span>' +
-          '<button onclick="window.print()" style="background:#EA580C;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ In / Lưu PDF A4</button>' +
-        '</div>' +
-        '<div class="hdr"><div><div style="font-size:16px;font-weight:800;color:#EA580C;">CÔNG TY XÂY DỰNG TRỌN GÓI KHỞI AN</div><div style="font-size:11px;color:#64748b;">Hệ thống Quản lý Thi công & Tài chính Minh bạch</div></div>' +
-        '<div style="text-align:right;font-size:11px;">Ngày xuất: ' + new Date().toLocaleDateString('vi-VN') + '</div></div>' +
-        '<h2 style="text-align:center;margin:8px 0 4px;font-size:16px;">BÁO CÁO NHẬT KÝ THI CÔNG & BẢNG CHẤM CÔNG</h2>' +
-        '<div style="background:#f8fafc;border:1px solid #e2e8f0;padding:8px 12px;border-radius:8px;margin-bottom:8px;">' +
-          '<b>Công trình:</b> ' + escHtml(d.projCode) + ' &nbsp;|&nbsp; <b>Chủ đầu tư:</b> ' + escHtml(d.customer) + ' &nbsp;|&nbsp; <b>Địa điểm:</b> ' + escHtml(d.address) + '<br/>' +
-          '<b>Tổng số ngày nhật ký:</b> ' + d.logs.length + ' ngày &nbsp;|&nbsp; <b>Tổng ngày công thực tế:</b> ' + d.grandTotalDays + ' công' +
-        '</div>' +
-        '<table><thead><tr><th style="width:32px;text-align:center;">STT</th><th style="width:82px;text-align:center;">Ngày</th><th>Công Việc & Thợ Ca Sáng</th><th>Công Việc & Thợ Ca Chiều</th><th style="width:52px;text-align:center;">Công</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
-        '<div style="margin-top:12px;"><b>Tổng hợp công theo từng thợ:</b><div style="margin-top:4px;">' + (workerBadges || '—') + '</div></div>' +
-        '<div class="sign"><div><b>NGƯỜI LẬP NHẬT KÝ</b><br/><small>(Ký, ghi rõ họ tên)</small></div><div><b>CHỈ HUY CÔNG TRÌNH</b><br/><small>(Ký, ghi rõ họ tên)</small></div><div><b>ĐẠI DIỆN CHỦ ĐẦU TƯ / GIÁM ĐỐC</b><br/><small>(Ký xác nhận)</small></div></div>' +
-        '</body></html>');
-      w.document.close();
-    };
-
-    window.exportSiteLogImagePNG = function() {
-      var d = buildSiteLogReportData();
-      if (!d.logs.length) { alert('Chưa có dữ liệu nhật ký để xuất ảnh!'); return; }
-
-      var W = 1240;
-      var lineH = 26;
-      var estimatedH = Math.max(1754, 480 + d.logs.length * 145 + Object.keys(d.workerTotals).length * 28);
-      var canvas = document.createElement('canvas');
-      canvas.width = W;
-      canvas.height = estimatedH;
-      var ctx = canvas.getContext('2d');
-
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, W, estimatedH);
-
-      ctx.fillStyle = '#EA580C';
-      ctx.fillRect(0, 0, W, 115);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 28px Arial, sans-serif';
-      ctx.fillText('CÔNG TY XÂY DỰNG TRỌN GÓI KHỞI AN', 50, 52);
-      ctx.font = '18px Arial, sans-serif';
-      ctx.fillText('BÁO CÁO NHẬT KÝ THI CÔNG & CHẤM CÔNG CÔNG TRÌNH (KHỔ A4)', 50, 88);
-
-      ctx.fillStyle = '#FFF7ED';
-      ctx.fillRect(50, 140, W - 100, 105);
-      ctx.strokeStyle = '#FDBA74';
-      ctx.strokeRect(50, 140, W - 100, 105);
-      ctx.fillStyle = '#1E293B';
-      ctx.font = 'bold 21px Arial, sans-serif';
-      ctx.fillText('Công trình: ' + d.projCode + '   |   Chủ đầu tư: ' + d.customer, 72, 180);
-      ctx.font = '18px Arial, sans-serif';
-      ctx.fillText('Địa điểm: ' + d.address + '   •   Số ngày: ' + d.logs.length + ' ngày   •   Tổng công: ' + d.grandTotalDays + ' công', 72, 220);
-
-      var y = 285;
-      function wrapTextLines(text, maxW) {
-        var words = String(text || '').split(/\s+/);
-        var lines = [], cur = '';
-        words.forEach(function(w) {
-          var test = cur ? cur + ' ' + w : w;
-          if (ctx.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; }
-          else { cur = test; }
-        });
-        if (cur) lines.push(cur);
-        return lines.length ? lines : ['—'];
-      }
-
-      d.logs.forEach(function(l, idx) {
-        var mDays = calcLogShiftDays(l.morningWorkers);
-        var aDays = calcLogShiftDays(l.afternoonWorkers);
-        ctx.font = '17px Arial, sans-serif';
-        var mLines = wrapTextLines('Ca Sáng (' + mDays + 'c): ' + (l.morningWork || '—') + ' [Thợ: ' + ((l.morningWorkers || []).join(', ') || '—') + ']', W - 150);
-        var aLines = wrapTextLines('Ca Chiều (' + aDays + 'c): ' + (l.afternoonWork || '—') + ' [Thợ: ' + ((l.afternoonWorkers || []).join(', ') || '—') + ']', W - 150);
-        var boxH = 54 + (mLines.length + aLines.length) * lineH + 16;
-
-        ctx.fillStyle = idx % 2 === 0 ? '#F8FAFC' : '#FFFFFF';
-        ctx.fillRect(50, y, W - 100, boxH);
-        ctx.strokeStyle = '#CBD5E1';
-        ctx.strokeRect(50, y, W - 100, boxH);
-
-        ctx.fillStyle = '#EA580C';
-        ctx.font = 'bold 19px Arial, sans-serif';
-        ctx.fillText((idx + 1) + '. Ngày ' + formatDisplayDate(l.date) + '  —  ' + (l.project || '') + '  (Tổng: ' + (mDays + aDays) + ' công | Ghi sổ: ' + (l.staff || '') + ')', 70, y + 32);
-
-        var ty = y + 62;
-        ctx.fillStyle = '#1E293B';
-        ctx.font = '17px Arial, sans-serif';
-        mLines.forEach(function(ln) { ctx.fillText(ln, 70, ty); ty += lineH; });
-        aLines.forEach(function(ln) { ctx.fillText(ln, 70, ty); ty += lineH; });
-        y += boxH + 14;
-      });
-
-      y += 15;
-      ctx.fillStyle = '#0F172A';
-      ctx.font = 'bold 20px Arial, sans-serif';
-      ctx.fillText('TỔNG HỢP NGÀY CÔNG TỪNG THỢ:', 50, y);
-      y += 30;
-      ctx.font = '18px Arial, sans-serif';
-      var summaryStr = Object.keys(d.workerTotals).map(function(w) { return w + ' (' + d.workerTotals[w] + 'c)'; }).join('  •  ');
-      wrapTextLines(summaryStr || '—', W - 100).forEach(function(ln) { ctx.fillText(ln, 50, y); y += lineH; });
-
-      y += 45;
-      ctx.font = 'bold 18px Arial, sans-serif';
-      ctx.fillText('NGƯỜI LẬP BÁO CÁO', 110, y);
-      ctx.fillText('CHỈ HUY CÔNG TRÌNH', 510, y);
-      ctx.fillText('GIÁM ĐỐC / CHỦ ĐẦU TƯ', 900, y);
-
-      var a = document.createElement('a');
-      a.href = canvas.toDataURL('image/png');
-      a.download = 'BaoCao_NhatKy_A4_' + d.projCode.replace(/[^a-zA-Z0-9_-]/g, '_') + '.png';
-      a.click();
-      if (typeof showToast === 'function') showToast('🖼️ Đã xuất Ảnh báo cáo A4 (PNG) sẵn sàng gửi Zalo');
-    };
-
-    function renderEnhancedSiteLogList() {
-      var box = document.querySelector('.v160-enhanced-log-list');
-      if (!box) return;
-      var res = getFilteredSiteLogs();
-      var logs = res.logs;
-      if (!logs.length) {
-        box.innerHTML = '<div class="text-center py-6 text-slate-400 text-[12.5px]">Chưa có nhật ký thi công nào cho lựa chọn này.</div>';
-        return;
-      }
-
-      box.innerHTML = logs.map(function(l) {
-        var mDays = calcLogShiftDays(l.morningWorkers);
-        var aDays = calcLogShiftDays(l.afternoonWorkers);
-        var totalDays = mDays + aDays;
-        var mWorkersStr = (l.morningWorkers || []).join(', ');
-        var aWorkersStr = (l.afternoonWorkers || []).join(', ');
-        var mPhotos = Array.isArray(l.morningPhotos) ? l.morningPhotos : [];
-        var aPhotos = Array.isArray(l.afternoonPhotos) ? l.afternoonPhotos : [];
-
-        var renderThumbs = function(arr) {
-          if (!arr.length) return '';
-          return '<div class="flex flex-wrap gap-1.5 mt-1.5">' + arr.map(function(src) {
-            return '<img src="' + escHtml(src) + '" class="w-12 h-12 rounded-lg object-cover border border-slate-200"/>';
-          }).join('') + '</div>';
+        var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
+        var DEFAULT_AVATAR_META = {
+          'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
+          'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
+          'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
+          'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
         };
 
-        return '<div class="p-3 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-2">' +
-          '<div class="flex items-center justify-between gap-2">' +
-            '<div class="flex items-center gap-1.5 flex-wrap">' +
-              '<span class="px-2.5 py-0.5 rounded-lg bg-orange-50 border border-orange-200 text-[#EA580C] text-[11px] font-extrabold">' + escHtml(l.project || 'Công trình') + '</span>' +
-              '<span class="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10.5px] font-bold">Tổng: ' + totalDays + ' công</span>' +
-            '</div>' +
-            '<div class="flex items-center gap-1.5 shrink-0">' +
-              '<span class="text-[11px] font-semibold text-slate-500 mr-1">' + escHtml(formatDisplayDate(l.date)) + '</span>' +
-              '<button type="button" onclick="openEditSiteLogModal(\'' + escHtml(l.id) + '\')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-[11px] font-bold">Sửa</button>' +
-              '<button type="button" onclick="deleteSiteLogItem(\'' + escHtml(l.id) + '\')" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold">Xóa</button>' +
-            '</div>' +
-          '</div>' +
-          (l.morningWork || mWorkersStr || mPhotos.length ? (
-            '<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-[12px] space-y-0.5">' +
-              '<div class="font-bold text-slate-800">☀️ Ca Sáng (' + mDays + ' công)</div>' +
-              (l.morningWork ? '<div class="text-slate-700">' + escHtml(l.morningWork) + '</div>' : '') +
-              (mWorkersStr ? '<div class="text-[11px] text-slate-500">Thợ: <b>' + escHtml(mWorkersStr) + '</b></div>' : '') +
-              renderThumbs(mPhotos) +
-            '</div>'
-          ) : '') +
-          (l.afternoonWork || aWorkersStr || aPhotos.length ? (
-            '<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-[12px] space-y-0.5">' +
-              '<div class="font-bold text-slate-800">🌤️ Ca Chiều (' + aDays + ' công)</div>' +
-              (l.afternoonWork ? '<div class="text-slate-700">' + escHtml(l.afternoonWork) + '</div>' : '') +
-              (aWorkersStr ? '<div class="text-[11px] text-slate-500">Thợ: <b>' + escHtml(aWorkersStr) + '</b></div>' : '') +
-              renderThumbs(aPhotos) +
-            '</div>'
-          ) : '') +
-          '<div class="text-[10.5px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-100">' +
-            '<span>Người ghi: <b>' + escHtml(l.staff || '—') + '</b></span>' +
-            '<button type="button" onclick="syncSiteLogsOnlyToSheets(true)" class="text-emerald-700 font-bold hover:underline">☁️ Đồng bộ Sheets</button>' +
-          '</div>' +
-        '</div>';
-      }).join('');
-    }
-
-    function enhanceSiteLogSummaryModal() {
-      var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
-      var modalTitle = headings.find(function(el) {
-        return el.children.length === 0 && el.textContent && el.textContent.indexOf('Nhật Ký Công Trình & Chấm Công') !== -1 && el.offsetParent !== null;
-      });
-      if (!modalTitle) return;
-
-      var modal = modalTitle.parentElement;
-      while (modal && modal.parentElement && modal.parentElement !== document.body) {
-        if (modal.clientHeight > 260 && modal.clientWidth > 280) break;
-        modal = modal.parentElement;
-      }
-      if (!modal) return;
-
-      var summaryTab = Array.from(modal.querySelectorAll('button, div')).find(function(el) {
-        return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Sổ Nhật Ký & Tổng Hợp';
-      });
-      if (!summaryTab) return;
-
-      var isSummaryActive = summaryTab.className.indexOf('bg-[#EA580C]') !== -1 || summaryTab.className.indexOf('text-white') !== -1;
-      var existingToolbar = modal.querySelector('.v160-log-toolbar');
-      var existingList = modal.querySelector('.v160-enhanced-log-list');
-
-      if (!isSummaryActive) {
-        if (existingToolbar) existingToolbar.style.display = 'none';
-        if (existingList) existingList.style.display = 'none';
-        return;
-      }
-
-      var filterBox = Array.from(modal.querySelectorAll('div, select')).find(function(el) {
-        return el.textContent && el.textContent.indexOf('Tất cả công trình') !== -1 && el.clientHeight > 25 && el.clientHeight < 65 && !el.classList.contains('v160-log-proj-filter');
-      });
-      if (!filterBox) return;
-
-      // Ẩn danh sách đọc tĩnh cũ để hiển thị danh sách tương tác mới
-      var sibling = filterBox.nextElementSibling;
-      while (sibling) {
-        if (!sibling.classList.contains('v160-log-toolbar') && !sibling.classList.contains('v160-enhanced-log-list')) {
-          sibling.style.display = 'none';
+        function escHtml(str) {
+          return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
-        sibling = sibling.nextElementSibling;
-      }
-
-      var realLogs = (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) ? siteLogs : [];
-      if (!existingToolbar) {
-        filterBox.style.display = 'none';
-        var projSet = new Set();
-        if (typeof projects !== 'undefined' && Array.isArray(projects)) {
-          projects.forEach(function(p) { if (p && p.code) projSet.add(String(p.code)); });
+        function fmtMoney(n) {
+          return Number(n || 0).toLocaleString('vi-VN') + ' ₫';
         }
-        realLogs.forEach(function(l) { if (l && l.project) projSet.add(String(l.project)); });
-
-        var opts = '<option value="">Tất cả công trình (' + realLogs.length + ' ngày nhật ký)</option>' +
-          Array.from(projSet).map(function(code) { return '<option value="' + escHtml(code) + '">' + escHtml(code) + '</option>'; }).join('');
-
-        var toolbar = document.createElement('div');
-        toolbar.className = 'v160-log-toolbar space-y-2 mb-2.5';
-        toolbar.innerHTML =
-          '<select class="v160-log-proj-filter w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-[12.5px] font-bold text-slate-800">' + opts + '</select>' +
-          '<div class="grid grid-cols-3 gap-1.5">' +
-            '<button type="button" onclick="exportSiteLogImagePNG()" class="py-1.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center justify-center gap-1 shadow-2xs">🖼️ Xuất Ảnh A4</button>' +
-            '<button type="button" onclick="exportSiteLogExcel()" class="py-1.5 px-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold flex items-center justify-center gap-1 shadow-2xs">📊 Xuất Excel</button>' +
-            '<button type="button" onclick="exportSiteLogPrintA4()" class="py-1.5 px-2 rounded-xl bg-[#EA580C] hover:bg-orange-700 text-white text-[11px] font-bold flex items-center justify-center gap-1 shadow-2xs">📄 In / PDF A4</button>' +
-          '</div>';
-
-        toolbar.querySelector('select').onchange = renderEnhancedSiteLogList;
-        filterBox.parentNode.insertBefore(toolbar, filterBox.nextSibling);
-
-        var listDiv = document.createElement('div');
-        listDiv.className = 'v160-enhanced-log-list space-y-2.5';
-        toolbar.parentNode.insertBefore(listDiv, toolbar.nextSibling);
-        renderEnhancedSiteLogList();
-      } else {
-        existingToolbar.style.display = 'block';
-        if (existingList) existingList.style.display = 'block';
-        var allOpt = existingToolbar.querySelector('option[value=""]');
-        if (allOpt) allOpt.textContent = 'Tất cả công trình (' + realLogs.length + ' ngày nhật ký)';
-        renderEnhancedSiteLogList();
-      }
-    }
-
-    // 4. TÀI KHOẢN NHÂN SỰ TGKA: GẮN ẢNH & NÚT ĐỔI ẢNH GỌN TRONG THẺ NHÂN SỰ
-    function enhanceAccountModalCards() {
-      var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
-      var accTitle = headings.find(function(el) {
-        return el.children.length === 0 && el.textContent && el.textContent.indexOf('Tài Khoản Nhân Sự') !== -1 && el.offsetParent !== null;
-      });
-      if (!accTitle) return;
-
-      var modal = accTitle.parentElement;
-      while (modal && modal.parentElement && modal.parentElement !== document.body) {
-        if (modal.clientHeight > 220 && modal.clientWidth > 260) break;
-        modal = modal.parentElement;
-      }
-      if (!modal) return;
-
-      Array.from(modal.querySelectorAll('button, div')).filter(function(el) {
-        return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Cập nhật ảnh đại diện cho tài khoản hiện tại';
-      }).forEach(function(el) {
-        var box = el.closest('button') || el.parentElement;
-        if (box && box !== modal) box.style.display = 'none';
-      });
-
-      Array.from(modal.querySelectorAll('div, span')).forEach(function(el) {
-        if (el.children.length > 0) return;
-        var stName = (el.textContent || '').trim();
-        if (!DEFAULT_AVATAR_META[stName]) return;
-
-        var card = el.parentElement;
-        while (card && card !== modal) {
-          var cardTxt = card.textContent || '';
-          if (cardTxt.indexOf('Đang dùng') !== -1 || cardTxt.indexOf('Chuyển sang') !== -1) break;
-          card = card.parentElement;
+        function loadStaffAvatars() {
+          try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
+          catch (e) { return {}; }
         }
-        if (!card || card === modal || card.classList.contains('v160-acc-row')) return;
-
-        card.classList.add('v160-acc-row');
-        card.style.display = 'flex';
-        card.style.alignItems = 'center';
-        card.style.justifyContent = 'space-between';
-        card.style.gap = '8px';
-
-        var nameRow = el.parentElement;
-        if (nameRow) {
-          Array.from(nameRow.querySelectorAll('svg, img, .v160-staff-avatar')).forEach(function(ic) { ic.remove(); });
+        function saveStaffAvatars(map) {
+          try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
         }
-        var leftAvatar = document.createElement('div');
-        leftAvatar.className = 'v160-acc-avatar shrink-0 flex items-center justify-center';
-        leftAvatar.innerHTML = makeAvatarHtml(stName, 36, 'margin-right:0;');
-        card.insertBefore(leftAvatar, card.firstChild);
-
-        var infoCol = card.children[1];
-        if (infoCol) {
-          infoCol.style.flex = '1 1 auto';
-          infoCol.style.minWidth = '0';
+        function makeAvatarHtml(staffName, sizePx, extraStyle) {
+          var name = String(staffName || '').trim();
+          var meta = DEFAULT_AVATAR_META[name];
+          if (!meta) return '';
+          var saved = loadStaffAvatars()[name];
+          var sz = sizePx || 18;
+          var st = extraStyle || 'margin-right:5px;';
+          if (saved) {
+            return '<img src="' + saved + '" alt="' + escHtml(name) + '" class="v161-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;' + st + '"/>';
+          }
+          return '<span class="v161-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.44) + 'px;line-height:1;' + st + '">' + meta.initials + '</span>';
         }
 
-        var statusBtn = Array.from(card.querySelectorAll('button, span')).find(function(b) {
-          var t = (b.textContent || '').trim();
-          return t === 'Đang dùng' || t === 'Chuyển sang';
-        });
-        if (statusBtn) {
-          statusBtn.style.whiteSpace = 'nowrap';
-          statusBtn.style.flexShrink = '0';
-          var rightGroup = document.createElement('div');
-          rightGroup.className = 'v160-acc-actions flex items-center gap-1.5 shrink-0';
-
-          var uploadLabel = document.createElement('label');
-          uploadLabel.className = 'px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-[#EA580C] text-[11px] font-bold cursor-pointer hover:bg-orange-100 transition whitespace-nowrap shrink-0';
-          uploadLabel.textContent = 'Đổi ảnh';
-          uploadLabel.onclick = function(ev) { ev.stopPropagation(); };
-
-          var fileInp = document.createElement('input');
-          fileInp.type = 'file';
-          fileInp.accept = 'image/*';
-          fileInp.className = 'hidden';
-          fileInp.onchange = function() { window.handleStaffAvatarUpload(stName, fileInp); };
-          uploadLabel.appendChild(fileInp);
-
-          statusBtn.parentNode.insertBefore(rightGroup, statusBtn);
-          rightGroup.appendChild(uploadLabel);
-          rightGroup.appendChild(statusBtn);
+        function parseTxDateScore(raw) {
+          var s = String(raw || '').trim();
+          if (!s) return 0;
+          var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+          if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
+          var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+          if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
+          return 0;
         }
-      });
-    }
+        function formatDisplayDate(raw) {
+          var s = String(raw || '').trim();
+          var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+          if (iso) return iso[3].padStart(2, '0') + '/' + iso[2].padStart(2, '0') + '/' + iso[1];
+          return s;
+        }
+        function getRowSeqScore(id) {
+          var m = String(id || '').match(/(\d+)$/);
+          return m ? Number(m[1]) : 0;
+        }
 
-    window.handleStaffAvatarUpload = function(staffName, input) {
-      var file = input.files && input.files[0];
-      if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        var img = new Image();
-        img.onload = function() {
-          var canvas = document.createElement('canvas');
-          canvas.width = 96; canvas.height = 96;
-          var ctx = canvas.getContext('2d');
-          var minSide = Math.min(img.width, img.height);
-          ctx.drawImage(img, (img.width - minSide) / 2, (img.height - minSide) / 2, minSide, minSide, 0, 0, 96, 96);
-          var map = loadStaffAvatars();
-          map[staffName] = canvas.toDataURL('image/jpeg', 0.8);
-          saveStaffAvatars(map);
-          runInstantDomSync(function() {
-            document.querySelectorAll('[data-v160-key]').forEach(function(el) { el.removeAttribute('data-v160-key'); });
-            document.querySelectorAll('.v160-acc-row').forEach(function(el) {
-              el.classList.remove('v160-acc-row');
-              var av = el.querySelector('.v160-acc-avatar'); if (av) av.remove();
-              var act = el.querySelector('.v160-acc-actions'); if (act) { var l = act.querySelector('label'); if (l) l.remove(); }
+        // =====================================================================
+        // PHẦN 1: PHÂN LOẠI 4 NHÓM CHI PHÍ NỘI BỘ (STT 1–229) & BÁO CÁO TÀI CHÍNH
+        // =====================================================================
+        function classifyInternalGroupV161(tx) {
+          if (!tx) return '';
+          var rawGrp = String(tx.internalGroup || '').trim();
+          var text = (rawGrp + ' ' + (tx.category || '') + ' ' + (tx.note || '')).toLowerCase();
+
+          // 1. Văn phòng (STT 1-47)
+          if (rawGrp.indexOf('Văn phòng') !== -1 || text.indexOf('trả lương') !== -1 || text.indexOf('tiền bảo hiểm') !== -1 || text.indexOf('tiền vp') !== -1 || text.indexOf('văn phòng') !== -1 || text.indexOf('thưởng') !== -1 || text.indexOf('khám sk') !== -1 || text.indexOf('đồng phục') !== -1 || text.indexOf('máy photo') !== -1) {
+            return 'Văn phòng';
+          }
+          // 2. Dụng cụ xây dựng (STT 48-187)
+          if (rawGrp.indexOf('Máy móc') !== -1 || rawGrp.indexOf('Dụng cụ') !== -1 || text.indexOf('cây chống') !== -1 || text.indexOf('ván sàn') !== -1 || text.indexOf('cốt pha') !== -1 || text.indexOf('que hàn') !== -1 || text.indexOf('mũi khoan') !== -1 || text.indexOf('thước') !== -1 || text.indexOf('dây xây') !== -1 || text.indexOf('máy đầm') !== -1 || text.indexOf('quấn mô tơ') !== -1 || text.indexOf('lưới') !== -1 || text.indexOf('xẻng') !== -1 || text.indexOf('máy cắt') !== -1 || text.indexOf('máy bơm') !== -1 || text.indexOf('bắn ghim') !== -1 || text.indexOf('ốc vít') !== -1 || text.indexOf('xe rùa') !== -1 || text.indexOf('xốp') !== -1 || text.indexOf('đinh bt') !== -1) {
+            return 'Dụng cụ xây dựng';
+          }
+          // 3. Xe bán tải (STT 188-203)
+          if (rawGrp.indexOf('Xăng xe') !== -1 || rawGrp.indexOf('Xe bán tải') !== -1 || text.indexOf('xe bán tải') !== -1 || text.indexOf('đổ dầu') !== -1 || text.indexOf('đăng kiểm') !== -1 || text.indexOf('bảo dưỡng xe') !== -1) {
+            return 'Xe bán tải';
+          }
+          // 4. Nhà thợ (STT 204-229 - bao gồm Ứng công thợ & Sinh hoạt ăn ở đội thợ)
+          if (rawGrp.indexOf('Nuôi ăn') !== -1 || rawGrp.indexOf('Nhà thợ') !== -1 || text.indexOf('ứng công thợ') !== -1 || text.indexOf('lương thợ') !== -1 || text.indexOf('tiền ăn') !== -1 || text.indexOf('mua gạo') !== -1 || text.indexOf('thuốc lá') !== -1 || text.indexOf('gia vị') !== -1 || text.indexOf('đổi ga') !== -1 || text.indexOf('đổi nước') !== -1 || text.indexOf('liên hoan') !== -1 || text.indexOf('tiền nhà') !== -1 || text.indexOf('tiền điện') !== -1 || text.indexOf('tiền nước') !== -1 || text.indexOf('sửa xe máy') !== -1 || text.indexOf('mua chè') !== -1 || text.indexOf('lễ cúng') !== -1 || text.indexOf('tạm trú') !== -1) {
+            return 'Nhà thợ';
+          }
+          return '';
+        }
+
+        function computeInternalCostSummary(txList) {
+          var groups = {
+            'Văn phòng':        { label: '1. Văn phòng (STT 1–47)', total: 0, count: 0, items: {}, color: '#0284C7', bg: 'bg-sky-50 border-sky-200 text-sky-800' },
+            'Dụng cụ xây dựng': { label: '2. Dụng cụ xây dựng (STT 48–187)', total: 0, count: 0, items: {}, color: '#D97706', bg: 'bg-amber-50 border-amber-200 text-amber-900' },
+            'Xe bán tải':       { label: '3. Xe bán tải (STT 188–203)', total: 0, count: 0, items: {}, color: '#059669', bg: 'bg-emerald-50 border-emerald-200 text-emerald-800' },
+            'Nhà thợ':          { label: '4. Nhà thợ (STT 204–229)', total: 0, count: 0, items: {}, color: '#7C3AED', bg: 'bg-purple-50 border-purple-200 text-purple-900' }
+          };
+          var workerWageSub = 0;
+          var workerLivingSub = 0;
+
+          (txList || []).forEach(function(tx) {
+            if (!tx) return;
+            var amt = Number(tx.amount) || 0;
+            if (amt <= 0) return;
+
+            var noteLower = String(tx.note || '').toLowerCase();
+            // Khoản ứng công thợ cho Quyển KA được ghi nhận vào nhóm Nhà thợ
+            if (tx.type === 'ChuyenQuy' && (noteLower.indexOf('ứng công thợ') !== -1 || String(tx.recipient || '').trim() === 'Quyển KA')) {
+              if (noteLower.indexOf('ứng công thợ') !== -1) {
+                groups['Nhà thợ'].total += amt;
+                groups['Nhà thợ'].count += 1;
+                groups['Nhà thợ'].items['Ứng / Trả công thợ'] = (groups['Nhà thợ'].items['Ứng / Trả công thợ'] || 0) + amt;
+                workerWageSub += amt;
+              }
+              return;
+            }
+
+            if (tx.type !== 'Chi') return;
+            var grp = classifyInternalGroupV161(tx);
+            if (!grp || !groups[grp]) return;
+
+            groups[grp].total += amt;
+            groups[grp].count += 1;
+            var itemName = String(tx.note || tx.category || 'Khoản chi khác').trim();
+            groups[grp].items[itemName] = (groups[grp].items[itemName] || 0) + amt;
+
+            if (grp === 'Nhà thợ') {
+              if (noteLower.indexOf('công thợ') !== -1 || noteLower.indexOf('lương thợ') !== -1) workerWageSub += amt;
+              else workerLivingSub += amt;
+            }
+          });
+
+          var grandTotal = groups['Văn phòng'].total + groups['Dụng cụ xây dựng'].total + groups['Xe bán tải'].total + groups['Nhà thợ'].total;
+          return {
+            groups: groups,
+            grandTotal: grandTotal,
+            workerWageSub: workerWageSub,
+            workerLivingSub: workerLivingSub
+          };
+        }
+
+        function injectInternalCostCardIntoFinancialReport() {
+          var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+          var repTitle = headings.find(function(el) {
+            return el.children.length === 0 && el.textContent && el.textContent.indexOf('Báo Cáo Tài Chính') !== -1 && el.offsetParent !== null;
+          });
+          if (!repTitle) return;
+
+          var modal = repTitle.parentElement;
+          while (modal && modal.parentElement && modal.parentElement !== document.body) {
+            if (modal.clientHeight > 260 && modal.clientWidth > 280) break;
+            modal = modal.parentElement;
+          }
+          if (!modal) return;
+
+          var scrollBody = Array.from(modal.querySelectorAll('div')).find(function(el) {
+            var st = window.getComputedStyle(el);
+            return (st.overflowY === 'auto' || st.overflowY === 'scroll') && el.clientHeight > 140;
+          });
+          if (!scrollBody) return;
+
+          // Lấy danh sách giao dịch đang lọc theo kỳ hiện tại trên app (nếu có hàm getFilteredTransactions)
+          var activeList = (typeof getFilteredTransactions === 'function')
+            ? getFilteredTransactions()
+            : ((typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : []);
+
+          var stats = computeInternalCostSummary(activeList);
+          var sig = [activeList.length, stats.grandTotal, stats.groups['Nhà thợ'].total].join('|');
+          var existingCard = scrollBody.querySelector('.v161-internal-cost-card');
+          if (existingCard && existingCard.getAttribute('data-sig') === sig) return;
+
+          var groupKeys = ['Văn phòng', 'Dụng cụ xây dựng', 'Xe bán tải', 'Nhà thợ'];
+          var cardsHtml = groupKeys.map(function(k) {
+            var g = stats.groups[k];
+            var pct = stats.grandTotal > 0 ? Math.round((g.total / stats.grandTotal) * 100) : 0;
+            var subHtml = '';
+            if (k === 'Nhà thợ') {
+              subHtml =
+                '<div class="mt-1.5 pt-1.5 border-t border-purple-200/70 grid grid-cols-2 gap-1.5 text-[10.5px]">' +
+                  '<div class="bg-white/80 rounded-lg px-2 py-1"><div class="text-slate-500">Ứng / Lương thợ:</div><div class="font-bold text-purple-900 tabular-nums">' + fmtMoney(stats.workerWageSub) + '</div></div>' +
+                  '<div class="bg-white/80 rounded-lg px-2 py-1"><div class="text-slate-500">Sinh hoạt, ăn ở thợ:</div><div class="font-bold text-purple-900 tabular-nums">' + fmtMoney(stats.workerLivingSub) + '</div></div>' +
+                '</div>';
+            }
+            return '<div class="p-2.5 rounded-xl border ' + g.bg + '">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<div class="font-bold text-[11.5px]">' + g.label + '</div>' +
+                '<div class="font-extrabold text-[12.5px] tabular-nums whitespace-nowrap">' + fmtMoney(g.total) + ' <span class="text-[10px] font-semibold opacity-75">(' + pct + '%)</span></div>' +
+              '</div>' +
+              '<div class="w-full h-1.5 bg-white/80 rounded-full overflow-hidden mt-1.5">' +
+                '<div style="width:' + pct + '%;background:' + g.color + ';height:100%;"></div>' +
+              '</div>' +
+              subHtml +
+            '</div>';
+          }).join('');
+
+          // Bảng chi tiết từng hạng mục bên trong 4 nhóm
+          var detailRows = [];
+          groupKeys.forEach(function(k) {
+            var g = stats.groups[k];
+            Object.keys(g.items).sort(function(a, b) { return g.items[b] - g.items[a]; }).forEach(function(itemName) {
+              detailRows.push(
+                '<tr class="border-b border-slate-100">' +
+                  '<td class="py-1.5 pr-2 font-medium text-slate-700">' + escHtml(itemName) + '</td>' +
+                  '<td class="py-1.5 px-1.5 text-[10px] text-slate-500 whitespace-nowrap">' + escHtml(k) + '</td>' +
+                  '<td class="py-1.5 pl-2 text-right font-bold text-slate-800 tabular-nums whitespace-nowrap">' + fmtMoney(g.items[itemName]) + '</td>' +
+                '</tr>'
+              );
             });
+          });
+
+          var card = existingCard || document.createElement('div');
+          card.className = 'v161-internal-cost-card rounded-2xl border border-orange-200 bg-white p-3.5 shadow-2xs space-y-2.5 mt-3';
+          card.setAttribute('data-sig', sig);
+          card.innerHTML =
+            '<div class="flex items-center justify-between gap-2 border-b border-orange-100 pb-2">' +
+              '<div>' +
+                '<div class="text-[12.5px] font-extrabold text-[#9A3412]">🏢 Chi Phí Nội Bộ Vận Hành (4 Nhóm STT 1–229)</div>' +
+                '<div class="text-[10.5px] text-slate-500">Tách bạch khỏi chi phí trực tiếp từng công trình</div>' +
+              '</div>' +
+              '<div class="text-right">' +
+                '<div class="text-[14px] font-extrabold text-[#EA580C] tabular-nums">' + fmtMoney(stats.grandTotal) + '</div>' +
+                '<button type="button" onclick="var el=this.closest(\'.v161-internal-cost-card\').querySelector(\'.v161-ic-detail\');el.classList.toggle(\'hidden\');" class="text-[10.5px] font-bold text-sky-700 underline">Xem chi tiết (' + detailRows.length + ' mục)</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="space-y-2">' + cardsHtml + '</div>' +
+            '<div class="v161-ic-detail hidden pt-2 border-t border-slate-100 max-h-60 overflow-y-auto">' +
+              '<table class="w-full text-[11px]"><thead><tr class="text-left text-slate-400 border-b border-slate-200"><th class="pb-1">Nội dung</th><th class="pb-1">Nhóm</th><th class="pb-1 text-right">Tổng chi</th></tr></thead><tbody>' +
+                (detailRows.join('') || '<tr><td colspan="3" class="py-2 text-center text-slate-400">Chưa có khoản chi nội bộ trong kỳ</td></tr>') +
+              '</tbody></table>' +
+            '</div>';
+
+          if (!existingCard) {
+            scrollBody.appendChild(card);
+          }
+        }
+
+        // =====================================================================
+        // PHẦN 2: LỊCH SỬ GIAO DỊCH 3 TẦNG (CÓ ĐỐI TÁC, KHÔNG TRÙNG TÊN CT, MỚI NHẤT LÊN ĐẦU)
+        // =====================================================================
+        window.sortTransactionsNewestFirst = function(forceRender) {
+          if (typeof transactions === 'undefined' || !Array.isArray(transactions) || transactions.length < 2) return;
+          var firstScore = parseTxDateScore(transactions[0].date);
+          var lastScore = parseTxDateScore(transactions[transactions.length - 1].date);
+          if (!forceRender && firstScore >= lastScore && window._v161SortedLen === transactions.length) return;
+
+          transactions.sort(function(a, b) {
+            var da = parseTxDateScore(a.date);
+            var db = parseTxDateScore(b.date);
+            if (db !== da) return db - da;
+            var idA = String(a.id || '');
+            var idB = String(b.id || '');
+            var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
+            var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
+            if (isImpB !== isImpA) return isImpB - isImpA;
+            return getRowSeqScore(idB) - getRowSeqScore(idA);
+          });
+          window._v161SortedLen = transactions.length;
+          if (typeof renderDashboard === 'function') renderDashboard();
+        };
+
+        function enrichTransactionCards() {
+          if (typeof transactions === 'undefined' || !Array.isArray(transactions) || !transactions.length) return;
+          var txById = {};
+          transactions.forEach(function(t) { if (t && t.id) txById[String(t.id)] = t; });
+
+          var allBtns = document.querySelectorAll('button');
+          for (var i = 0; i < allBtns.length; i++) {
+            var btn = allBtns[i];
+            if ((btn.textContent || '').trim() !== 'Sửa') continue;
+            var oc = btn.getAttribute('onclick') || '';
+            var m = oc.match(/['"]([^'"]+)['"]/);
+            if (!m) continue;
+            var tx = txById[m[1]];
+            if (!tx) continue;
+
+            var card = btn.parentElement;
+            while (card && card !== document.body) {
+              if (card.className && (card.className.indexOf('rounded-2xl') !== -1 || card.className.indexOf('rounded-xl') !== -1) && card.clientHeight >= 55 && card.clientHeight <= 260) {
+                break;
+              }
+              card = card.parentElement;
+            }
+            if (!card || card === document.body) continue;
+
+            var isMasked = (card.textContent || '').indexOf('***') !== -1;
+            var resolvedGroup = classifyInternalGroupV161(tx) || tx.internalGroup || '';
+            var renderKey = [tx.id, tx.date, tx.type, tx.staff, tx.recipient, tx.amount, tx.project, tx.partner, tx.category, resolvedGroup, tx.note, isMasked ? 'M' : 'V'].join('|');
+            if (card.getAttribute('data-v161-key') === renderKey) continue;
+
+            var delBtn = Array.from(card.querySelectorAll('button')).find(function(b) { return (b.textContent || '').trim() === 'Xóa'; });
+            var delOnclick = delBtn ? delBtn.getAttribute('onclick') : '';
+            var editOnclick = btn.getAttribute('onclick');
+
+            var isThu = tx.type === 'Thu';
+            var isTransfer = tx.type === 'ChuyenQuy';
+            var badgeBg = isThu ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (isTransfer ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-rose-50 text-rose-700 border-rose-200');
+            var badgeText = isThu ? 'THU' : (isTransfer ? 'CHUYỂN QUỸ' : 'CHI');
+            var amountColor = isThu ? 'text-emerald-600' : (isTransfer ? 'text-blue-600' : 'text-rose-600');
+            var sign = isThu ? '+' : (isTransfer ? '⇄ ' : '-');
+            var amtFormatted = isMasked ? '*** *** đ' : (sign + Number(tx.amount || 0).toLocaleString('vi-VN') + ' đ');
+
+            // Tầng 1: CHỈ tên nhân viên (+ người nhận nếu chuyển quỹ), KHÔNG ghép lặp tên công trình
+            var staffDisplay = escHtml(tx.staff || 'Việt KA');
+            if (isTransfer && tx.recipient) staffDisplay += ' → ' + escHtml(tx.recipient);
+
+            // Tầng 2: Nội dung chính
+            var titleText = escHtml(tx.note || tx.category || (isThu ? 'Thu tiền hợp đồng' : 'Chi phí công trình'));
+
+            // Tầng 3: Các thẻ tag tách biệt (Công trình xuất hiện 1 lần duy nhất + Đối tác + Hạng mục + Nhóm nội bộ)
+            var tagsHtml = '';
+            if (tx.project) {
+              tagsHtml += '<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:700;" class="bg-orange-50 text-[#C2410C] border border-orange-200">🏗️ ' + escHtml(tx.project) + '</span>';
+            }
+            if (tx.partner) {
+              tagsHtml += '<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:700;" class="bg-indigo-50 text-indigo-700 border border-indigo-200">🤝 Đối tác: ' + escHtml(tx.partner) + '</span>';
+            }
+            if (tx.category && tx.category !== tx.note) {
+              tagsHtml += '<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:600;" class="bg-slate-100 text-slate-700 border border-slate-200">🏷️ ' + escHtml(tx.category) + '</span>';
+            }
+            if (resolvedGroup) {
+              tagsHtml += '<span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:6px;font-size:10.5px;font-weight:700;" class="bg-purple-50 text-purple-800 border border-purple-200">🏢 ' + escHtml(resolvedGroup) + '</span>';
+            }
+
+            card.setAttribute('data-v161-key', renderKey);
+            card.innerHTML =
+              '<div class="flex items-start justify-between gap-2">' +
+                '<div class="flex items-center flex-wrap gap-1.5 min-w-0">' +
+                  '<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-orange-50 border border-orange-200 text-[#9A3412] text-[11px] font-bold whitespace-nowrap">' +
+                    makeAvatarHtml(tx.staff, 17, 'margin-right:4px;') + staffDisplay +
+                  '</span>' +
+                  '<span class="px-2 py-0.5 rounded-md border text-[10px] font-extrabold tracking-wide whitespace-nowrap ' + badgeBg + '">' + badgeText + '</span>' +
+                '</div>' +
+                '<div class="font-extrabold text-[13.5px] whitespace-nowrap shrink-0 tabular-nums ' + amountColor + '">' + amtFormatted + '</div>' +
+              '</div>' +
+              '<div class="mt-1.5 text-[13px] font-bold text-slate-800 leading-snug break-words">' + titleText + '</div>' +
+              (tagsHtml ? '<div class="mt-1.5 flex flex-wrap gap-1.5">' + tagsHtml + '</div>' : '') +
+              '<div class="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between gap-2">' +
+                '<div class="text-[11px] font-medium text-slate-500 whitespace-nowrap">📅 ' + escHtml(formatDisplayDate(tx.date)) + '</div>' +
+                '<div class="flex items-center gap-1.5 shrink-0">' +
+                  '<button type="button" onclick="' + escHtml(editOnclick) + '" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold">Sửa</button>' +
+                  (delOnclick ? '<button type="button" onclick="' + escHtml(delOnclick) + '" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold">Xóa</button>' : '') +
+                '</div>' +
+              '</div>';
+          }
+        }
+
+        // =====================================================================
+        // PHẦN 3: NHẬT KÝ CÔNG TRÌNH & CHẤM CÔNG (ẨN CT HOÀN THÀNH, TÌM KIẾM NHIỀU NĂM, SỬA & XUẤT A4)
+        // =====================================================================
+        function isProjectCompleted(proj) {
+          if (!proj) return false;
+          var st = String(proj.status || '').toLowerCase();
+          return st.indexOf('hoàn thành') !== -1 || st.indexOf('bàn giao') !== -1 || st.indexOf('quyết toán') !== -1;
+        }
+
+        // Lọc dropdown #log-project ở tab Ghi Nhật Ký Mới: chỉ hiển thị công trình Đang thi công
+        function filterNewSiteLogProjectSelect() {
+          var logProj = document.getElementById('log-project');
+          if (!logProj || typeof projects === 'undefined' || !Array.isArray(projects)) return;
+
+          var showAllChk = document.getElementById('v161-show-completed-proj');
+          if (!showAllChk && logProj.parentElement) {
+            var lbl = document.createElement('label');
+            lbl.className = 'mt-1 inline-flex items-center gap-1.5 text-[10.5px] text-slate-500 cursor-pointer select-none';
+            lbl.innerHTML = '<input id="v161-show-completed-proj" type="checkbox" class="accent-[#EA580C]"/><span>Hiện cả công trình đã hoàn thành</span>';
+            lbl.querySelector('input').onchange = function() {
+              logProj.removeAttribute('data-v161-filtered');
+              filterNewSiteLogProjectSelect();
+            };
+            logProj.parentElement.appendChild(lbl);
+            showAllChk = lbl.querySelector('input');
+          }
+
+          var includeCompleted = showAllChk && showAllChk.checked;
+          var key = (includeCompleted ? 'ALL_' : 'ACT_') + projects.length;
+          if (logProj.getAttribute('data-v161-filtered') === key) return;
+
+          var curVal = logProj.value;
+          var filtered = includeCompleted ? projects : projects.filter(function(p) { return !isProjectCompleted(p); });
+          if (!filtered.length) filtered = projects;
+
+          logProj.innerHTML = filtered.map(function(p) {
+            return '<option value="' + escHtml(p.code) + '">' + escHtml(p.code) + (isProjectCompleted(p) ? ' (Hoàn thành)' : '') + '</option>';
+          }).join('');
+          if (curVal && filtered.some(function(p) { return p.code === curVal; })) {
+            logProj.value = curVal;
+          }
+          logProj.setAttribute('data-v161-filtered', key);
+        }
+
+        window.syncSiteLogsOnlyToSheets = function(showNotify) {
+          if (typeof execUrl === 'undefined' || !execUrl || String(execUrl).indexOf('http') !== 0) return;
+          var list = (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) ? siteLogs : [];
+          fetch(execUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ siteLogs: list })
+          }).then(function() {
+            if (showNotify && typeof showToast === 'function') {
+              showToast('☁️ Đã lưu ' + list.length + ' ngày nhật ký lên tab NhatKyCongTrinh');
+            }
+          }).catch(function() {});
+        };
+
+        var _lastSiteLogsSig = '';
+        if (typeof saveAllLocal === 'function') {
+          var _origSaveAllLocal = saveAllLocal;
+          saveAllLocal = function() {
+            _origSaveAllLocal.apply(this, arguments);
+            if (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) {
+              var sig = JSON.stringify(siteLogs.map(function(l) {
+                return [l.id, l.date, l.project, l.morningWork, (l.morningWorkers || []).length, l.afternoonWork, (l.afternoonWorkers || []).length];
+              }));
+              if (sig !== _lastSiteLogsSig) {
+                _lastSiteLogsSig = sig;
+                window.syncSiteLogsOnlyToSheets(false);
+              }
+            }
+          };
+        }
+
+        function calcLogShiftDays(workersArr) {
+          return (Array.isArray(workersArr) && workersArr.length) ? (workersArr.length * 0.5) : 0;
+        }
+
+        function getFilteredSiteLogsV161() {
+          var logs = (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) ? siteLogs.slice() : [];
+          var projList = (typeof projects !== 'undefined' && Array.isArray(projects)) ? projects : [];
+          var projMap = {};
+          projList.forEach(function(p) { if (p && p.code) projMap[String(p.code)] = p; });
+
+          var yearVal = (document.querySelector('.v161-log-year-filter') || {}).value || '';
+          var statusVal = (document.querySelector('.v161-log-status-filter') || {}).value || '';
+          var projVal = (document.querySelector('.v161-log-proj-filter') || {}).value || '';
+          var kwVal = String((document.querySelector('.v161-log-search-input') || {}).value || '').trim().toLowerCase();
+
+          if (yearVal) {
+            logs = logs.filter(function(l) { return String(l.date || '').indexOf(yearVal) === 0; });
+          }
+          if (statusVal) {
+            logs = logs.filter(function(l) {
+              var p = projMap[String(l.project || '')];
+              var done = isProjectCompleted(p);
+              return statusVal === 'done' ? done : !done;
+            });
+          }
+          if (projVal) {
+            logs = logs.filter(function(l) { return String(l.project || '').trim() === projVal; });
+          }
+          if (kwVal) {
+            logs = logs.filter(function(l) {
+              var blob = [l.project, l.staff, l.morningWork, l.afternoonWork, (l.morningWorkers || []).join(' '), (l.afternoonWorkers || []).join(' '), formatDisplayDate(l.date)].join(' ').toLowerCase();
+              return blob.indexOf(kwVal) !== -1;
+            });
+          }
+
+          logs.sort(function(a, b) { return parseTxDateScore(b.date) - parseTxDateScore(a.date); });
+          return { logs: logs, projectCode: projVal };
+        }
+
+        window.openEditSiteLogModal = function(logId) {
+          if (typeof siteLogs === 'undefined' || !Array.isArray(siteLogs)) return;
+          var log = siteLogs.find(function(l) { return String(l.id) === String(logId); });
+          if (!log) return;
+
+          var old = document.getElementById('v161-edit-log-modal');
+          if (old) old.remove();
+
+          var allProjects = (typeof projects !== 'undefined' && Array.isArray(projects)) ? projects : [];
+          var projOpts = allProjects.map(function(p) {
+            var sel = String(p.code) === String(log.project) ? 'selected' : '';
+            return '<option value="' + escHtml(p.code) + '" ' + sel + '>' + escHtml(p.code + (p.customer && p.customer !== p.code ? ' - ' + p.customer : '')) + '</option>';
+          }).join('');
+          if (log.project && !allProjects.some(function(p) { return String(p.code) === String(log.project); })) {
+            projOpts = '<option value="' + escHtml(log.project) + '" selected>' + escHtml(log.project) + '</option>' + projOpts;
+          }
+
+          var allWorkers = (typeof workers !== 'undefined' && Array.isArray(workers) && workers.length)
+            ? workers.map(function(w) { return w.name; })
+            : Array.from(new Set([].concat(log.morningWorkers || [], log.afternoonWorkers || [])));
+
+          var makeWorkerCheckboxes = function(prefix, selectedList) {
+            var set = new Set((selectedList || []).map(function(x) { return String(x).trim(); }));
+            if (!allWorkers.length) return '<div class="text-[11px] text-slate-400">Chưa có danh sách thợ</div>';
+            return allWorkers.map(function(name) {
+              var chk = set.has(name) ? 'checked' : '';
+              return '<label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-200 bg-white text-[11.5px] font-medium cursor-pointer">' +
+                '<input type="checkbox" class="' + prefix + '-chk accent-[#EA580C]" value="' + escHtml(name) + '" ' + chk + '/>' +
+                '<span>' + escHtml(name) + '</span>' +
+              '</label>';
+            }).join('');
+          };
+
+          var wrap = document.createElement('div');
+          wrap.id = 'v161-edit-log-modal';
+          wrap.className = 'fixed inset-0 z-[9999] bg-black/60 flex items-center justify-center p-3';
+          wrap.innerHTML =
+            '<div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">' +
+              '<div class="bg-[#EA580C] text-white px-4 py-3 flex items-center justify-between">' +
+                '<div class="font-bold text-[15px]">Sửa Nhật Ký Công Trình & Chấm Công</div>' +
+                '<button type="button" onclick="document.getElementById(\'v161-edit-log-modal\').remove()" class="w-8 h-8 rounded-full bg-white/20 text-white font-bold">✕</button>' +
+              '</div>' +
+              '<div class="p-4 overflow-y-auto space-y-3 text-[12.5px]">' +
+                '<div class="grid grid-cols-2 gap-2.5">' +
+                  '<div><label class="block font-bold text-slate-700 mb-1">Ngày thi công</label>' +
+                    '<input id="v161-elog-date" type="date" value="' + escHtml(log.date || '') + '" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold"/>' +
+                  '</div>' +
+                  '<div><label class="block font-bold text-slate-700 mb-1">Công trình</label>' +
+                    '<select id="v161-elog-proj" class="w-full px-3 py-2 rounded-xl border border-slate-300 font-semibold">' + projOpts + '</select>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="p-3 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2">' +
+                  '<div class="font-bold text-amber-900">☀️ Ca Sáng</div>' +
+                  '<textarea id="v161-elog-mwork" rows="2" placeholder="Nội dung công việc ca sáng..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">' + escHtml(log.morningWork || '') + '</textarea>' +
+                  '<div class="text-[11px] font-bold text-slate-600">Chấm công thợ Ca Sáng (0.5 công/người):</div>' +
+                  '<div class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">' + makeWorkerCheckboxes('v161-mw', log.morningWorkers) + '</div>' +
+                '</div>' +
+                '<div class="p-3 rounded-2xl bg-sky-50/70 border border-sky-200 space-y-2">' +
+                  '<div class="font-bold text-sky-900">🌤️ Ca Chiều</div>' +
+                  '<textarea id="v161-elog-awork" rows="2" placeholder="Nội dung công việc ca chiều..." class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white">' + escHtml(log.afternoonWork || '') + '</textarea>' +
+                  '<div class="text-[11px] font-bold text-slate-600">Chấm công thợ Ca Chiều (0.5 công/người):</div>' +
+                  '<div class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">' + makeWorkerCheckboxes('v161-aw', log.afternoonWorkers) + '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="px-4 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-2">' +
+                '<button type="button" onclick="document.getElementById(\'v161-edit-log-modal\').remove()" class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 font-bold text-[12.5px]">Hủy</button>' +
+                '<button type="button" onclick="saveEditedSiteLog(\'' + escHtml(log.id) + '\')" class="px-4 py-2 rounded-xl bg-[#EA580C] text-white font-bold text-[12.5px] shadow">Lưu & Đồng Bộ Sheets</button>' +
+              '</div>' +
+            '</div>';
+          document.body.appendChild(wrap);
+        };
+
+        window.saveEditedSiteLog = function(logId) {
+          if (typeof siteLogs === 'undefined' || !Array.isArray(siteLogs)) return;
+          var idx = siteLogs.findIndex(function(l) { return String(l.id) === String(logId); });
+          if (idx < 0) return;
+          var log = siteLogs[idx];
+          log.date = document.getElementById('v161-elog-date').value || log.date;
+          log.project = document.getElementById('v161-elog-proj').value || log.project;
+          log.morningWork = document.getElementById('v161-elog-mwork').value.trim();
+          log.afternoonWork = document.getElementById('v161-elog-awork').value.trim();
+          log.morningWorkers = Array.from(document.querySelectorAll('.v161-mw-chk:checked')).map(function(c) { return c.value; });
+          log.afternoonWorkers = Array.from(document.querySelectorAll('.v161-aw-chk:checked')).map(function(c) { return c.value; });
+
+          if (typeof saveAllLocal === 'function') saveAllLocal();
+          window.syncSiteLogsOnlyToSheets(true);
+          var m = document.getElementById('v161-edit-log-modal');
+          if (m) m.remove();
+          renderEnhancedSiteLogList();
+        };
+
+        window.deleteSiteLogItem = function(logId) {
+          if (!confirm('Bạn có chắc muốn xóa ngày nhật ký thi công này không?')) return;
+          if (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) {
+            siteLogs = siteLogs.filter(function(l) { return String(l.id) !== String(logId); });
+          }
+          if (typeof saveAllLocal === 'function') saveAllLocal();
+          window.syncSiteLogsOnlyToSheets(true);
+          renderEnhancedSiteLogList();
+        };
+
+        function buildSiteLogReportData() {
+          var res = getFilteredSiteLogsV161();
+          var logs = res.logs;
+          var projCode = res.projectCode || (logs[0] ? logs[0].project : 'TẤT CẢ CÔNG TRÌNH');
+          var projList = (typeof projects !== 'undefined' && Array.isArray(projects)) ? projects : [];
+          var projObj = projList.find(function(p) { return String(p.code) === String(projCode); }) || {};
+          var workerTotals = {};
+          var grandTotalDays = 0;
+
+          logs.forEach(function(l) {
+            var mList = Array.isArray(l.morningWorkers) ? l.morningWorkers : [];
+            var aList = Array.isArray(l.afternoonWorkers) ? l.afternoonWorkers : [];
+            grandTotalDays += (mList.length + aList.length) * 0.5;
+            mList.forEach(function(w) { workerTotals[w] = (workerTotals[w] || 0) + 0.5; });
+            aList.forEach(function(w) { workerTotals[w] = (workerTotals[w] || 0) + 0.5; });
+          });
+
+          return {
+            logs: logs,
+            projCode: projCode || 'TẤT CẢ CÔNG TRÌNH',
+            customer: projObj.customer || projCode || 'Chủ đầu tư',
+            address: projObj.address || 'Hà An',
+            workerTotals: workerTotals,
+            grandTotalDays: grandTotalDays
+          };
+        }
+
+        window.exportSiteLogExcel = function() {
+          var d = buildSiteLogReportData();
+          if (!d.logs.length) { alert('Chưa có dữ liệu nhật ký để xuất!'); return; }
+          var rowsHtml = d.logs.map(function(l, idx) {
+            var mDays = calcLogShiftDays(l.morningWorkers);
+            var aDays = calcLogShiftDays(l.afternoonWorkers);
+            return '<tr><td style="text-align:center;">' + (idx + 1) + '</td><td style="text-align:center;">' + escHtml(formatDisplayDate(l.date)) + '</td><td>' + escHtml(l.project) + '</td><td>' + escHtml(l.staff || '') + '</td><td>' + escHtml(l.morningWork || '-') + '</td><td>' + escHtml((l.morningWorkers || []).join(', ')) + ' (' + mDays + ' công)</td><td>' + escHtml(l.afternoonWork || '-') + '</td><td>' + escHtml((l.afternoonWorkers || []).join(', ')) + ' (' + aDays + ' công)</td><td style="text-align:center;font-weight:bold;">' + (mDays + aDays) + '</td></tr>';
+          }).join('');
+          var workerSummaryRows = Object.keys(d.workerTotals).map(function(w, i) {
+            return '<tr><td style="text-align:center;">' + (i + 1) + '</td><td>' + escHtml(w) + '</td><td style="text-align:center;font-weight:bold;">' + d.workerTotals[w] + '</td></tr>';
+          }).join('');
+          var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"/></head><body>' +
+            '<h2>BÁO CÁO NHẬT KÝ THI CÔNG & CHẤM CÔNG - CÔNG TY XÂY DỰNG TRỌN GÓI KHỞI AN</h2>' +
+            '<p><b>Công trình:</b> ' + escHtml(d.projCode) + ' | <b>Chủ đầu tư:</b> ' + escHtml(d.customer) + ' | <b>Địa chỉ:</b> ' + escHtml(d.address) + '</p>' +
+            '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;">' +
+              '<tr style="background:#EA580C;color:#FFFFFF;font-weight:bold;"><th>STT</th><th>Ngày</th><th>Mã Công Trình</th><th>Người Ghi</th><th>Nội Dung Ca Sáng</th><th>Thợ Ca Sáng</th><th>Nội Dung Ca Chiều</th><th>Thợ Ca Chiều</th><th>Tổng Công</th></tr>' + rowsHtml +
+              '<tr style="background:#FFF7ED;font-weight:bold;"><td colspan="8" style="text-align:right;">TỔNG CỘNG NGÀY CÔNG TOÀN ĐỢT:</td><td style="text-align:center;">' + d.grandTotalDays + '</td></tr>' +
+            '</table><br/><h3>BẢNG TỔNG HỢP CÔNG TỪNG THỢ</h3>' +
+            '<table border="1" cellspacing="0" cellpadding="5" style="border-collapse:collapse;font-family:Arial,sans-serif;font-size:12px;">' +
+              '<tr style="background:#1E293B;color:#FFFFFF;font-weight:bold;"><th>STT</th><th>Họ Tên Thợ</th><th>Tổng Số Công</th></tr>' + workerSummaryRows +
+            '</table></body></html>';
+          var blob = new Blob(['\ufeff', html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'NhatKy_ChamCong_' + d.projCode.replace(/[^a-zA-Z0-9_-]/g, '_') + '.xls';
+          a.click();
+          if (typeof showToast === 'function') showToast('📊 Đã xuất tệp Excel báo cáo Nhật ký & Chấm công');
+        };
+
+        window.exportSiteLogPrintA4 = function() {
+          var d = buildSiteLogReportData();
+          if (!d.logs.length) { alert('Chưa có dữ liệu nhật ký để xuất PDF/In!'); return; }
+          var rowsHtml = d.logs.map(function(l, idx) {
+            var mDays = calcLogShiftDays(l.morningWorkers);
+            var aDays = calcLogShiftDays(l.afternoonWorkers);
+            return '<tr><td style="text-align:center;">' + (idx + 1) + '</td><td style="text-align:center;white-space:nowrap;">' + escHtml(formatDisplayDate(l.date)) + '<br/><small style="color:#64748b;">(' + escHtml(l.staff || '') + ')</small></td><td><b>' + escHtml(l.project) + '</b><br/>' + escHtml(l.morningWork || '—') + '<br/><small style="color:#0369a1;">Thợ (' + mDays + 'c): ' + escHtml((l.morningWorkers || []).join(', ') || '—') + '</small></td><td>' + escHtml(l.afternoonWork || '—') + '<br/><small style="color:#0369a1;">Thợ (' + aDays + 'c): ' + escHtml((l.afternoonWorkers || []).join(', ') || '—') + '</small></td><td style="text-align:center;font-weight:bold;">' + (mDays + aDays) + '</td></tr>';
+          }).join('');
+          var workerBadges = Object.keys(d.workerTotals).map(function(w) {
+            return '<span style="display:inline-block;margin:2px 4px 2px 0;padding:3px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:11px;"><b>' + escHtml(w) + ':</b> ' + d.workerTotals[w] + ' công</span>';
+          }).join('');
+          var w = window.open('', '_blank');
+          if (!w) { alert('Vui lòng cho phép trình duyệt mở cửa sổ in A4!'); return; }
+          w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Báo Cáo Nhật Ký Công Trình - ' + escHtml(d.projCode) + '</title>' +
+            '<style>@page{size:A4 portrait;margin:14mm;}body{font-family:"Segoe UI",Arial,sans-serif;color:#1e293b;font-size:12px;line-height:1.45;}' +
+            '.hdr{border-bottom:2px solid #EA580C;padding-bottom:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:flex-end;}' +
+            'table{width:100%;border-collapse:collapse;margin-top:8px;}th,td{border:1px solid #cbd5e1;padding:6px 8px;vertical-align:top;}' +
+            'th{background:#f8fafc;color:#0f172a;font-weight:700;text-align:left;}' +
+            '.sign{margin-top:26px;display:flex;justify-content:space-between;text-align:center;}' +
+            '@media print{.no-print{display:none;}}</style></head><body>' +
+            '<div class="no-print" style="background:#FFF7ED;border:1px solid #FDBA74;padding:8px 12px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">' +
+              '<span>Bấm <b>In / Lưu PDF</b> để xuất bản báo cáo chuẩn khổ A4</span>' +
+              '<button onclick="window.print()" style="background:#EA580C;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ In / Lưu PDF A4</button>' +
+            '</div>' +
+            '<div class="hdr"><div><div style="font-size:16px;font-weight:800;color:#EA580C;">CÔNG TY XÂY DỰNG TRỌN GÓI KHỞI AN</div><div style="font-size:11px;color:#64748b;">Hệ thống Quản lý Thi công & Tài chính Minh bạch</div></div>' +
+            '<div style="text-align:right;font-size:11px;">Ngày xuất: ' + new Date().toLocaleDateString('vi-VN') + '</div></div>' +
+            '<h2 style="text-align:center;margin:8px 0 4px;font-size:16px;">BÁO CÁO NHẬT KÝ THI CÔNG & BẢNG CHẤM CÔNG</h2>' +
+            '<div style="background:#f8fafc;border:1px solid #e2e8f0;padding:8px 12px;border-radius:8px;margin-bottom:8px;">' +
+              '<b>Công trình:</b> ' + escHtml(d.projCode) + ' &nbsp;|&nbsp; <b>Chủ đầu tư:</b> ' + escHtml(d.customer) + ' &nbsp;|&nbsp; <b>Địa điểm:</b> ' + escHtml(d.address) + '<br/>' +
+              '<b>Tổng số ngày nhật ký:</b> ' + d.logs.length + ' ngày &nbsp;|&nbsp; <b>Tổng ngày công thực tế:</b> ' + d.grandTotalDays + ' công' +
+            '</div>' +
+            '<table><thead><tr><th style="width:32px;text-align:center;">STT</th><th style="width:82px;text-align:center;">Ngày</th><th>Công Việc & Thợ Ca Sáng</th><th>Công Việc & Thợ Ca Chiều</th><th style="width:52px;text-align:center;">Công</th></tr></thead><tbody>' + rowsHtml + '</tbody></table>' +
+            '<div style="margin-top:12px;"><b>Tổng hợp công theo từng thợ:</b><div style="margin-top:4px;">' + (workerBadges || '—') + '</div></div>' +
+            '<div class="sign"><div><b>NGƯỜI LẬP NHẬT KÝ</b><br/><small>(Ký, ghi rõ họ tên)</small></div><div><b>CHỈ HUY CÔNG TRÌNH</b><br/><small>(Ký, ghi rõ họ tên)</small></div><div><b>ĐẠI DIỆN CHỦ ĐẦU TƯ / GIÁM ĐỐC</b><br/><small>(Ký xác nhận)</small></div></div>' +
+            '</body></html>');
+          w.document.close();
+        };
+
+        window.exportSiteLogImagePNG = function() {
+          var d = buildSiteLogReportData();
+          if (!d.logs.length) { alert('Chưa có dữ liệu nhật ký để xuất ảnh!'); return; }
+          var W = 1240, lineH = 26;
+          var estimatedH = Math.max(1754, 480 + d.logs.length * 145 + Object.keys(d.workerTotals).length * 28);
+          var canvas = document.createElement('canvas');
+          canvas.width = W; canvas.height = estimatedH;
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, estimatedH);
+          ctx.fillStyle = '#EA580C'; ctx.fillRect(0, 0, W, 115);
+          ctx.fillStyle = '#FFFFFF'; ctx.font = 'bold 28px Arial, sans-serif';
+          ctx.fillText('CÔNG TY XÂY DỰNG TRỌN GÓI KHỞI AN', 50, 52);
+          ctx.font = '18px Arial, sans-serif';
+          ctx.fillText('BÁO CÁO NHẬT KÝ THI CÔNG & CHẤM CÔNG CÔNG TRÌNH (KHỔ A4)', 50, 88);
+          ctx.fillStyle = '#FFF7ED'; ctx.fillRect(50, 140, W - 100, 105);
+          ctx.strokeStyle = '#FDBA74'; ctx.strokeRect(50, 140, W - 100, 105);
+          ctx.fillStyle = '#1E293B'; ctx.font = 'bold 21px Arial, sans-serif';
+          ctx.fillText('Công trình: ' + d.projCode + '   |   Chủ đầu tư: ' + d.customer, 72, 180);
+          ctx.font = '18px Arial, sans-serif';
+          ctx.fillText('Địa điểm: ' + d.address + '   •   Số ngày: ' + d.logs.length + ' ngày   •   Tổng công: ' + d.grandTotalDays + ' công', 72, 220);
+
+          var y = 285;
+          function wrapTextLines(text, maxW) {
+            var words = String(text || '').split(/\s+/);
+            var lines = [], cur = '';
+            words.forEach(function(w) {
+              var test = cur ? cur + ' ' + w : w;
+              if (ctx.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; }
+              else { cur = test; }
+            });
+            if (cur) lines.push(cur);
+            return lines.length ? lines : ['—'];
+          }
+
+          d.logs.forEach(function(l, idx) {
+            var mDays = calcLogShiftDays(l.morningWorkers);
+            var aDays = calcLogShiftDays(l.afternoonWorkers);
+            ctx.font = '17px Arial, sans-serif';
+            var mLines = wrapTextLines('Ca Sáng (' + mDays + 'c): ' + (l.morningWork || '—') + ' [Thợ: ' + ((l.morningWorkers || []).join(', ') || '—') + ']', W - 150);
+            var aLines = wrapTextLines('Ca Chiều (' + aDays + 'c): ' + (l.afternoonWork || '—') + ' [Thợ: ' + ((l.afternoonWorkers || []).join(', ') || '—') + ']', W - 150);
+            var boxH = 54 + (mLines.length + aLines.length) * lineH + 16;
+            ctx.fillStyle = idx % 2 === 0 ? '#F8FAFC' : '#FFFFFF'; ctx.fillRect(50, y, W - 100, boxH);
+            ctx.strokeStyle = '#CBD5E1'; ctx.strokeRect(50, y, W - 100, boxH);
+            ctx.fillStyle = '#EA580C'; ctx.font = 'bold 19px Arial, sans-serif';
+            ctx.fillText((idx + 1) + '. Ngày ' + formatDisplayDate(l.date) + '  —  ' + (l.project || '') + '  (Tổng: ' + (mDays + aDays) + ' công | Ghi sổ: ' + (l.staff || '') + ')', 70, y + 32);
+            var ty = y + 62; ctx.fillStyle = '#1E293B'; ctx.font = '17px Arial, sans-serif';
+            mLines.forEach(function(ln) { ctx.fillText(ln, 70, ty); ty += lineH; });
+            aLines.forEach(function(ln) { ctx.fillText(ln, 70, ty); ty += lineH; });
+            y += boxH + 14;
+          });
+
+          y += 15; ctx.fillStyle = '#0F172A'; ctx.font = 'bold 20px Arial, sans-serif';
+          ctx.fillText('TỔNG HỢP NGÀY CÔNG TỪNG THỢ:', 50, y); y += 30; ctx.font = '18px Arial, sans-serif';
+          var summaryStr = Object.keys(d.workerTotals).map(function(w) { return w + ' (' + d.workerTotals[w] + 'c)'; }).join('  •  ');
+          wrapTextLines(summaryStr || '—', W - 100).forEach(function(ln) { ctx.fillText(ln, 50, y); y += lineH; });
+
+          y += 45; ctx.font = 'bold 18px Arial, sans-serif';
+          ctx.fillText('NGƯỜI LẬP BÁO CÁO', 110, y); ctx.fillText('CHỈ HUY CÔNG TRÌNH', 510, y); ctx.fillText('GIÁM ĐỐC / CHỦ ĐẦU TƯ', 900, y);
+
+          var a = document.createElement('a');
+          a.href = canvas.toDataURL('image/png');
+          a.download = 'BaoCao_NhatKy_A4_' + d.projCode.replace(/[^a-zA-Z0-9_-]/g, '_') + '.png';
+          a.click();
+          if (typeof showToast === 'function') showToast('🖼️ Đã xuất Ảnh báo cáo A4 (PNG) sẵn sàng gửi Zalo');
+        };
+
+        function renderEnhancedSiteLogList() {
+          var box = document.querySelector('.v161-enhanced-log-list');
+          if (!box) return;
+          var res = getFilteredSiteLogsV161();
+          var logs = res.logs;
+          var countBadge = document.querySelector('.v161-log-result-count');
+          if (countBadge) {
+            var sumDays = logs.reduce(function(s, l) { return s + calcLogShiftDays(l.morningWorkers) + calcLogShiftDays(l.afternoonWorkers); }, 0);
+            countBadge.textContent = logs.length + ' ngày nhật ký • ' + sumDays + ' công';
+          }
+
+          if (!logs.length) {
+            box.innerHTML = '<div class="text-center py-6 text-slate-400 text-[12px]">Không tìm thấy nhật ký thi công khớp bộ lọc.</div>';
+            return;
+          }
+
+          box.innerHTML = logs.map(function(l) {
+            var mDays = calcLogShiftDays(l.morningWorkers);
+            var aDays = calcLogShiftDays(l.afternoonWorkers);
+            var totalDays = mDays + aDays;
+            var mWorkersStr = (l.morningWorkers || []).join(', ');
+            var aWorkersStr = (l.afternoonWorkers || []).join(', ');
+            var mPhotos = Array.isArray(l.morningPhotos) ? l.morningPhotos : [];
+            var aPhotos = Array.isArray(l.afternoonPhotos) ? l.afternoonPhotos : [];
+
+            var renderThumbs = function(arr) {
+              if (!arr.length) return '';
+              return '<div class="flex flex-wrap gap-1.5 mt-1.5">' + arr.map(function(src) {
+                return '<img src="' + escHtml(src) + '" class="w-12 h-12 rounded-lg object-cover border border-slate-200"/>';
+              }).join('') + '</div>';
+            };
+
+            return '<div class="p-3 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-2">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<div class="flex items-center gap-1.5 flex-wrap">' +
+                  '<span class="px-2.5 py-0.5 rounded-lg bg-orange-50 border border-orange-200 text-[#EA580C] text-[11px] font-extrabold">' + escHtml(l.project || 'Công trình') + '</span>' +
+                  '<span class="px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10.5px] font-bold">Tổng: ' + totalDays + ' công</span>' +
+                '</div>' +
+                '<div class="flex items-center gap-1.5 shrink-0">' +
+                  '<span class="text-[11px] font-semibold text-slate-500 mr-1">' + escHtml(formatDisplayDate(l.date)) + '</span>' +
+                  '<button type="button" onclick="openEditSiteLogModal(\'' + escHtml(l.id) + '\')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-[11px] font-bold">Sửa</button>' +
+                  '<button type="button" onclick="deleteSiteLogItem(\'' + escHtml(l.id) + '\')" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold">Xóa</button>' +
+                '</div>' +
+              '</div>' +
+              (l.morningWork || mWorkersStr || mPhotos.length ? (
+                '<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-[12px] space-y-0.5">' +
+                  '<div class="font-bold text-slate-800">☀️ Ca Sáng (' + mDays + ' công)</div>' +
+                  (l.morningWork ? '<div class="text-slate-700">' + escHtml(l.morningWork) + '</div>' : '') +
+                  (mWorkersStr ? '<div class="text-[11px] text-slate-500">Thợ: <b>' + escHtml(mWorkersStr) + '</b></div>' : '') +
+                  renderThumbs(mPhotos) +
+                '</div>'
+              ) : '') +
+              (l.afternoonWork || aWorkersStr || aPhotos.length ? (
+                '<div class="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-[12px] space-y-0.5">' +
+                  '<div class="font-bold text-slate-800">🌤️ Ca Chiều (' + aDays + ' công)</div>' +
+                  (l.afternoonWork ? '<div class="text-slate-700">' + escHtml(l.afternoonWork) + '</div>' : '') +
+                  (aWorkersStr ? '<div class="text-[11px] text-slate-500">Thợ: <b>' + escHtml(aWorkersStr) + '</b></div>' : '') +
+                  renderThumbs(aPhotos) +
+                '</div>'
+              ) : '') +
+              '<div class="text-[10.5px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-100">' +
+                '<span>Người ghi: <b>' + escHtml(l.staff || '—') + '</b></span>' +
+                '<button type="button" onclick="syncSiteLogsOnlyToSheets(true)" class="text-emerald-700 font-bold hover:underline">☁️ Đồng bộ Sheets</button>' +
+              '</div>' +
+            '</div>';
+          }).join('');
+        }
+
+        function enhanceSiteLogSummaryModal() {
+          var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+          var modalTitle = headings.find(function(el) {
+            return el.children.length === 0 && el.textContent && el.textContent.indexOf('Nhật Ký Công Trình & Chấm Công') !== -1 && el.offsetParent !== null;
+          });
+          if (!modalTitle) return;
+
+          var modal = modalTitle.parentElement;
+          while (modal && modal.parentElement && modal.parentElement !== document.body) {
+            if (modal.clientHeight > 260 && modal.clientWidth > 280) break;
+            modal = modal.parentElement;
+          }
+          if (!modal) return;
+
+          var summaryTab = Array.from(modal.querySelectorAll('button, div')).find(function(el) {
+            return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Sổ Nhật Ký & Tổng Hợp';
+          });
+          if (!summaryTab) return;
+
+          var isSummaryActive = summaryTab.className.indexOf('bg-[#EA580C]') !== -1 || summaryTab.className.indexOf('text-white') !== -1;
+          var existingToolbar = modal.querySelector('.v161-log-toolbar');
+          var existingList = modal.querySelector('.v161-enhanced-log-list');
+
+          if (!isSummaryActive) {
+            if (existingToolbar) existingToolbar.style.display = 'none';
+            if (existingList) existingList.style.display = 'none';
+            return;
+          }
+
+          var filterBox = Array.from(modal.querySelectorAll('div, select')).find(function(el) {
+            return el.textContent && el.textContent.indexOf('Tất cả công trình') !== -1 && el.clientHeight > 25 && el.clientHeight < 65 && !el.classList.contains('v161-log-proj-filter');
+          });
+          if (!filterBox) return;
+
+          var sibling = filterBox.nextElementSibling;
+          while (sibling) {
+            if (!sibling.classList.contains('v161-log-toolbar') && !sibling.classList.contains('v161-enhanced-log-list')) {
+              sibling.style.display = 'none';
+            }
+            sibling = sibling.nextElementSibling;
+          }
+
+          var realLogs = (typeof siteLogs !== 'undefined' && Array.isArray(siteLogs)) ? siteLogs : [];
+          if (!existingToolbar) {
+            filterBox.style.display = 'none';
+            var projSet = new Set();
+            var yearSet = new Set(['2026', '2025']);
+            if (typeof projects !== 'undefined' && Array.isArray(projects)) {
+              projects.forEach(function(p) { if (p && p.code) projSet.add(String(p.code)); });
+            }
+            realLogs.forEach(function(l) {
+              if (l && l.project) projSet.add(String(l.project));
+              if (l && l.date && String(l.date).length >= 4) yearSet.add(String(l.date).slice(0, 4));
+            });
+
+            var yearOpts = '<option value="">Tất cả năm</option>' + Array.from(yearSet).sort().reverse().map(function(y) {
+              return '<option value="' + escHtml(y) + '">' + escHtml(y) + '</option>';
+            }).join('');
+            var projOpts = '<option value="">Tất cả công trình</option>' + Array.from(projSet).map(function(code) {
+              return '<option value="' + escHtml(code) + '">' + escHtml(code) + '</option>';
+            }).join('');
+
+            var toolbar = document.createElement('div');
+            toolbar.className = 'v161-log-toolbar space-y-2 mb-2.5';
+            toolbar.innerHTML =
+              '<div class="grid grid-cols-2 gap-1.5">' +
+                '<select class="v161-log-year-filter px-2.5 py-2 rounded-xl border border-slate-300 bg-white text-[12px] font-bold text-slate-800">' + yearOpts + '</select>' +
+                '<select class="v161-log-status-filter px-2.5 py-2 rounded-xl border border-slate-300 bg-white text-[12px] font-bold text-slate-800">' +
+                  '<option value="">Tất cả trạng thái</option>' +
+                  '<option value="active">Đang thi công</option>' +
+                  '<option value="done">Đã hoàn thành</option>' +
+                '</select>' +
+              '</div>' +
+              '<select class="v161-log-proj-filter w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-[12.5px] font-bold text-slate-800">' + projOpts + '</select>' +
+              '<div class="relative">' +
+                '<input type="text" placeholder="🔍 Tìm nhanh tên công trình, tên thợ, hạng mục..." class="v161-log-search-input w-full px-3 py-2 rounded-xl border border-slate-300 bg-slate-50 focus:bg-white text-[12px]"/>' +
+              '</div>' +
+              '<div class="flex items-center justify-between text-[11px] font-bold text-slate-600 px-1">' +
+                '<span class="v161-log-result-count"></span>' +
+                '<span class="text-emerald-700">✓ Lưu tự động Sheets TEST APP</span>' +
+              '</div>' +
+              '<div class="grid grid-cols-3 gap-1.5">' +
+                '<button type="button" onclick="exportSiteLogImagePNG()" class="py-1.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold flex items-center justify-center gap-1 shadow-2xs">🖼️ Xuất Ảnh A4</button>' +
+                '<button type="button" onclick="exportSiteLogExcel()" class="py-1.5 px-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-bold flex items-center justify-center gap-1 shadow-2xs">📊 Xuất Excel</button>' +
+                '<button type="button" onclick="exportSiteLogPrintA4()" class="py-1.5 px-2 rounded-xl bg-[#EA580C] hover:bg-orange-700 text-white text-[11px] font-bold flex items-center justify-center gap-1 shadow-2xs">📄 In / PDF A4</button>' +
+              '</div>';
+
+            toolbar.querySelector('.v161-log-year-filter').onchange = renderEnhancedSiteLogList;
+            toolbar.querySelector('.v161-log-status-filter').onchange = renderEnhancedSiteLogList;
+            toolbar.querySelector('.v161-log-proj-filter').onchange = renderEnhancedSiteLogList;
+            toolbar.querySelector('.v161-log-search-input').oninput = renderEnhancedSiteLogList;
+
+            filterBox.parentNode.insertBefore(toolbar, filterBox.nextSibling);
+
+            var listDiv = document.createElement('div');
+            listDiv.className = 'v161-enhanced-log-list space-y-2.5';
+            toolbar.parentNode.insertBefore(listDiv, toolbar.nextSibling);
+            renderEnhancedSiteLogList();
+          } else {
+            existingToolbar.style.display = 'block';
+            if (existingList) existingList.style.display = 'block';
+            renderEnhancedSiteLogList();
+          }
+        }
+
+        // =====================================================================
+        // PHẦN 4: TÀI KHOẢN NHÂN SỰ TGKA (ẢNH ĐẠI DIỆN GỌN) & ĐỒNG BỘ NGẦM 15 GIÂY
+        // =====================================================================
+        function enhanceAccountModalCards() {
+          var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+          var accTitle = headings.find(function(el) {
+            return el.children.length === 0 && el.textContent && el.textContent.indexOf('Tài Khoản Nhân Sự') !== -1 && el.offsetParent !== null;
+          });
+          if (!accTitle) return;
+
+          var modal = accTitle.parentElement;
+          while (modal && modal.parentElement && modal.parentElement !== document.body) {
+            if (modal.clientHeight > 220 && modal.clientWidth > 260) break;
+            modal = modal.parentElement;
+          }
+          if (!modal) return;
+
+          Array.from(modal.querySelectorAll('button, div')).filter(function(el) {
+            return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Cập nhật ảnh đại diện cho tài khoản hiện tại';
+          }).forEach(function(el) {
+            var box = el.closest('button') || el.parentElement;
+            if (box && box !== modal) box.style.display = 'none';
+          });
+
+          Array.from(modal.querySelectorAll('div, span')).forEach(function(el) {
+            if (el.children.length > 0) return;
+            var stName = (el.textContent || '').trim();
+            if (!DEFAULT_AVATAR_META[stName]) return;
+
+            var card = el.parentElement;
+            while (card && card !== modal) {
+              var cardTxt = card.textContent || '';
+              if (cardTxt.indexOf('Đang dùng') !== -1 || cardTxt.indexOf('Chuyển sang') !== -1) break;
+              card = card.parentElement;
+            }
+            if (!card || card === modal || card.classList.contains('v161-acc-row')) return;
+
+            card.classList.add('v161-acc-row');
+            card.style.display = 'flex';
+            card.style.alignItems = 'center';
+            card.style.justifyContent = 'space-between';
+            card.style.gap = '8px';
+
+            var nameRow = el.parentElement;
+            if (nameRow) {
+              Array.from(nameRow.querySelectorAll('svg, img, .v161-staff-avatar')).forEach(function(ic) { ic.remove(); });
+            }
+            var leftAvatar = document.createElement('div');
+            leftAvatar.className = 'v161-acc-avatar shrink-0 flex items-center justify-center';
+            leftAvatar.innerHTML = makeAvatarHtml(stName, 36, 'margin-right:0;');
+            card.insertBefore(leftAvatar, card.firstChild);
+
+            var infoCol = card.children[1];
+            if (infoCol) {
+              infoCol.style.flex = '1 1 auto';
+              infoCol.style.minWidth = '0';
+            }
+
+            var statusBtn = Array.from(card.querySelectorAll('button, span')).find(function(b) {
+              var t = (b.textContent || '').trim();
+              return t === 'Đang dùng' || t === 'Chuyển sang';
+            });
+            if (statusBtn) {
+              statusBtn.style.whiteSpace = 'nowrap';
+              statusBtn.style.flexShrink = '0';
+              var rightGroup = document.createElement('div');
+              rightGroup.className = 'v161-acc-actions flex items-center gap-1.5 shrink-0';
+
+              var uploadLabel = document.createElement('label');
+              uploadLabel.className = 'px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-[#EA580C] text-[11px] font-bold cursor-pointer hover:bg-orange-100 transition whitespace-nowrap shrink-0';
+              uploadLabel.textContent = 'Đổi ảnh';
+              uploadLabel.onclick = function(ev) { ev.stopPropagation(); };
+
+              var fileInp = document.createElement('input');
+              fileInp.type = 'file';
+              fileInp.accept = 'image/*';
+              fileInp.className = 'hidden';
+              fileInp.onchange = function() { window.handleStaffAvatarUpload(stName, fileInp); };
+              uploadLabel.appendChild(fileInp);
+
+              statusBtn.parentNode.insertBefore(rightGroup, statusBtn);
+              rightGroup.appendChild(uploadLabel);
+              rightGroup.appendChild(statusBtn);
+            }
+          });
+        }
+
+        window.handleStaffAvatarUpload = function(staffName, input) {
+          var file = input.files && input.files[0];
+          if (!file) return;
+          var reader = new FileReader();
+          reader.onload = function(ev) {
+            var img = new Image();
+            img.onload = function() {
+              var canvas = document.createElement('canvas');
+              canvas.width = 96; canvas.height = 96;
+              var ctx = canvas.getContext('2d');
+              var minSide = Math.min(img.width, img.height);
+              ctx.drawImage(img, (img.width - minSide) / 2, (img.height - minSide) / 2, minSide, minSide, 0, 0, 96, 96);
+              var map = loadStaffAvatars();
+              map[staffName] = canvas.toDataURL('image/jpeg', 0.8);
+              saveStaffAvatars(map);
+              runInstantDomSync(function() {
+                document.querySelectorAll('[data-v161-key]').forEach(function(el) { el.removeAttribute('data-v161-key'); });
+                document.querySelectorAll('.v161-acc-row').forEach(function(el) {
+                  el.classList.remove('v161-acc-row');
+                  var av = el.querySelector('.v161-acc-avatar'); if (av) av.remove();
+                  var act = el.querySelector('.v161-acc-actions'); if (act) { var l = act.querySelector('label'); if (l) l.remove(); }
+                });
+                enrichTransactionCards();
+                enhanceAccountModalCards();
+              });
+              if (typeof showToast === 'function') showToast('Đã cập nhật ảnh đại diện cho ' + staffName);
+            };
+            img.src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
+        };
+
+        var _v161Syncing = false;
+        function buildDataFingerprint(txs, projs, pts, wks, logs) {
+          var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+          var firstId = (txs && txs[0]) ? txs[0].id : '';
+          var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
+          return [(txs || []).length, txSum, firstId, lastId, (projs || []).length, (pts || []).length, (wks || []).length, (logs || []).length].join('|');
+        }
+
+        window.silentBackgroundPullFromSheets = function() {
+          if (_v161Syncing) return;
+          if (typeof execUrl === 'undefined' || !execUrl || String(execUrl).indexOf('http') !== 0) return;
+          if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+          if (document.visibilityState === 'hidden') return;
+          var act = document.activeElement;
+          if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
+
+          _v161Syncing = true;
+          var sep = execUrl.indexOf('?') === -1 ? '?' : '&';
+          fetch(execUrl + sep + 'action=loadAll&t=' + Date.now(), { method: 'GET', redirect: 'follow' })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+              if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
+              var oldCount = transactions.length;
+              var oldFp = buildDataFingerprint(transactions, projects, partners, workers, siteLogs);
+              var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers, data.siteLogs);
+              if (oldFp === newFp) return;
+
+              transactions = data.transactions;
+              if (Array.isArray(data.projects) && data.projects.length) projects = data.projects;
+              if (Array.isArray(data.partners) && data.partners.length) partners = data.partners;
+              if (Array.isArray(data.workers) && data.workers.length) workers = data.workers;
+              if (Array.isArray(data.siteLogs)) siteLogs = data.siteLogs;
+
+              window.sortTransactionsNewestFirst(true);
+              if (typeof saveAllLocal === 'function') saveAllLocal();
+              if (typeof renderDashboard === 'function') renderDashboard();
+
+              var diff = transactions.length - oldCount;
+              if (diff > 0 && typeof showToast === 'function') {
+                showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
+              }
+            })
+            .catch(function() {})
+            .finally(function() { _v161Syncing = false; });
+        };
+
+        var _v161Obs = new MutationObserver(function() {
+          runInstantDomSync(function() {
+            window.sortTransactionsNewestFirst(false);
             enrichTransactionCards();
+            injectInternalCostCardIntoFinancialReport();
+            filterNewSiteLogProjectSelect();
+            enhanceSiteLogSummaryModal();
             enhanceAccountModalCards();
           });
-          if (typeof showToast === 'function') showToast('Đã cập nhật ảnh đại diện cho ' + staffName);
-        };
-        img.src = ev.target.result;
-      };
-      reader.readAsDataURL(file);
-    };
+        });
 
-    // 5. TỰ ĐỘNG TẢI DỮ LIỆU NGẦM MỖI 15 GIÂY TỪ GOOGLE SHEETS
-    var _v160Syncing = false;
-    function buildDataFingerprint(txs, projs, pts, wks, logs) {
-      var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
-      var firstId = (txs && txs[0]) ? txs[0].id : '';
-      var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
-      return [(txs || []).length, txSum, firstId, lastId, (projs || []).length, (pts || []).length, (wks || []).length, (logs || []).length].join('|');
-    }
-
-    window.silentBackgroundPullFromSheets = function() {
-      if (_v160Syncing) return;
-      if (typeof execUrl === 'undefined' || !execUrl || String(execUrl).indexOf('http') !== 0) return;
-      if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
-      if (document.visibilityState === 'hidden') return;
-      var act = document.activeElement;
-      if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
-
-      _v160Syncing = true;
-      var sep = execUrl.indexOf('?') === -1 ? '?' : '&';
-      fetch(execUrl + sep + 'action=loadAll&t=' + Date.now(), { method: 'GET', redirect: 'follow' })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-          if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
-          var oldCount = transactions.length;
-          var oldFp = buildDataFingerprint(transactions, projects, partners, workers, siteLogs);
-          var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers, data.siteLogs);
-          if (oldFp === newFp) return;
-
-          transactions = data.transactions;
-          if (Array.isArray(data.projects) && data.projects.length) projects = data.projects;
-          if (Array.isArray(data.partners) && data.partners.length) partners = data.partners;
-          if (Array.isArray(data.workers) && data.workers.length) workers = data.workers;
-          if (Array.isArray(data.siteLogs) && data.siteLogs.length) siteLogs = data.siteLogs;
-
-          window.sortTransactionsNewestFirst(true);
-          if (typeof saveAllLocal === 'function') saveAllLocal();
-          if (typeof renderDashboard === 'function') renderDashboard();
-
-          var diff = transactions.length - oldCount;
-          if (diff > 0 && typeof showToast === 'function') {
-            showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
+        function runInstantDomSync(fn) {
+          _v161Obs.disconnect();
+          try { fn(); } finally {
+            _v161Obs.observe(document.body, { childList: true, subtree: true });
           }
-        })
-        .catch(function() {})
-        .finally(function() { _v160Syncing = false; });
-    };
+        }
 
-    var _v160Obs = new MutationObserver(function() {
-      runInstantDomSync(function() {
-        window.sortTransactionsNewestFirst(false);
-        enrichTransactionCards();
-        enhanceAccountModalCards();
-        enhanceSiteLogSummaryModal();
-      });
-    });
+        setTimeout(function() {
+          runInstantDomSync(function() {
+            window.sortTransactionsNewestFirst(false);
+            enrichTransactionCards();
+            injectInternalCostCardIntoFinancialReport();
+            filterNewSiteLogProjectSelect();
+            enhanceSiteLogSummaryModal();
+            enhanceAccountModalCards();
+          });
+        }, 120);
 
-    function runInstantDomSync(fn) {
-      _v160Obs.disconnect();
-      try { fn(); } finally {
-        _v160Obs.observe(document.body, { childList: true, subtree: true });
-      }
-    }
+        setInterval(window.silentBackgroundPullFromSheets, 15000);
+      })();
+      // === V161_CORE_END ===
 
-    setTimeout(function() {
-      runInstantDomSync(function() {
-        window.sortTransactionsNewestFirst(false);
-        enrichTransactionCards();
-        enhanceAccountModalCards();
-        enhanceSiteLogSummaryModal();
-      });
-    }, 120);
-
-    setInterval(window.silentBackgroundPullFromSheets, 15000);
-  })();
-
-  function copyAppsScriptCode() {
+      function copyAppsScriptCode() {
         const cfg = resolveVersionConfig(ACTIVE_VERSION);
         const code = cfg.features.twoWaySheetsSync5SheetsV155
           ? `// =========================================================================
