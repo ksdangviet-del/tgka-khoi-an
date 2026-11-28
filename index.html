@@ -487,7 +487,7 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.67</button>
+            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.68</button>
             <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
               <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1741,7 +1741,7 @@
         return { ...top, features: mergedFeatures };
       }
 
-      localStorage.setItem('tgka_active_version', 'v1.67'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
+      localStorage.setItem('tgka_active_version', 'v1.68'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
       if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.59';
       if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
         ACTIVE_VERSION = 'v1.59';
@@ -6540,19 +6540,19 @@
 
             // === V161_CORE_START ===
       (function initV161Suite() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.67']) {
-          RAW_VERSION_SPECS['v1.67'] = {
-            version: 'v1.67',
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.68']) {
+          RAW_VERSION_SPECS['v1.68'] = {
+            version: 'v1.68',
             extends: 'v1.59',
             date: '28/11/2026',
             title: 'Chi Phí Nội Bộ 4 Nhóm (STT 1–229), Thẻ GD Có Đối Tác & Nhật Ký Nhiều Năm A4',
             summary: 'Kế thừa bản khóa chuẩn v1.59: bổ sung khối Chi phí nội bộ 4 nhóm vào Báo cáo tài chính (tách rõ Lương thợ & Sinh hoạt trong Nhà thợ), thiết kế lại thẻ Lịch sử giao dịch hiện đầy đủ Đối tác không lặp tên công trình, ẩn công trình hoàn thành khi ghi nhật ký mới và tìm kiếm/xuất báo cáo A4 (Ảnh/Excel/PDF).',
             features: { v161Suite: true }
           };
-          ACTIVE_VERSION = 'v1.67';
+          ACTIVE_VERSION = 'v1.68';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.67');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.67');
+            localStorage.setItem('tgka_active_version', 'v1.68');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.68');
           } catch (e) {}
         }
 
@@ -7642,19 +7642,19 @@
 
         // === V162_CORE_START ===
   (function initV162Suite() {
-    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.67']) {
-      RAW_VERSION_SPECS['v1.67'] = {
-        version: 'v1.67',
+    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.68']) {
+      RAW_VERSION_SPECS['v1.68'] = {
+        version: 'v1.68',
         extends: 'v1.61',
         date: '28/11/2026',
         title: 'Gọn Báo Cáo Tài Chính, Xuất PDF A4 Chi Phí Nội Bộ & Công Nợ Đối Tác 2 Chiều',
         summary: 'Bỏ 2 tab thừa (Nhân Viên, Đối Tác) trong Báo cáo tài chính; thêm nút xuất PDF/In A4 chi tiết Chi phí nội bộ 4 nhóm (STT 1–229); nâng cấp Báo cáo công nợ đối tác lọc theo từng Đối tác × từng Công trình và tự động gộp công nợ chuẩn xác.',
         features: { v162Suite: true }
       };
-      ACTIVE_VERSION = 'v1.67';
+      ACTIVE_VERSION = 'v1.68';
       try {
-        localStorage.setItem('tgka_active_version', 'v1.67');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.67');
+        localStorage.setItem('tgka_active_version', 'v1.68');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.68');
       } catch (e) {}
     }
 
@@ -8067,19 +8067,19 @@
 
     // === V163_CORE_START ===
   (function initV163OfficialSyncSuite() {
-    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.67']) {
-      RAW_VERSION_SPECS['v1.67'] = {
-        version: 'v1.67',
+    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.68']) {
+      RAW_VERSION_SPECS['v1.68'] = {
+        version: 'v1.68',
         extends: 'v1.62',
         date: '28/11/2026',
         title: 'Bảo Toàn Dữ Liệu Chính Thức, Giữ Trạng Thái Nghiệm Thu, Tự Điền Hạng Mục ĐT & Đồng Bộ 2 Chiều ĐT',
         summary: 'Khóa bảo vệ trạng thái Nghiệm thu / Chốt HĐ công trình không bị ghi đè khi đồng bộ; tự động điền Hạng mục khi chọn Đối tác/Thầu phụ; đồng bộ 2 chiều thêm/sửa Đối tác giữa App và Sheets và bảo toàn toàn bộ dữ liệu chính thức.',
         features: { v163Suite: true }
       };
-      ACTIVE_VERSION = 'v1.67';
+      ACTIVE_VERSION = 'v1.68';
       try {
-        localStorage.setItem('tgka_active_version', 'v1.67');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.67');
+        localStorage.setItem('tgka_active_version', 'v1.68');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.68');
       } catch (e) {}
     }
 
@@ -8413,19 +8413,19 @@
 
         // === V164_CORE_START ===
       (function initV164PartnerExportSuite() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.67']) {
-          RAW_VERSION_SPECS['v1.67'] = {
-            version: 'v1.67',
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.68']) {
+          RAW_VERSION_SPECS['v1.68'] = {
+            version: 'v1.68',
             extends: 'v1.63',
             date: '28/11/2026',
             title: 'Xuất PDF A4 & Excel Riêng Cho Từng Đối Tác Trong Báo Cáo Công Nợ',
             summary: 'Bổ sung thanh 2 nút Xuất Excel (.xls) và Xuất PDF / In A4 ngay trong Báo cáo công nợ đối tác, xuất đầy đủ bảng tổng hợp hợp đồng, công nợ còn lại và bảng kê chi tiết từng phiếu chi đúng theo đối tác và công trình đang chọn lọc.',
             features: { v164Suite: true }
           };
-          ACTIVE_VERSION = 'v1.67';
+          ACTIVE_VERSION = 'v1.68';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.67');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.67');
+            localStorage.setItem('tgka_active_version', 'v1.68');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.68');
           } catch (e) {}
         }
 
@@ -8709,19 +8709,19 @@
 
             // === V165_CORE_START ===
       (function initV165PartnerReportUiFix() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.67']) {
-          RAW_VERSION_SPECS['v1.67'] = {
-            version: 'v1.67',
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.68']) {
+          RAW_VERSION_SPECS['v1.68'] = {
+            version: 'v1.68',
             extends: 'v1.64',
             date: '28/11/2026',
             title: 'Khóa Khung Chống Co Giãn & Chuẩn Hóa Phông Chữ Báo Cáo Công Nợ Đối Tác',
             summary: 'Khóa cứng chiều rộng khung hộp thoại và bộ lọc tìm kiếm của Báo Cáo Công Nợ Đối Tác để không bị co giãn khi chọn đối tác/công trình; đồng bộ phông chữ, nét chữ và bố cục thẻ report-card chuẩn với Danh Sách Công Trình & Công Nợ.',
             features: { v165Suite: true }
           };
-          ACTIVE_VERSION = 'v1.67';
+          ACTIVE_VERSION = 'v1.68';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.67');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.67');
+            localStorage.setItem('tgka_active_version', 'v1.68');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.68');
           } catch (e) {}
         }
 
@@ -8959,19 +8959,19 @@
 
             // === V166_CORE_START ===
       (function initV166SmartFiltersAndAutocomplete() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.67']) {
-          RAW_VERSION_SPECS['v1.67'] = {
-            version: 'v1.67',
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.68']) {
+          RAW_VERSION_SPECS['v1.68'] = {
+            version: 'v1.68',
             extends: 'v1.65',
             date: '28/11/2026',
             title: 'Gọn Lọc Năm Dropdown, Chọn Công Trình Thông Minh & Đề Xuất Nội Dung Chi Nội Bộ',
             summary: 'Thay thanh cuộn ngang chọn năm bằng ô Dropdown gọn gàng kèm tìm nhanh công trình; phân nhóm Công trình đang thi công lên đầu danh sách Thu Chi kèm ô gõ lọc nhanh; tự động đề xuất Nội dung chi tiết giao dịch theo lịch sử và từng Nhóm chi nội bộ.',
             features: { v166Suite: true }
           };
-          ACTIVE_VERSION = 'v1.67';
+          ACTIVE_VERSION = 'v1.68';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.67');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.67');
+            localStorage.setItem('tgka_active_version', 'v1.68');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.68');
           } catch (e) {}
         }
 
@@ -9276,75 +9276,72 @@
       })();
       // === V166_CORE_END ===
 
-            // === V167_CORE_START ===
-      (function initV167DefaultMonthAndGranularPermissions() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.67']) {
-          RAW_VERSION_SPECS['v1.67'] = {
-            version: 'v1.67',
-            extends: 'v1.66',
+            
+
+            // === V168_CORE_START ===
+      (function initV168ShareholderAndNonDestructivePermissions() {
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.68']) {
+          RAW_VERSION_SPECS['v1.68'] = {
+            version: 'v1.68',
+            extends: 'v1.67',
             date: '28/11/2026',
-            title: 'Mặc Định Xem Theo Tháng Hiện Tại & Bảng Phân Quyền Chi Tiết Từng Nút Chức Năng',
-            summary: 'Mặc định mở ứng dụng ở tab Tháng hiện tại và tự động đưa mốc thời gian về hiện tại khi chuyển tab Ngày/Tháng/Năm; bổ sung bảng phân cấp 12 quyền chức năng độc lập cho từng nhân viên (Sen KA, Quyển KA, Hiếu KA) ngay trong Tài Khoản Nhân Sự TGKA.',
-            features: { v167Suite: true }
+            title: 'Bổ Sung Cổ Đông Tuấn KA (Chỉ Xem) & Khóa Quyền Giữ Nguyên 100% Giao Diện',
+            summary: 'Mở toàn quyền 100% cho Giám đốc Việt KA; thêm nhân sự cổ đông Tuấn KA mặc định chỉ xem toàn bộ báo cáo và khóa chỉnh sửa; khóa chức năng theo phân quyền bằng thông báo chặn mở mà không ẩn/xóa bất kỳ nút nào trên giao diện.',
+            features: { v168Suite: true }
           };
-          ACTIVE_VERSION = 'v1.67';
+          ACTIVE_VERSION = 'v1.68';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.67');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.67');
+            localStorage.setItem('tgka_active_version', 'v1.68');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.68');
           } catch (e) {}
         }
 
-        // =====================================================================
-        // 1. MẶC ĐỊNH XEM THEO THÁNG & ĐƯA VỀ THỜI ĐIỂM HIỆN TẠI KHI CHUYỂN TAB
-        // =====================================================================
+        // 1. Mặc định mở tab Tháng hiện tại & đưa mốc thời gian về hiện tại khi chuyển tab
         function syncPeriodToCurrentNow(mode) {
           try {
-            if (typeof periodCursor !== 'undefined') {
-              periodCursor = new Date();
-            }
-            if (mode && typeof periodMode !== 'undefined') {
-              periodMode = mode;
-            }
+            if (typeof periodCursor !== 'undefined') periodCursor = new Date();
+            if (mode && typeof periodMode !== 'undefined') periodMode = mode;
           } catch (e) {}
         }
 
-        // Bọc hàm chuyển tab thời gian (setPeriodMode) để luôn đưa mốc thời gian về hiện tại
         if (typeof setPeriodMode === 'function') {
-          var _origSetPeriodMode167 = setPeriodMode;
+          var _origSetPeriodMode168 = setPeriodMode;
           setPeriodMode = function(mode) {
             if (mode === 'day' || mode === 'month' || mode === 'year') {
               syncPeriodToCurrentNow(mode);
             }
-            return _origSetPeriodMode167.apply(this, arguments);
+            return _origSetPeriodMode168.apply(this, arguments);
           };
         }
 
-        // Khởi tạo mặc định tab Tháng theo thời điểm hiện tại ngay khi mở app
-        var _v167InitMonthApplied = false;
-        function applyDefaultMonthOnLaunch() {
-          if (_v167InitMonthApplied) return;
-          _v167InitMonthApplied = true;
-          syncPeriodToCurrentNow('month');
-          if (typeof setPeriodMode === 'function') {
-            setPeriodMode('month');
-          } else if (typeof renderDashboard === 'function') {
-            renderDashboard();
+        // 2. Bổ sung tài khoản cổ đông Tuấn KA vào danh sách accounts của App
+        function ensureTuanKaAccountExists() {
+          if (typeof accounts === 'undefined' || !Array.isArray(accounts)) return;
+          var exists = accounts.some(function(a) { return a && String(a.id).trim() === 'Tuấn KA'; });
+          if (!exists) {
+            var samplePin = (accounts[0] && accounts[0].pin) ? accounts[0].pin : '1234';
+            accounts.push({
+              id: 'Tuấn KA',
+              name: 'Tuấn KA',
+              role: 'Cổ đông (Chỉ xem)',
+              pin: samplePin,
+              color: '#0D9488'
+            });
           }
         }
+        ensureTuanKaAccountExists();
 
-        // =====================================================================
-        // 2. PHÂN CẤP QUYỀN CHI TIẾT TỪNG NÚT CHỨC NĂNG CHO NHÂN VIÊN
-        // =====================================================================
-        var PERM_STORAGE_KEY = 'tgka_staff_granular_perms_v167';
-        var MANAGED_STAFF = ['Sen KA', 'Quyển KA', 'Hiếu KA'];
+        // 3. Cấu hình 12 quyền chi tiết cho Sen KA, Quyển KA, Hiếu KA, Tuấn KA (Việt KA luôn toàn quyền)
+        var PERM_STORAGE_KEY = 'tgka_staff_granular_perms_v168';
+        var MANAGED_STAFF = ['Tuấn KA', 'Sen KA', 'Quyển KA', 'Hiếu KA'];
 
         var PERM_DEFINITIONS = [
           { key: 'viewFinance',   label: 'Xem Doanh thu & Báo cáo tài chính', group: 'Báo cáo & Số liệu' },
-          { key: 'viewProjects',  label: 'Xem nút Công trình & Công nợ KH',   group: 'Báo cáo & Số liệu' },
-          { key: 'viewPartners',  label: 'Xem nút Đối tác & Công nợ ĐT',      group: 'Báo cáo & Số liệu' },
+          { key: 'viewProjects',  label: 'Xem Công trình & Công nợ KH',       group: 'Báo cáo & Số liệu' },
+          { key: 'viewPartners',  label: 'Xem Đối tác & Công nợ ĐT',          group: 'Báo cáo & Số liệu' },
           { key: 'viewWorkers',   label: 'Xem & Chấm công Lương thợ',         group: 'Báo cáo & Số liệu' },
           { key: 'viewCashbook',  label: 'Xem Sổ quỹ nhân viên',              group: 'Báo cáo & Số liệu' },
-          { key: 'viewTxReport',  label: 'Xem nút Báo cáo LSGD',              group: 'Báo cáo & Số liệu' },
+          { key: 'viewTxReport',  label: 'Xem Báo cáo Lịch sử giao dịch',     group: 'Báo cáo & Số liệu' },
           { key: 'addTx',         label: 'Ghi phiếu Thu / Chi mới (Nút +)',   group: 'Thao tác nhập liệu' },
           { key: 'editTx',        label: 'Sửa giao dịch đã ghi (Nút Sửa)',    group: 'Thao tác nhập liệu' },
           { key: 'deleteTx',      label: 'Xóa giao dịch (Nút Xóa)',           group: 'Thao tác nhập liệu' },
@@ -9354,6 +9351,10 @@
         ];
 
         var DEFAULT_STAFF_PERMS = {
+          'Tuấn KA': {
+            viewFinance: true, viewProjects: true, viewPartners: true, viewWorkers: true, viewCashbook: true, viewTxReport: true,
+            addTx: false, editTx: false, deleteTx: false, siteLog: false, manageCatalog: false, syncSheets: true
+          },
           'Sen KA': {
             viewFinance: false, viewProjects: true, viewPartners: true, viewWorkers: true, viewCashbook: true, viewTxReport: true,
             addTx: true, editTx: true, deleteTx: false, siteLog: true, manageCatalog: true, syncSheets: true
@@ -9382,161 +9383,110 @@
           try { localStorage.setItem(PERM_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
         }
 
-        function getActiveUserIdV167() {
-          if (typeof currentUserId !== 'undefined' && currentUserId) return String(currentUserId).trim();
-          var pill = document.querySelector('header button, header span');
-          var txt = pill ? (pill.textContent || '').trim() : '';
-          if (txt.indexOf('Sen') !== -1) return 'Sen KA';
-          if (txt.indexOf('Quyển') !== -1) return 'Quyển KA';
-          if (txt.indexOf('Hiếu') !== -1) return 'Hiếu KA';
+        // Nhận diện chính xác tài khoản đang đăng nhập (ưu tiên biến hệ thống currentUserId)
+        function getActiveUserIdV168() {
+          if (typeof currentUserId !== 'undefined' && currentUserId) {
+            return String(currentUserId).trim();
+          }
+          try {
+            var stored = localStorage.getItem('tgka_current_user') || localStorage.getItem('tgka_user');
+            if (stored) return String(stored).trim();
+          } catch (e) {}
           return 'Việt KA';
         }
 
+        function isAdminUser() {
+          var uid = getActiveUserIdV168().toLowerCase();
+          return uid.indexOf('việt') !== -1 || uid.indexOf('viet') !== -1;
+        }
+
         function getActiveUserPermMap() {
-          var uid = getActiveUserIdV167();
-          if (uid === 'Việt KA') {
+          if (isAdminUser()) {
             var full = {};
             PERM_DEFINITIONS.forEach(function(p) { full[p.key] = true; });
             return full;
           }
+          var uid = getActiveUserIdV168();
           var all = loadAllGranularPerms();
           return all[uid] || DEFAULT_STAFF_PERMS[uid] || {};
         }
 
-        function setVisible(el, allowed) {
-          if (!el) return;
-          if (allowed) {
-            if (el.getAttribute('data-v167-hidden') === '1') {
-              el.style.display = el.getAttribute('data-v167-orig-display') || '';
-              el.removeAttribute('data-v167-hidden');
-            }
+        function denyPermissionToast(featureLabel) {
+          var uid = getActiveUserIdV168();
+          if (typeof showToast === 'function') {
+            showToast('🔒 Tài khoản ' + uid + ' chưa được cấp quyền: ' + featureLabel);
           } else {
-            if (el.getAttribute('data-v167-hidden') !== '1') {
-              el.setAttribute('data-v167-orig-display', el.style.display || '');
-              el.setAttribute('data-v167-hidden', '1');
-              el.style.display = 'none';
-            }
+            alert('Tài khoản ' + uid + ' chưa được cấp quyền: ' + featureLabel);
           }
         }
 
-        // Áp dụng phân quyền thực tế lên toàn bộ các nút và khu vực chức năng trên giao diện
-        function enforceGranularPermissionsOnUI() {
+        // Khôi phục toàn bộ nút nếu bản cũ lỡ ẩn, tuyệt đối KHÔNG ẩn bất kỳ nút nào trên giao diện
+        function restoreAllHiddenButtons() {
+          document.querySelectorAll('[data-v167-hidden="1"]').forEach(function(el) {
+            el.style.display = el.getAttribute('data-v167-orig-display') || '';
+            el.removeAttribute('data-v167-hidden');
+          });
+        }
+
+        // Chặn thao tác ở tầng xử lý click & mở hộp thoại (giữ nguyên 100% hình thức giao diện)
+        document.addEventListener('click', function(ev) {
+          if (isAdminUser()) return;
+          var btn = ev.target && ev.target.closest('button');
+          if (!btn || btn.closest('.v168-perm-matrix-box')) return;
+
           var perms = getActiveUserPermMap();
+          var txt = (btn.textContent || '').trim();
+          var oc = (btn.getAttribute('onclick') || '').toLowerCase();
 
-          // 1. Nút Báo cáo tài chính & Thẻ tổng doanh thu công ty
-          var finBtn = Array.from(document.querySelectorAll('button')).find(function(b) {
-            return b.textContent && b.textContent.indexOf('Báo cáo tài chính') !== -1;
-          });
-          setVisible(finBtn, !!perms.viewFinance);
-          if (finBtn) {
-            var overviewBox = finBtn.closest('.rounded-3xl, .rounded-2xl, [class*="overview"]');
-            if (overviewBox) {
-              var revLabel = Array.from(overviewBox.querySelectorAll('div, span')).find(function(el) {
-                return el.children.length === 0 && el.textContent && el.textContent.trim() === 'TỔNG DOANH THU';
-              });
-              if (revLabel && revLabel.parentElement && revLabel.parentElement.parentElement) {
-                setVisible(revLabel.parentElement.parentElement, !!perms.viewFinance);
-              }
-            }
+          var blockedFeature = '';
+          if (!btn.closest('.modal-sheet')) {
+            if (txt.indexOf('Báo cáo tài chính') !== -1 && !perms.viewFinance) blockedFeature = 'Xem Báo cáo tài chính';
+            else if (txt === 'Công trình' && !perms.viewProjects) blockedFeature = 'Xem Công trình & Công nợ';
+            else if (txt === 'Đối tác' && !perms.viewPartners) blockedFeature = 'Xem Đối tác & Công nợ ĐT';
+            else if (txt === 'Lương thợ' && !perms.viewWorkers) blockedFeature = 'Xem Lương thợ';
+            else if (txt === 'Sổ quỹ' && !perms.viewCashbook) blockedFeature = 'Xem Sổ quỹ nhân viên';
+            else if (txt.indexOf('Báo cáo LSGD') !== -1 && !perms.viewTxReport) blockedFeature = 'Xem Báo cáo LSGD';
+            else if (txt.indexOf('Đồng bộ') !== -1 && !perms.syncSheets) blockedFeature = 'Đồng bộ Google Sheets';
+            else if (txt === 'Sửa' && !perms.editTx) blockedFeature = 'Sửa giao dịch';
+            else if (txt === 'Xóa' && !perms.deleteTx) blockedFeature = 'Xóa giao dịch';
+            else if ((oc.indexOf('log') !== -1 || oc.indexOf('nhatky') !== -1) && !perms.siteLog) blockedFeature = 'Nhật ký công trình';
+            else if ((oc.indexOf('manual') !== -1 || oc.indexOf('addtx') !== -1 || oc.indexOf('opennewtx') !== -1 || btn.className.indexOf('bg-[#EA580C]') !== -1) && btn.getBoundingClientRect().bottom > window.innerHeight - 95 && !perms.addTx) blockedFeature = 'Ghi phiếu Thu / Chi mới';
+            else if ((oc.indexOf('catalog') !== -1 || oc.indexOf('danhmuc') !== -1 || oc.indexOf('manage') !== -1) && !perms.manageCatalog) blockedFeature = 'Danh mục quản lý';
           }
 
-          // 2. 4 nút chức năng trung tâm: Công trình, Đối tác, Lương thợ, Sổ quỹ
-          var navTargets = [
-            { text: 'Công trình', key: 'viewProjects' },
-            { text: 'Đối tác',    key: 'viewPartners' },
-            { text: 'Lương thợ',  key: 'viewWorkers' },
-            { text: 'Sổ quỹ',     key: 'viewCashbook' }
-          ];
-          navTargets.forEach(function(item) {
-            var btn = Array.from(document.querySelectorAll('button')).find(function(b) {
-              return b.textContent && b.textContent.trim() === item.text && !b.closest('.modal-sheet');
-            });
-            setVisible(btn, !!perms[item.key]);
-          });
+          if (blockedFeature) {
+            ev.preventDefault();
+            ev.stopImmediatePropagation();
+            denyPermissionToast(blockedFeature);
+          }
+        }, true);
 
-          // 3. Nút Báo cáo LSGD
-          var lsgdBtn = Array.from(document.querySelectorAll('button')).find(function(b) {
-            return b.textContent && b.textContent.indexOf('Báo cáo LSGD') !== -1;
-          });
-          setVisible(lsgdBtn, !!perms.viewTxReport);
-
-          // 4. Nút Đồng bộ ở góc trên bên phải
-          var syncBtn = Array.from(document.querySelectorAll('header button')).find(function(b) {
-            return b.textContent && b.textContent.indexOf('Đồng bộ') !== -1;
-          });
-          setVisible(syncBtn, !!perms.syncSheets);
-
-          // 5. Thanh nổi dưới cùng: Nhật ký (trái), Thêm giao dịch + (giữa), Danh mục (phải)
-          var bottomBtns = Array.from(document.querySelectorAll('button')).filter(function(b) {
-            var r = b.getBoundingClientRect();
-            return r.bottom > window.innerHeight - 95 && r.width >= 36 && r.width <= 70 && !b.closest('.modal-sheet');
-          });
-          bottomBtns.forEach(function(b) {
-            var oc = (b.getAttribute('onclick') || '').toLowerCase();
-            if (oc.indexOf('log') !== -1 || oc.indexOf('nhatky') !== -1) {
-              setVisible(b, !!perms.siteLog);
-            } else if (oc.indexOf('manual') !== -1 || oc.indexOf('addtx') !== -1 || oc.indexOf('opennewtx') !== -1 || b.className.indexOf('bg-[#EA580C]') !== -1) {
-              setVisible(b, !!perms.addTx);
-            } else if (oc.indexOf('catalog') !== -1 || oc.indexOf('danhmuc') !== -1 || oc.indexOf('manage') !== -1) {
-              setVisible(b, !!perms.manageCatalog);
-            }
-          });
-
-          // 6. Nút Sửa / Xóa trên từng thẻ giao dịch
-          document.querySelectorAll('button').forEach(function(b) {
-            if (b.closest('.modal-sheet')) return;
-            var t = (b.textContent || '').trim();
-            if (t === 'Sửa') setVisible(b, !!perms.editTx);
-            if (t === 'Xóa') setVisible(b, !!perms.deleteTx);
-          });
-        }
-
-        // Bọc openModal để chặn mở hộp thoại nếu nhân viên không có quyền truy cập chức năng đó
+        // Bọc openModal làm lớp bảo vệ thứ 2 (không chặn hộp thoại Tài Khoản Nhân Sự để đổi tài khoản)
         if (typeof openModal === 'function') {
-          var _origOpenModal167 = openModal;
+          var _origOpenModal168 = openModal;
           openModal = function(modalId) {
+            if (isAdminUser()) return _origOpenModal168.apply(this, arguments);
+            var id = String(modalId || '').toLowerCase();
+            if (id.indexOf('account') !== -1 || id.indexOf('pin') !== -1 || id.indexOf('user') !== -1) {
+              return _origOpenModal168.apply(this, arguments);
+            }
             var perms = getActiveUserPermMap();
-            var id = String(modalId || '');
-            if (id.indexOf('financial') !== -1 && !perms.viewFinance) {
-              if (typeof showToast === 'function') showToast('🔒 Tài khoản của bạn chưa được cấp quyền xem Báo cáo tài chính');
-              return;
-            }
-            if (id.indexOf('project') !== -1 && !perms.viewProjects) {
-              if (typeof showToast === 'function') showToast('🔒 Tài khoản của bạn chưa được cấp quyền xem Công trình');
-              return;
-            }
-            if (id.indexOf('partner') !== -1 && !perms.viewPartners) {
-              if (typeof showToast === 'function') showToast('🔒 Tài khoản của bạn chưa được cấp quyền xem Đối tác');
-              return;
-            }
-            if (id.indexOf('worker') !== -1 && !perms.viewWorkers) {
-              if (typeof showToast === 'function') showToast('🔒 Tài khoản của bạn chưa được cấp quyền xem Lương thợ');
-              return;
-            }
-            if (id.indexOf('cash') !== -1 && id.indexOf('fund') !== -1 && !perms.viewCashbook) {
-              if (typeof showToast === 'function') showToast('🔒 Tài khoản của bạn chưa được cấp quyền xem Sổ quỹ');
-              return;
-            }
-            if (id.indexOf('log') !== -1 && !perms.siteLog) {
-              if (typeof showToast === 'function') showToast('🔒 Tài khoản của bạn chưa được cấp quyền Nhật ký công trình');
-              return;
-            }
-            if (id.indexOf('catalog') !== -1 && !perms.manageCatalog) {
-              if (typeof showToast === 'function') showToast('🔒 Tài khoản của bạn chưa được cấp quyền Danh mục quản lý');
-              return;
-            }
-            if (id.indexOf('sync') !== -1 && !perms.syncSheets) {
-              if (typeof showToast === 'function') showToast('🔒 Tài khoản của bạn chưa được cấp quyền Đồng bộ Sheets');
-              return;
-            }
-            return _origOpenModal167.apply(this, arguments);
+            if (id.indexOf('financial') !== -1 && !perms.viewFinance) { denyPermissionToast('Xem Báo cáo tài chính'); return; }
+            if (id.indexOf('project') !== -1 && !perms.viewProjects) { denyPermissionToast('Xem Công trình'); return; }
+            if (id.indexOf('partner') !== -1 && !perms.viewPartners) { denyPermissionToast('Xem Đối tác'); return; }
+            if (id.indexOf('worker') !== -1 && !perms.viewWorkers) { denyPermissionToast('Xem Lương thợ'); return; }
+            if ((id.indexOf('cash') !== -1 || id.indexOf('fund') !== -1) && !perms.viewCashbook) { denyPermissionToast('Xem Sổ quỹ'); return; }
+            if (id.indexOf('lsgd') !== -1 && !perms.viewTxReport) { denyPermissionToast('Xem Báo cáo LSGD'); return; }
+            if (id.indexOf('manual') !== -1 && !perms.addTx && !perms.editTx) { denyPermissionToast('Ghi / Sửa giao dịch'); return; }
+            if (id.indexOf('log') !== -1 && !perms.siteLog) { denyPermissionToast('Nhật ký công trình'); return; }
+            if ((id.indexOf('catalog') !== -1 || id.indexOf('manage') !== -1) && !perms.manageCatalog) { denyPermissionToast('Danh mục quản lý'); return; }
+            if (id.indexOf('sync') !== -1 && !perms.syncSheets) { denyPermissionToast('Đồng bộ Google Sheets'); return; }
+            return _origOpenModal168.apply(this, arguments);
           };
         }
 
-        // =====================================================================
-        // 3. BẢNG CẤU HÌNH PHÂN QUYỀN TRỰC QUAN TRONG HỘP THOẠI TÀI KHOẢN NHÂN SỰ
-        // =====================================================================
-        var _selectedPermStaff = 'Sen KA';
+        // Bảng cấu hình phân quyền trong Tài Khoản Nhân Sự TGKA (có sẵn tab Tuấn KA)
+        var _selectedPermStaff = 'Tuấn KA';
 
         window.selectPermTargetStaff = function(st) {
           _selectedPermStaff = st;
@@ -9548,10 +9498,7 @@
           if (!all[st]) all[st] = Object.assign({}, DEFAULT_STAFF_PERMS[st]);
           all[st][permKey] = !!checked;
           saveAllGranularPerms(all);
-          enforceGranularPermissionsOnUI();
-          if (typeof showToast === 'function') {
-            showToast('✓ Đã cập nhật quyền "' + permKey + '" cho ' + st);
-          }
+          if (typeof showToast === 'function') showToast('✓ Đã cập nhật quyền cho ' + st);
         };
 
         window.setAllPermsForStaff = function(st, val) {
@@ -9560,30 +9507,29 @@
           PERM_DEFINITIONS.forEach(function(p) { all[st][p.key] = !!val; });
           saveAllGranularPerms(all);
           renderGranularPermMatrix();
-          enforceGranularPermissionsOnUI();
           if (typeof showToast === 'function') {
             showToast((val ? '🔓 Đã mở toàn bộ quyền cho ' : '🔒 Đã khóa toàn bộ quyền của ') + st);
           }
         };
 
         function renderGranularPermMatrix() {
-          var box = document.querySelector('.v167-perm-matrix-box');
+          var box = document.querySelector('.v168-perm-matrix-box');
           if (!box) return;
           var allPerms = loadAllGranularPerms();
           var curPerms = allPerms[_selectedPermStaff] || {};
-          var isAdmin = getActiveUserIdV167() === 'Việt KA';
+          var admin = isAdminUser();
 
           var tabsHtml = MANAGED_STAFF.map(function(st) {
             var active = st === _selectedPermStaff;
             var cls = active
               ? 'bg-[#EA580C] text-white border-[#EA580C]'
               : 'bg-white text-slate-700 border-slate-200 hover:bg-orange-50';
-            return '<button type="button" onclick="selectPermTargetStaff(\'' + st + '\')" class="py-1.5 px-2 rounded-xl border text-[11.5px] font-bold transition ' + cls + '">' + st + '</button>';
+            return '<button type="button" onclick="selectPermTargetStaff(\'' + st + '\')" class="py-1.5 px-1.5 rounded-xl border text-[11px] font-bold transition truncate ' + cls + '">' + st + '</button>';
           }).join('');
 
           var rowsHtml = PERM_DEFINITIONS.map(function(p) {
             var checked = curPerms[p.key] ? 'checked' : '';
-            var disabled = isAdmin ? '' : 'disabled';
+            var disabled = admin ? '' : 'disabled';
             return '<label class="flex items-center justify-between gap-2 py-1.5 px-2.5 rounded-xl bg-white border border-slate-100 cursor-pointer">' +
               '<div class="min-w-0">' +
                 '<div class="text-[11.5px] font-semibold text-slate-800 truncate">' + p.label + '</div>' +
@@ -9593,27 +9539,28 @@
             '</label>';
           }).join('');
 
-          var quickActions = isAdmin
+          var quickActions = admin
             ? '<div class="flex items-center justify-between gap-2 pt-1">' +
-                '<span class="text-[10.5px] text-slate-500">Đang chỉnh quyền: <b class="text-[#EA580C]">' + _selectedPermStaff + '</b></span>' +
+                '<span class="text-[10.5px] text-slate-500">Đang chỉnh: <b class="text-[#EA580C]">' + _selectedPermStaff + '</b>' + (_selectedPermStaff === 'Tuấn KA' ? ' (Cổ đông)' : '') + '</span>' +
                 '<div class="flex gap-1.5">' +
                   '<button type="button" onclick="setAllPermsForStaff(\'' + _selectedPermStaff + '\', true)" class="px-2 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-bold">Bật tất cả</button>' +
                   '<button type="button" onclick="setAllPermsForStaff(\'' + _selectedPermStaff + '\', false)" class="px-2 py-0.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 text-[10px] font-bold">Tắt tất cả</button>' +
                 '</div>' +
               '</div>'
-            : '<div class="text-[10.5px] text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg">🔒 Chỉ tài khoản Giám đốc (Việt KA) mới có quyền thay đổi phân quyền.</div>';
+            : '<div class="text-[10.5px] text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg">🔒 Chỉ Giám đốc (Việt KA) mới được chỉnh sửa phân quyền.</div>';
 
           box.innerHTML =
             '<div class="flex items-center justify-between">' +
-              '<div class="text-[12px] font-extrabold text-[#9A3412]">🛡️ Phân Cấp Quyền Chức Năng Nhân Viên</div>' +
+              '<div class="text-[12px] font-extrabold text-[#9A3412]">🛡️ Phân Cấp Quyền Chức Năng (Giữ Nguyên Giao Diện)</div>' +
               '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-orange-100 text-[#EA580C]">Việt KA: Toàn quyền</span>' +
             '</div>' +
-            '<div class="grid grid-cols-3 gap-1.5">' + tabsHtml + '</div>' +
+            '<div class="grid grid-cols-4 gap-1">' + tabsHtml + '</div>' +
             quickActions +
             '<div class="space-y-1.5 max-h-56 overflow-y-auto pr-0.5">' + rowsHtml + '</div>';
         }
 
         function injectPermissionMatrixIntoAccountModal() {
+          ensureTuanKaAccountExists();
           var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
           var accTitle = headings.find(function(el) {
             return el.children.length === 0 && el.textContent && el.textContent.indexOf('Tài Khoản Nhân Sự') !== -1 && el.offsetParent !== null;
@@ -9626,7 +9573,7 @@
             if (modal.clientHeight > 220 && modal.clientWidth > 260) break;
             modal = modal.parentElement;
           }
-          if (!modal || modal.querySelector('.v167-perm-matrix-box')) return;
+          if (!modal || modal.querySelector('.v168-perm-matrix-box')) return;
 
           var scrollHost = Array.from(modal.querySelectorAll('div')).find(function(el) {
             var st = window.getComputedStyle(el);
@@ -9634,29 +9581,32 @@
           }) || modal;
 
           var box = document.createElement('div');
-          box.className = 'v167-perm-matrix-box mt-3 p-3 rounded-2xl border border-orange-200 bg-[#FFF7ED]/70 space-y-2';
+          box.className = 'v168-perm-matrix-box mt-3 p-3 rounded-2xl border border-orange-200 bg-[#FFF7ED]/70 space-y-2';
           scrollHost.appendChild(box);
           renderGranularPermMatrix();
         }
 
-        var _v167Obs = new MutationObserver(function() {
-          _v167Obs.disconnect();
+        var _v168Obs = new MutationObserver(function() {
+          _v168Obs.disconnect();
           try {
-            enforceGranularPermissionsOnUI();
+            ensureTuanKaAccountExists();
+            restoreAllHiddenButtons();
             injectPermissionMatrixIntoAccountModal();
           } finally {
-            _v167Obs.observe(document.body, { childList: true, subtree: true });
+            _v168Obs.observe(document.body, { childList: true, subtree: true });
           }
         });
 
         setTimeout(function() {
-          applyDefaultMonthOnLaunch();
-          enforceGranularPermissionsOnUI();
+          ensureTuanKaAccountExists();
+          restoreAllHiddenButtons();
+          syncPeriodToCurrentNow('month');
+          if (typeof setPeriodMode === 'function') setPeriodMode('month');
           injectPermissionMatrixIntoAccountModal();
-          _v167Obs.observe(document.body, { childList: true, subtree: true });
-        }, 260);
+          _v168Obs.observe(document.body, { childList: true, subtree: true });
+        }, 250);
       })();
-      // === V167_CORE_END ===
+      // === V168_CORE_END ===
 
       function copyAppsScriptCode() {
         const cfg = resolveVersionConfig(ACTIVE_VERSION);
