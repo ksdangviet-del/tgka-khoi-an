@@ -1741,7 +1741,7 @@
         return { ...top, features: mergedFeatures };
       }
 
-      localStorage.setItem('tgka_active_version', 'v1.59'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
+      localStorage.setItem('tgka_active_version', 'v1.60'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
       if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.59';
       if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
         ACTIVE_VERSION = 'v1.59';
@@ -7366,263 +7366,304 @@ _v159Obs.observe(document.body, { childList: true, subtree: true });
 <!-- V160_ADDON_START -->
 <script>
 (function() {
-  var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
-  var STAFF_LIST = ['Việt KA', 'Sen KA', 'Hiếu KA', 'Quyển KA'];
-  var DEFAULT_AVATAR_META = {
-    'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
-    'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
-    'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
-    'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
-  };
+var AVATAR_STORAGE_KEY = 'tgka_staff_avatars_v160';
+var DEFAULT_AVATAR_META = {
+'Việt KA':  { initials: 'VK', bg: '#EA580C', color: '#FFFFFF' },
+'Sen KA':   { initials: 'SK', bg: '#0284C7', color: '#FFFFFF' },
+'Hiếu KA':  { initials: 'HK', bg: '#059669', color: '#FFFFFF' },
+'Quyển KA': { initials: 'QK', bg: '#7C3AED', color: '#FFFFFF' }
+};
 
-  function loadStaffAvatars() {
-    try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
-    catch (e) { return {}; }
+function loadStaffAvatars() {
+try { return JSON.parse(localStorage.getItem(AVATAR_STORAGE_KEY) || '{}'); }
+catch (e) { return {}; }
+}
+function saveStaffAvatars(map) {
+try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
+}
+
+function parseTxDateScore(raw) {
+var s = String(raw || '').trim();
+if (!s) return 0;
+var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
+var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
+return 0;
+}
+
+function getRowSeqScore(id) {
+var m = String(id || '').match(/(\d+)$/);
+return m ? Number(m[1]) : 0;
+}
+
+// Sắp xếp giao dịch mới nhất lên đầu danh sách
+window.sortTransactionsNewestFirst = function(forceRender) {
+if (!Array.isArray(window.transactions) || window.transactions.length < 2) return;
+var firstScore = parseTxDateScore(window.transactions[0].date);
+var lastScore = parseTxDateScore(window.transactions[window.transactions.length - 1].date);
+if (!forceRender && firstScore >= lastScore && window._v160SortedLen === window.transactions.length) return;
+
+window.transactions.sort(function(a, b) {
+  var da = parseTxDateScore(a.date);
+  var db = parseTxDateScore(b.date);
+  if (db !== da) return db - da;
+  var idA = String(a.id || '');
+  var idB = String(b.id || '');
+  var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
+  var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
+  if (isImpB !== isImpA) return isImpB - isImpA;
+  return getRowSeqScore(idB) - getRowSeqScore(idA);
+});
+window._v160SortedLen = window.transactions.length;
+if (typeof renderDashboard === 'function') renderDashboard();
+};
+
+function makeAvatarHtml(staffName, sizePx, extraStyle) {
+var name = String(staffName || '').trim();
+var meta = DEFAULT_AVATAR_META[name];
+if (!meta) return '';
+var saved = loadStaffAvatars()[name];
+var sz = sizePx || 18;
+var st = extraStyle || 'margin-right:5px;';
+if (saved) {
+  return '<img src="' + saved + '" alt="' + name + '" class="v160-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;' + st + '"/>';
+}
+return '<span class="v160-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.44) + 'px;line-height:1;' + st + '">' + meta.initials + '</span>';
+}
+
+// Gắn ảnh đại diện trong Lịch sử giao dịch (không chớp nháy)
+function decorateStaffBadgesWithAvatars() {
+var candidates = document.querySelectorAll('span, div, button');
+for (var i = 0; i < candidates.length; i++) {
+  var el = candidates[i];
+  if (el.querySelector('.v160-staff-avatar') || el.closest('.v160-has-avatar') || el.closest('.v160-acc-row')) continue;
+  if (el.children.length > 0) continue;
+  var txt = (el.textContent || '').trim();
+  if (!DEFAULT_AVATAR_META[txt]) continue;
+  if (el.tagName === 'OPTION' || el.closest('select') || el.closest('table') || el.closest('header')) continue;
+  if (el.textContent.indexOf('Quỹ đầu kỳ') !== -1) continue;
+
+  var avatarHtml = makeAvatarHtml(txt, 18, 'margin-right:5px;');
+  if (avatarHtml) {
+    el.classList.add('v160-has-avatar');
+    el.style.display = 'inline-flex';
+    el.style.alignItems = 'center';
+    el.insertAdjacentHTML('afterbegin', avatarHtml);
   }
-  function saveStaffAvatars(map) {
-    try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(map)); } catch (e) {}
+}
+}
+
+// Tinh gọn bố cục hộp thoại Tài Khoản Nhân Sự TGKA: gắn ảnh & nút "Đổi ảnh" thẳng vào từng thẻ nhân sự
+function enhanceAccountModalCards() {
+var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+var accTitle = headings.find(function(el) {
+  return el.children.length === 0 && el.textContent && el.textContent.indexOf('Tài Khoản Nhân Sự') !== -1 && el.offsetParent !== null;
+});
+if (!accTitle) return;
+
+var modal = accTitle.parentElement;
+while (modal && modal.parentElement && modal.parentElement !== document.body) {
+  if (modal.clientHeight > 220 && modal.clientWidth > 260) break;
+  modal = modal.parentElement;
+}
+if (!modal) return;
+
+// Ẩn thanh nút phụ dư thừa phía trên danh sách nhân sự nếu có
+var topHintBtns = Array.from(modal.querySelectorAll('button, div')).filter(function(el) {
+  return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Cập nhật ảnh đại diện cho tài khoản hiện tại';
+});
+topHintBtns.forEach(function(el) {
+  var box = el.closest('button') || el.parentElement;
+  if (box && box !== modal) box.style.display = 'none';
+});
+
+// Tìm 4 thẻ nhân sự và bố trí lại gọn gàng: [Ảnh 36px] [Tên + Chức vụ] ... [Đổi ảnh] [Đang dùng / Chuyển sang]
+var allNodes = Array.from(modal.querySelectorAll('div, span'));
+allNodes.forEach(function(el) {
+  if (el.children.length > 0) return;
+  var stName = (el.textContent || '').trim();
+  if (!DEFAULT_AVATAR_META[stName]) return;
+
+  var card = el.parentElement;
+  while (card && card !== modal) {
+    var cardTxt = card.textContent || '';
+    if (cardTxt.indexOf('Đang dùng') !== -1 || cardTxt.indexOf('Chuyển sang') !== -1) break;
+    card = card.parentElement;
+  }
+  if (!card || card === modal || card.classList.contains('v160-acc-row')) return;
+
+  card.classList.add('v160-acc-row');
+  card.style.display = 'flex';
+  card.style.alignItems = 'center';
+  card.style.justifyContent = 'space-between';
+  card.style.gap = '8px';
+
+  // Thay biểu tượng nhỏ cạnh tên bằng ảnh đại diện 36px rõ nét ở đầu thẻ
+  var nameRow = el.parentElement;
+  if (nameRow) {
+    Array.from(nameRow.querySelectorAll('svg, img, .v160-staff-avatar')).forEach(function(ic) { ic.remove(); });
+  }
+  var leftAvatar = document.createElement('div');
+  leftAvatar.className = 'v160-acc-avatar shrink-0 flex items-center justify-center';
+  leftAvatar.innerHTML = makeAvatarHtml(stName, 36, 'margin-right:0;');
+  card.insertBefore(leftAvatar, card.firstChild);
+
+  // Giữ cột thông tin giữa co giãn tự nhiên, không bao giờ ép xuống dòng đè chữ
+  var infoCol = card.children[1];
+  if (infoCol) {
+    infoCol.style.flex = '1 1 auto';
+    infoCol.style.minWidth = '0';
   }
 
-  function parseTxDateScore(raw) {
-    var s = String(raw || '').trim();
-    if (!s) return 0;
-    var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (iso) return Number(iso[1]) * 10000 + Number(iso[2]) * 100 + Number(iso[3]);
-    var dmy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if (dmy) return Number(dmy[3]) * 10000 + Number(dmy[2]) * 100 + Number(dmy[1]);
-    return 0;
+  // Gom nút "Đổi ảnh" và nút trạng thái ("Đang dùng" / "Chuyển sang") thành cụm nút ngang bên phải
+  var statusBtn = Array.from(card.querySelectorAll('button, span')).find(function(b) {
+    var t = (b.textContent || '').trim();
+    return t === 'Đang dùng' || t === 'Chuyển sang';
+  });
+  if (statusBtn) {
+    statusBtn.style.whiteSpace = 'nowrap';
+    statusBtn.style.flexShrink = '0';
+
+    var rightGroup = document.createElement('div');
+    rightGroup.className = 'v160-acc-actions flex items-center gap-1.5 shrink-0';
+
+    var uploadLabel = document.createElement('label');
+    uploadLabel.className = 'px-2.5 py-1 rounded-full bg-orange-50 border border-orange-200 text-[#EA580C] text-[11px] font-bold cursor-pointer hover:bg-orange-100 transition whitespace-nowrap shrink-0';
+    uploadLabel.textContent = 'Đổi ảnh';
+    uploadLabel.title = 'Chọn ảnh đại diện cho ' + stName;
+    uploadLabel.onclick = function(ev) { ev.stopPropagation(); };
+
+    var fileInp = document.createElement('input');
+    fileInp.type = 'file';
+    fileInp.accept = 'image/*';
+    fileInp.className = 'hidden';
+    fileInp.onchange = function() { window.handleStaffAvatarUpload(stName, fileInp); };
+    uploadLabel.appendChild(fileInp);
+
+    statusBtn.parentNode.insertBefore(rightGroup, statusBtn);
+    rightGroup.appendChild(uploadLabel);
+    rightGroup.appendChild(statusBtn);
   }
+});
+}
 
-  function getRowSeqScore(id) {
-    var m = String(id || '').match(/(\d+)$/);
-    return m ? Number(m[1]) : 0;
-  }
-
-  // 1. Sắp xếp giao dịch mới nhất lên trên cùng
-  window.sortTransactionsNewestFirst = function(forceRender) {
-    if (!Array.isArray(window.transactions) || window.transactions.length < 2) return;
-    var firstScore = parseTxDateScore(window.transactions[0].date);
-    var lastScore = parseTxDateScore(window.transactions[window.transactions.length - 1].date);
-    if (!forceRender && firstScore >= lastScore && window._v160SortedLen === window.transactions.length) return;
-
-    window.transactions.sort(function(a, b) {
-      var da = parseTxDateScore(a.date);
-      var db = parseTxDateScore(b.date);
-      if (db !== da) return db - da;
-      var idA = String(a.id || '');
-      var idB = String(b.id || '');
-      var isImpA = idA.indexOf('IMP_NL_') === 0 ? 1 : 0;
-      var isImpB = idB.indexOf('IMP_NL_') === 0 ? 1 : 0;
-      if (isImpB !== isImpA) return isImpB - isImpA;
-      return getRowSeqScore(idB) - getRowSeqScore(idA);
-    });
-    window._v160SortedLen = window.transactions.length;
-    if (typeof renderDashboard === 'function') renderDashboard();
-  };
-
-  function makeAvatarHtml(staffName, sizePx) {
-    var name = String(staffName || '').trim();
-    var meta = DEFAULT_AVATAR_META[name];
-    if (!meta) return '';
-    var saved = loadStaffAvatars()[name];
-    var sz = sizePx || 18;
-    if (saved) {
-      return '<img src="' + saved + '" alt="' + name + '" class="v160-staff-avatar rounded-full object-cover inline-block shrink-0 border border-white shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;vertical-align:middle;"/>';
-    }
-    return '<span class="v160-staff-avatar rounded-full inline-flex items-center justify-center font-extrabold shrink-0 border border-white/80 shadow-2xs" style="width:' + sz + 'px;height:' + sz + 'px;margin-right:5px;background:' + meta.bg + ';color:' + meta.color + ';font-size:' + Math.round(sz * 0.46) + 'px;line-height:1;">' + meta.initials + '</span>';
-  }
-
-  // 2. Gắn ảnh đại diện tức thì (không dùng setInterval nên không chớp nháy)
-  function decorateStaffBadgesWithAvatars() {
-    var candidates = document.querySelectorAll('span, div, button');
-    for (var i = 0; i < candidates.length; i++) {
-      var el = candidates[i];
-      if (el.querySelector('.v160-staff-avatar') || el.closest('.v160-has-avatar') || el.closest('.v160-account-avatar-box')) continue;
-      if (el.children.length > 0) continue;
-      var txt = (el.textContent || '').trim();
-      if (!DEFAULT_AVATAR_META[txt]) continue;
-      if (el.tagName === 'OPTION' || el.closest('select') || el.closest('table') || el.closest('header')) continue;
-      if (el.textContent.indexOf('Quỹ đầu kỳ') !== -1) continue;
-
-      var avatarHtml = makeAvatarHtml(txt, 18);
-      if (avatarHtml) {
-        el.classList.add('v160-has-avatar');
-        el.style.display = 'inline-flex';
-        el.style.alignItems = 'center';
-        el.insertAdjacentHTML('afterbegin', avatarHtml);
-      }
-    }
-  }
-
-  // 3. Tích hợp khung cài đặt Ảnh Đại Diện ngay trong hộp thoại Tài Khoản Nhân Sự TGKA
-  function injectAvatarManagerIntoAccountModal() {
-    var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
-    var accTitle = headings.find(function(el) {
-      return el.children.length === 0 && el.textContent && el.textContent.indexOf('Tài Khoản Nhân Sự') !== -1 && el.offsetParent !== null;
-    });
-    if (!accTitle) return;
-
-    var modal = accTitle.parentElement;
-    while (modal && modal.parentElement && modal.parentElement !== document.body) {
-      if (modal.clientHeight > 220 && modal.clientWidth > 260) break;
-      modal = modal.parentElement;
-    }
-    if (!modal || modal.querySelector('.v160-account-avatar-box')) return;
-
-    var scrollHost = Array.from(modal.querySelectorAll('div')).find(function(el) {
-      var st = window.getComputedStyle(el);
-      return (st.overflowY === 'auto' || st.overflowY === 'scroll') && el.clientHeight > 120;
-    }) || modal;
-
-    var box = document.createElement('div');
-    box.className = 'v160-account-avatar-box mt-3 p-3 rounded-2xl border border-orange-200 bg-[#FFF7ED]/70 space-y-2';
-    scrollHost.appendChild(box);
-    renderAccountAvatarBox(box);
-  }
-
-  function renderAccountAvatarBox(box) {
-    if (!box) box = document.querySelector('.v160-account-avatar-box');
-    if (!box) return;
-    var saved = loadStaffAvatars();
-    var rows = STAFF_LIST.map(function(st) {
-      var meta = DEFAULT_AVATAR_META[st];
-      var preview = saved[st]
-        ? '<img src="' + saved[st] + '" class="w-9 h-9 rounded-full object-cover border border-white shadow-2xs"/>'
-        : '<div class="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs shadow-2xs" style="background:' + meta.bg + ';color:#fff;">' + meta.initials + '</div>';
-      return '<div class="flex items-center justify-between gap-2 bg-white px-2.5 py-1.5 rounded-xl border border-slate-200">' +
-        '<div class="flex items-center gap-2">' + preview + '<span class="font-bold text-slate-800 text-[12px]">' + st + '</span></div>' +
-        '<div class="flex items-center gap-1">' +
-          '<label class="px-2.5 py-1 rounded-lg bg-[#EA580C] text-white text-[11px] font-bold cursor-pointer">Đổi ảnh' +
-            '<input type="file" accept="image/*" class="hidden" onchange="handleStaffAvatarUpload(\'' + st + '\', this)"/>' +
-          '</label>' +
-          (saved[st] ? '<button type="button" onclick="removeStaffAvatar(\'' + st + '\')" class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-[11px] font-semibold">Xóa</button>' : '') +
-        '</div>' +
-      '</div>';
-    }).join('');
-
-    box.innerHTML =
-      '<div class="text-[12px] font-bold text-[#9A3412]">Ảnh Đại Diện Nhân Sự (Hiển thị trên Lịch sử GD)</div>' +
-      '<div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">' + rows + '</div>';
-  }
-
-  window.handleStaffAvatarUpload = function(staffName, input) {
-    var file = input.files && input.files[0];
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      var img = new Image();
-      img.onload = function() {
-        var canvas = document.createElement('canvas');
-        canvas.width = 96; canvas.height = 96;
-        var ctx = canvas.getContext('2d');
-        var minSide = Math.min(img.width, img.height);
-        var sx = (img.width - minSide) / 2;
-        var sy = (img.height - minSide) / 2;
-        ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 96, 96);
-        var map = loadStaffAvatars();
-        map[staffName] = canvas.toDataURL('image/jpeg', 0.8);
-        saveStaffAvatars(map);
-        refreshAllAvatarsNow();
-        if (typeof showToast === 'function') showToast('Đã lưu ảnh đại diện cho ' + staffName);
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-  };
-
-  window.removeStaffAvatar = function(staffName) {
+window.handleStaffAvatarUpload = function(staffName, input) {
+var file = input.files && input.files[0];
+if (!file) return;
+var reader = new FileReader();
+reader.onload = function(ev) {
+  var img = new Image();
+  img.onload = function() {
+    var canvas = document.createElement('canvas');
+    canvas.width = 96; canvas.height = 96;
+    var ctx = canvas.getContext('2d');
+    var minSide = Math.min(img.width, img.height);
+    var sx = (img.width - minSide) / 2;
+    var sy = (img.height - minSide) / 2;
+    ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 96, 96);
     var map = loadStaffAvatars();
-    delete map[staffName];
+    map[staffName] = canvas.toDataURL('image/jpeg', 0.8);
     saveStaffAvatars(map);
-    refreshAllAvatarsNow();
-  };
-
-  function refreshAllAvatarsNow() {
     runInstantDomSync(function() {
       document.querySelectorAll('.v160-staff-avatar').forEach(function(el) { el.remove(); });
       document.querySelectorAll('.v160-has-avatar').forEach(function(el) { el.classList.remove('v160-has-avatar'); });
-      decorateStaffBadgesWithAvatars();
-      renderAccountAvatarBox();
-    });
-  }
-
-  // 4. Tự động tải dữ liệu ngầm mỗi 15 giây từ Google Sheets
-  var _v160Syncing = false;
-  function buildDataFingerprint(txs, projs, pts, wks) {
-    var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
-    var firstId = (txs && txs[0]) ? txs[0].id : '';
-    var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
-    return [
-      (txs || []).length, txSum, firstId, lastId,
-      (projs || []).length, (pts || []).length, (wks || []).length
-    ].join('|');
-  }
-
-  window.silentBackgroundPullFromSheets = function() {
-    if (_v160Syncing) return;
-    if (!window.execUrl || String(window.execUrl).indexOf('http') !== 0) return;
-    if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
-    if (document.visibilityState === 'hidden') return;
-
-    var act = document.activeElement;
-    if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
-
-    _v160Syncing = true;
-    var sep = window.execUrl.indexOf('?') === -1 ? '?' : '&';
-    var pullUrl = window.execUrl + sep + 'action=loadAll&t=' + Date.now();
-
-    fetch(pullUrl, { method: 'GET', redirect: 'follow' })
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
-
-        var oldCount = (window.transactions || []).length;
-        var oldFp = buildDataFingerprint(window.transactions, window.projects, window.partners, window.workers);
-        var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers);
-        if (oldFp === newFp) return;
-
-        window.transactions = data.transactions;
-        if (Array.isArray(data.projects) && data.projects.length) window.projects = data.projects;
-        if (Array.isArray(data.partners) && data.partners.length) window.partners = data.partners;
-        if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
-        if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
-
-        window.sortTransactionsNewestFirst(true);
-        if (typeof saveAllLocal === 'function') saveAllLocal();
-        if (typeof renderDashboard === 'function') renderDashboard();
-
-        var diff = window.transactions.length - oldCount;
-        if (diff > 0 && typeof showToast === 'function') {
-          showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
+      document.querySelectorAll('.v160-acc-row').forEach(function(el) {
+        el.classList.remove('v160-acc-row');
+        var av = el.querySelector('.v160-acc-avatar');
+        if (av) av.remove();
+        var act = el.querySelector('.v160-acc-actions');
+        if (act) {
+          var lbl = act.querySelector('label');
+          if (lbl) lbl.remove();
         }
-      })
-      .catch(function() {})
-      .finally(function() { _v160Syncing = false; });
-  };
-
-  // Bộ theo dõi DOM tức thì (0ms trễ -> loại bỏ hoàn toàn hiện tượng chớp nháy)
-  var _v160Obs = new MutationObserver(function() {
-    runInstantDomSync(function() {
-      window.sortTransactionsNewestFirst(false);
+      });
       decorateStaffBadgesWithAvatars();
-      injectAvatarManagerIntoAccountModal();
+      enhanceAccountModalCards();
     });
-  });
+    if (typeof showToast === 'function') showToast('Đã cập nhật ảnh đại diện cho ' + staffName);
+  };
+  img.src = ev.target.result;
+};
+reader.readAsDataURL(file);
+};
 
-  function runInstantDomSync(fn) {
-    _v160Obs.disconnect();
-    try { fn(); } finally {
-      _v160Obs.observe(document.body, { childList: true, subtree: true });
+// Tự động tải dữ liệu ngầm mỗi 15 giây từ Google Sheets
+var _v160Syncing = false;
+function buildDataFingerprint(txs, projs, pts, wks) {
+var txSum = (txs || []).reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+var firstId = (txs && txs[0]) ? txs[0].id : '';
+var lastId = (txs && txs[txs.length - 1]) ? txs[txs.length - 1].id : '';
+return [
+  (txs || []).length, txSum, firstId, lastId,
+  (projs || []).length, (pts || []).length, (wks || []).length
+].join('|');
+}
+
+window.silentBackgroundPullFromSheets = function() {
+if (_v160Syncing) return;
+if (!window.execUrl || String(window.execUrl).indexOf('http') !== 0) return;
+if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+if (document.visibilityState === 'hidden') return;
+
+var act = document.activeElement;
+if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
+
+_v160Syncing = true;
+var sep = window.execUrl.indexOf('?') === -1 ? '?' : '&';
+var pullUrl = window.execUrl + sep + 'action=loadAll&t=' + Date.now();
+
+fetch(pullUrl, { method: 'GET', redirect: 'follow' })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
+
+    var oldCount = (window.transactions || []).length;
+    var oldFp = buildDataFingerprint(window.transactions, window.projects, window.partners, window.workers);
+    var newFp = buildDataFingerprint(data.transactions, data.projects, data.partners, data.workers);
+    if (oldFp === newFp) return;
+
+    window.transactions = data.transactions;
+    if (Array.isArray(data.projects) && data.projects.length) window.projects = data.projects;
+    if (Array.isArray(data.partners) && data.partners.length) window.partners = data.partners;
+    if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
+    if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
+
+    window.sortTransactionsNewestFirst(true);
+    if (typeof saveAllLocal === 'function') saveAllLocal();
+    if (typeof renderDashboard === 'function') renderDashboard();
+
+    var diff = window.transactions.length - oldCount;
+    if (diff > 0 && typeof showToast === 'function') {
+      showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets');
     }
-  }
+  })
+  .catch(function() {})
+  .finally(function() { _v160Syncing = false; });
+};
 
-  runInstantDomSync(function() {
-    window.sortTransactionsNewestFirst(false);
-    decorateStaffBadgesWithAvatars();
-    injectAvatarManagerIntoAccountModal();
-  });
+var _v160Obs = new MutationObserver(function() {
+runInstantDomSync(function() {
+  window.sortTransactionsNewestFirst(false);
+  decorateStaffBadgesWithAvatars();
+  enhanceAccountModalCards();
+});
+});
 
-  setInterval(window.silentBackgroundPullFromSheets, 15000);
+function runInstantDomSync(fn) {
+_v160Obs.disconnect();
+try { fn(); } finally {
+  _v160Obs.observe(document.body, { childList: true, subtree: true });
+}
+}
+
+runInstantDomSync(function() {
+window.sortTransactionsNewestFirst(false);
+decorateStaffBadgesWithAvatars();
+enhanceAccountModalCards();
+});
+
+setInterval(window.silentBackgroundPullFromSheets, 15000);
 })();
 </script>
 <!-- V160_ADDON_END -->
