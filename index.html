@@ -7134,77 +7134,72 @@ function readSiteLogs_() {
       }
     };
 
-    window.recordMonthlyOfficePayrollToCashbook = function() {
-      var ym = window.officePayrollMonth || '2026-11';
-      var totalSal = window.officeStaff.reduce(function(s, st) { return s + window.computeOfficeSalaryForMonth(st, ym); }, 0);
-      var totalVpBhxh = window.officeStaff.reduce(function(s, st) { return s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0); }, 0);
-      var duanObj = (window.workers || []).find(function(w) { return w.name === 'Duẩn'; });
-      var duanBhxh = Number(duanObj && duanObj.bhxh) || 0;
-      var totalAllBhxh = totalVpBhxh + duanBhxh;
-      var payDate = ym + '-05';
-      var uid = window.currentUserId || 'Việt KA';
+    window.activePayrollSubTab = 'workers';
 
-      if (Array.isArray(window.transactions)) {
-        window.transactions.unshift({
-          id: 'tx_vp_sal_' + Date.now(), date: payDate, type: 'Chi', staff: uid, recipient: '',
-          amount: totalSal, project: '', partner: '', category: 'Lương nhân viên văn phòng',
-          internalGroup: 'Văn phòng & Tiếp khách', note: 'Trả lương VP tháng ' + ym + ' (Việt, Quyển, Hiếu, Sen)',
-          photos: [], seenBy: [uid]
-        });
-        if (totalAllBhxh > 0) {
-          window.transactions.unshift({
-            id: 'tx_bhxh_' + (Date.now() + 1), date: payDate, type: 'Chi', staff: uid, recipient: '',
-            amount: totalAllBhxh, project: '', partner: '', category: 'Tiền bảo hiểm xã hội (100% Cty đóng)',
-            internalGroup: 'Văn phòng & Tiếp khách', note: 'Đóng 100% BHXH tháng ' + ym + ' (Việt, Quyển, Hiếu & Duẩn)',
-            photos: [], seenBy: [uid]
-          });
-        }
-      }
-      if (typeof saveAllLocal === 'function') saveAllLocal();
-      if (typeof renderDashboard === 'function') renderDashboard();
-      if (typeof playSuccessChime === 'function') playSuccessChime();
-      if (typeof showToast === 'function') showToast('Đã ghi sổ chi lương VP' + (totalAllBhxh > 0 ? ' & BHXH' : '') + ' tháng ' + ym);
-      if (window.execUrl && typeof runManualDeltaSync === 'function') runManualDeltaSync();
-    };
+window.switchPayrollSubTab = function(tabName) {
+  window.activePayrollSubTab = tabName;
+  window.refreshVpPanelV159();
+};
 
-    window.importAndAuditLegacy2026Sheets = async function() {
-      if (typeof saveSyncUrl === 'function') saveSyncUrl();
-      if (!window.execUrl) { if (typeof showToast === 'function') showToast('⚠️ Vui lòng dán link Google Apps Script /exec trước'); return; }
-      var stEl = document.getElementById('sync-status-label');
-      if (stEl) stEl.textContent = 'Đang đọc & đối soát 5 sheet gốc 2026...';
-      try {
-        var sep = window.execUrl.indexOf('?') !== -1 ? '&' : '?';
-        var res = await fetch(window.execUrl + sep + 'action=importLegacy&t=' + Date.now());
-        var data = await res.json();
-        if (!data || !data.ok) throw new Error((data && data.error) || 'Lỗi đọc Sheets');
-        if (Array.isArray(data.projects)) window.projects = data.projects;
-        if (Array.isArray(data.partners)) window.partners = data.partners;
-        if (Array.isArray(data.workers) && data.workers.length) window.workers = data.workers;
-        if (Array.isArray(data.officeStaff) && data.officeStaff.length) { window.officeStaff = data.officeStaff; window.saveOfficeStaffLocal(); }
-        if (Array.isArray(data.transactions)) window.transactions = data.transactions;
-        if (Array.isArray(data.siteLogs)) window.siteLogs = data.siteLogs;
-        if (typeof saveAllLocal === 'function') saveAllLocal();
-        if (typeof renderDashboard === 'function') renderDashboard();
-        if (typeof playSuccessChime === 'function') playSuccessChime();
-        if (stEl) stEl.textContent = 'Đã nạp chuẩn: ' + window.transactions.length + ' GD • ' + window.projects.length + ' CT';
-        if (typeof showToast === 'function') showToast('Đã nạp chuẩn ' + window.transactions.length + ' giao dịch & 22 thợ');
-      } catch (err) {
-        if (stEl) stEl.textContent = 'Lỗi đọc sheet gốc (kiểm tra Mã.gs v1.59)';
-        if (typeof showToast === 'function') showToast('⚠️ Hãy cập nhật Mã.gs v1.59 lên Apps Script trước');
-      }
-    };
+window.isMonthPayrollRecorded = function(ym) {
+  var list = window.transactions || [];
+  return list.some(function(t) {
+    return t.type === 'Chi' && t.category === 'Lương nhân viên văn phòng' && String(t.date || '').indexOf(ym) === 0;
+  });
+};
 
-    window.openAuditReconciliationModal = function() {
-      var staffRows = typeof computeStaffBalances === 'function' ? computeStaffBalances(window.transactions || []) : [];
-      var getBal = function(id) { var f = staffRows.find(function(s) { return s.staff === id; }); return f ? f.balance : 0; };
-      var totalCash = staffRows.reduce(function(s, r) { return s + r.balance; }, 0);
-      alert('BẢNG KIỂM TOÁN & ĐỐI SOÁT SỐ LIỆU 2026 (v1.59)\n----------------------------------------\n• Việt KA: ' + formatVND(getBal('Việt KA')) + '\n• Sen KA: ' + formatVND(getBal('Sen KA')) + '\n• Hiếu KA: ' + formatVND(getBal('Hiếu KA')) + '\n• Quyển KA: ' + formatVND(getBal('Quyển KA')) + '\n• TỔNG TỒN QUỸ: ' + formatVND(totalCash));
-    };
+window.recordMonthlyOfficePayrollToCashbook = function() {
+  var ym = window.officePayrollMonth || '2026-11';
+  if (window.isMonthPayrollRecorded(ym)) {
+    if (typeof showToast === 'function') showToast('⚠️ Tháng ' + ym + ' đã ghi sổ chi lương & BHXH rồi!');
+    return;
+  }
+  var totalSal = window.officeStaff.reduce(function(s, st) { return s + window.computeOfficeSalaryForMonth(st, ym); }, 0);
+  var totalVpBhxh = window.officeStaff.reduce(function(s, st) { return s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0); }, 0);
+  var duanObj = (window.workers || []).find(function(w) { return w.name === 'Duẩn'; });
+  var duanBhxh = Number(duanObj && duanObj.bhxh) || 0;
+  var totalAllBhxh = totalVpBhxh + duanBhxh;
+  var payDate = ym + '-05';
+  var uid = window.currentUserId || 'Việt KA';
 
-    function injectVpAndBhxhPanel() {
+  if (Array.isArray(window.transactions)) {
+    window.transactions.unshift({
+      id: 'tx_vp_sal_' + Date.now(), date: payDate, type: 'Chi', staff: uid, recipient: '',
+      amount: totalSal, project: '', partner: '', category: 'Lương nhân viên văn phòng',
+      internalGroup: 'Văn phòng & Tiếp khách', note: 'Trả lương VP tháng ' + ym + ' (Việt, Quyển, Hiếu, Sen)',
+      photos: [], seenBy: [uid]
+    });
+    if (totalAllBhxh > 0) {
+      window.transactions.unshift({
+        id: 'tx_bhxh_' + (Date.now() + 1), date: payDate, type: 'Chi', staff: uid, recipient: '',
+        amount: totalAllBhxh, project: '', partner: '', category: 'Tiền bảo hiểm xã hội (100% Cty đóng)',
+        internalGroup: 'Văn phòng & Tiếp khách', note: 'Đóng 100% BHXH tháng ' + ym + ' (Việt, Quyển, Hiếu & Duẩn)',
+        photos: [], seenBy: [uid]
+      });
+    }
+  }
+  if (typeof saveAllLocal === 'function') saveAllLocal();
+  if (typeof renderDashboard === 'function') renderDashboard();
+  if (typeof window.refreshVpPanelV159 === 'function') window.refreshVpPanelV159();
+  if (typeof playSuccessChime === 'function') playSuccessChime();
+  if (typeof showToast === 'function') showToast('Đã ghi sổ chi lương VP' + (totalAllBhxh > 0 ? ' & BHXH' : '') + ' tháng ' + ym);
+  if (window.execUrl && typeof runManualDeltaSync === 'function') runManualDeltaSync();
+};
+
+function injectVpAndBhxhPanel() {
   var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
-  var titleEl = headings.find(function(el) { return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Bảng Chấm Công & Lương Thợ'; });
-  if (!titleEl) return;
+  var titleEl = headings.find(function(el) {
+    return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Bảng Chấm Công & Lương Thợ';
+  });
+
+  if (!titleEl || titleEl.offsetParent === null) {
+    document.querySelectorAll('.v159-extra-panel').forEach(function(el) { el.remove(); });
+    document.querySelectorAll('.v159-hidden-worker-node').forEach(function(el) {
+      el.style.display = '';
+      el.classList.remove('v159-hidden-worker-node');
+    });
+    return;
+  }
 
   var modal = titleEl.parentElement;
   while (modal && modal.parentElement && modal.parentElement !== document.body) {
@@ -7213,7 +7208,6 @@ function readSiteLogs_() {
   }
   if (!modal || modal.offsetParent === null) return;
 
-  // Tìm đúng vùng chứa danh sách thợ (chứa dòng "Chênh lệch tăng lương" hoặc thẻ tên thợ "Mây" / "Linh")
   var targetAnchor = Array.from(modal.querySelectorAll('div')).find(function(el) {
     var txt = el.textContent || '';
     return el.children.length <= 3 && (txt.indexOf('Chênh lệch tăng lương') !== -1 || txt.indexOf('Tổng công:') !== -1);
@@ -7236,6 +7230,23 @@ function readSiteLogs_() {
       hostContainer.appendChild(panel);
     }
   }
+
+  var isVpTab = window.activePayrollSubTab === 'office';
+  Array.from(hostContainer.children).forEach(function(child) {
+    if (child === panel) return;
+    var txt = child.textContent || '';
+    if (txt.indexOf('Lưu/Chia sẻ Ảnh') !== -1 || txt.indexOf('Tổng Công') !== -1) return;
+    if (isVpTab) {
+      if (child.style.display !== 'none') {
+        child.style.display = 'none';
+        child.classList.add('v159-hidden-worker-node');
+      }
+    } else if (child.classList.contains('v159-hidden-worker-node')) {
+      child.style.display = '';
+      child.classList.remove('v159-hidden-worker-node');
+    }
+  });
+
   if (panel.contains(document.activeElement)) return;
 
   var wkList = window.workers || [];
@@ -7243,8 +7254,30 @@ function readSiteLogs_() {
   var duanBhxh = Number(duanObj && duanObj.bhxh) || 0;
   var vpList = window.officeStaff || [];
   var ym = window.officePayrollMonth || '2026-11';
+  var alreadyRecorded = window.isMonthPayrollRecorded(ym);
   var totalSal = vpList.reduce(function(s, st) { return s + window.computeOfficeSalaryForMonth(st, ym); }, 0);
   var totalVpBhxh = vpList.reduce(function(s, st) { return s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0); }, 0);
+
+  var tabBarHtml =
+    '<div class="grid grid-cols-2 gap-1.5 bg-slate-100 p-1 rounded-2xl border border-slate-200">' +
+      '<button type="button" onclick="switchPayrollSubTab(\'workers\')" class="h-9 rounded-xl text-[12px] font-bold transition ' + (!isVpTab ? 'bg-[#EA580C] text-white shadow-2xs' : 'text-slate-600') + '">Lương Đội Thợ (22)</button>' +
+      '<button type="button" onclick="switchPayrollSubTab(\'office\')" class="h-9 rounded-xl text-[12px] font-bold transition ' + (isVpTab ? 'bg-[#EA580C] text-white shadow-2xs' : 'text-slate-600') + '">Lương VP & BHXH</button>' +
+    '</div>';
+
+  if (!isVpTab) {
+    panel.innerHTML = tabBarHtml +
+      '<div class="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2">' +
+        '<div>' +
+          '<div class="text-[12px] font-bold text-[#9A3412]">BHXH Thợ Duẩn (Cty đóng 100%)</div>' +
+          '<div class="text-[10.5px] text-slate-600">Tăng lương cuối năm áp dụng đồng nhất toàn bộ công trong năm</div>' +
+        '</div>' +
+        '<div class="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-amber-200">' +
+          '<span class="text-[10.5px] font-semibold text-slate-600">BHXH Duẩn:</span>' +
+          '<input type="text" inputmode="numeric" value="' + (duanBhxh ? formatVND(duanBhxh).replace(' ₫', '') : '') + '" placeholder="Nhập số tiền" onchange="updateDuanBhxh(this.value)" class="w-24 text-right text-[11.5px] font-bold text-[#EA580C] outline-none"/>' +
+        '</div>' +
+      '</div>';
+    return;
+  }
 
   var rowsHtml = vpList.map(function(st) {
     var sal = window.computeOfficeSalaryForMonth(st, ym);
@@ -7260,17 +7293,11 @@ function readSiteLogs_() {
     '</tr>';
   }).join('');
 
-  panel.innerHTML =
-    '<div class="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2">' +
-      '<div>' +
-        '<div class="text-[12px] font-bold text-[#9A3412]">BHXH Thợ Duẩn (Cty đóng 100%) & Chốt Lương Năm</div>' +
-        '<div class="text-[10.5px] text-slate-600">Tăng lương cuối năm áp dụng đồng nhất toàn bộ công trong năm</div>' +
-      '</div>' +
-      '<div class="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-amber-200">' +
-        '<span class="text-[10.5px] font-semibold text-slate-600">BHXH Duẩn:</span>' +
-        '<input type="text" inputmode="numeric" value="' + (duanBhxh ? formatVND(duanBhxh).replace(' ₫', '') : '') + '" placeholder="Nhập số tiền" onchange="updateDuanBhxh(this.value)" class="w-24 text-right text-[11.5px] font-bold text-[#EA580C] outline-none"/>' +
-      '</div>' +
-    '</div>' +
+  var actionBtnHtml = alreadyRecorded
+    ? '<button type="button" disabled class="h-8 px-3 rounded-full bg-slate-200 text-slate-500 text-[11px] font-bold cursor-not-allowed">✓ Đã ghi sổ T' + ym.slice(5) + '</button>'
+    : '<button type="button" onclick="recordMonthlyOfficePayrollToCashbook()" class="h-8 px-3 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Ghi Sổ Chi Lương & BHXH</button>';
+
+  panel.innerHTML = tabBarHtml +
     '<div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-2xs space-y-2.5">' +
       '<div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">' +
         '<div>' +
@@ -7279,7 +7306,7 @@ function readSiteLogs_() {
         '</div>' +
         '<div class="flex items-center gap-2">' +
           '<input type="month" value="' + ym + '" onchange="window.officePayrollMonth=this.value; window.refreshVpPanelV159();" class="h-8 px-2.5 rounded-xl border border-slate-200 text-[11.5px] font-semibold text-slate-700"/>' +
-          '<button type="button" onclick="recordMonthlyOfficePayrollToCashbook()" class="h-8 px-3 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Ghi Sổ Chi Lương & BHXH</button>' +
+          actionBtnHtml +
         '</div>' +
       '</div>' +
       '<div class="overflow-x-auto">' +
@@ -7299,6 +7326,7 @@ function readSiteLogs_() {
           '</tr></tfoot>' +
         '</table>' +
       '</div>' +
+      '<div class="text-[10.5px] text-slate-500 italic">* Mức BHXH nhập 1 lần được tự lưu cố định cho các tháng sau. Mỗi tháng chỉ ghi sổ 1 lần.</div>' +
     '</div>';
 }
 window.refreshVpPanelV159 = injectVpAndBhxhPanel;
