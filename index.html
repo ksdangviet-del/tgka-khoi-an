@@ -7249,7 +7249,9 @@ function injectVpAndBhxhPanel() {
     panel.classList.remove('v159-vp-mode');
   }
 
-  if (panel.contains(document.activeElement)) return;
+  // Chỉ tạm dừng vẽ lại khi đang gõ số trong ô input, không chặn khi bấm nút chuyển tab
+  var activeEl = document.activeElement;
+  if (activeEl && activeEl.tagName === 'INPUT' && panel.contains(activeEl)) return;
 
   var wkList = window.workers || [];
   var duanObj = wkList.find(function(w) { return w.name === 'Duẩn'; });
@@ -7270,21 +7272,13 @@ function injectVpAndBhxhPanel() {
       '<button type="button" onclick="switchPayrollSubTab(\'office\')" class="h-9 rounded-xl text-[12px] font-bold transition ' + (isVpTab ? 'bg-[#EA580C] text-white shadow-2xs' : 'text-slate-600') + '">Lương VP & BHXH</button>' +
     '</div>';
 
+  // Tab 1: Chỉ hiện thanh chọn tab và danh sách 22 thợ bên dưới
   if (!isVpTab) {
-    panel.innerHTML = tabBarHtml +
-      '<div class="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2">' +
-        '<div>' +
-          '<div class="text-[12px] font-bold text-[#9A3412]">BHXH Thợ Duẩn (Cty đóng 100%)</div>' +
-          '<div class="text-[10.5px] text-slate-600">Tăng lương cuối năm áp dụng đồng nhất toàn bộ công trong năm</div>' +
-        '</div>' +
-        '<div class="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-amber-200">' +
-          '<span class="text-[10.5px] font-semibold text-slate-600">BHXH Duẩn:</span>' +
-          '<input type="text" inputmode="numeric" value="' + (duanBhxh ? formatVND(duanBhxh).replace(' ₫', '') : '') + '" placeholder="Nhập số tiền" onchange="updateDuanBhxh(this.value)" class="w-24 text-right text-[11.5px] font-bold text-[#EA580C] outline-none"/>' +
-        '</div>' +
-      '</div>';
+    panel.innerHTML = tabBarHtml;
     return;
   }
 
+  // Tab 2: Hiện đầy đủ Bảng Lương VP & toàn bộ ô nhập BHXH (Việt, Quyển, Hiếu & Thợ Duẩn)
   var rowsHtml = vpList.map(function(st) {
     var sal = window.computeOfficeSalaryForMonth(st, ym);
     var bh = st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0;
@@ -7304,6 +7298,16 @@ function injectVpAndBhxhPanel() {
     : '<button type="button" onclick="recordMonthlyOfficePayrollToCashbook()" class="h-8 px-3 rounded-full bg-emerald-600 text-white text-[11px] font-bold">Ghi Sổ Chi Lương & BHXH</button>';
 
   panel.innerHTML = tabBarHtml +
+    '<div class="bg-[#FFF7ED] border border-[#FED7AA] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2">' +
+      '<div>' +
+        '<div class="text-[12px] font-bold text-[#9A3412]">BHXH Thợ Duẩn (Công ty đóng 100%)</div>' +
+        '<div class="text-[10.5px] text-slate-600">Không trừ vào lương ngày của thợ • Cộng chung vào quỹ BHXH hàng tháng</div>' +
+      '</div>' +
+      '<div class="flex items-center gap-1 bg-white px-2.5 py-1 rounded-xl border border-amber-200">' +
+        '<span class="text-[10.5px] font-semibold text-slate-600">BHXH Duẩn:</span>' +
+        '<input type="text" inputmode="numeric" value="' + (duanBhxh ? formatVND(duanBhxh).replace(' ₫', '') : '') + '" placeholder="Nhập số tiền" onchange="updateDuanBhxh(this.value)" class="w-24 text-right text-[11.5px] font-bold text-[#EA580C] outline-none"/>' +
+      '</div>' +
+    '</div>' +
     '<div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-2xs space-y-2.5">' +
       '<div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2">' +
         '<div>' +
@@ -7335,7 +7339,6 @@ function injectVpAndBhxhPanel() {
       '<div class="text-[10.5px] text-slate-500 italic">* Mức BHXH nhập 1 lần được tự lưu cố định cho các tháng sau. Mỗi tháng chỉ ghi sổ 1 lần.</div>' +
     '</div>';
 }
-
 window.refreshVpPanelV159 = injectVpAndBhxhPanel;
 document.addEventListener('click', function() { setTimeout(injectVpAndBhxhPanel, 0); }, true);
 var _v159Obs = new MutationObserver(function() { injectVpAndBhxhPanel(); });
