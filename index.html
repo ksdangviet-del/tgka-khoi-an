@@ -487,7 +487,7 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.61</button>
+            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.62</button>
             <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
               <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1741,7 +1741,7 @@
         return { ...top, features: mergedFeatures };
       }
 
-      localStorage.setItem('tgka_active_version', 'v1.61'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
+      localStorage.setItem('tgka_active_version', 'v1.62'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
       if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.59';
       if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
         ACTIVE_VERSION = 'v1.59';
@@ -6540,19 +6540,19 @@
 
             // === V161_CORE_START ===
       (function initV161Suite() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.61']) {
-          RAW_VERSION_SPECS['v1.61'] = {
-            version: 'v1.61',
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.62']) {
+          RAW_VERSION_SPECS['v1.62'] = {
+            version: 'v1.62',
             extends: 'v1.59',
             date: '28/11/2026',
             title: 'Chi Phí Nội Bộ 4 Nhóm (STT 1–229), Thẻ GD Có Đối Tác & Nhật Ký Nhiều Năm A4',
             summary: 'Kế thừa bản khóa chuẩn v1.59: bổ sung khối Chi phí nội bộ 4 nhóm vào Báo cáo tài chính (tách rõ Lương thợ & Sinh hoạt trong Nhà thợ), thiết kế lại thẻ Lịch sử giao dịch hiện đầy đủ Đối tác không lặp tên công trình, ẩn công trình hoàn thành khi ghi nhật ký mới và tìm kiếm/xuất báo cáo A4 (Ảnh/Excel/PDF).',
             features: { v161Suite: true }
           };
-          ACTIVE_VERSION = 'v1.61';
+          ACTIVE_VERSION = 'v1.62';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.61');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.61');
+            localStorage.setItem('tgka_active_version', 'v1.62');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.62');
           } catch (e) {}
         }
 
@@ -7640,7 +7640,432 @@
       })();
       // === V161_CORE_END ===
 
-      function copyAppsScriptCode() {
+        // === V162_CORE_START ===
+  (function initV162Suite() {
+    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.62']) {
+      RAW_VERSION_SPECS['v1.62'] = {
+        version: 'v1.62',
+        extends: 'v1.61',
+        date: '28/11/2026',
+        title: 'Gọn Báo Cáo Tài Chính, Xuất PDF A4 Chi Phí Nội Bộ & Công Nợ Đối Tác 2 Chiều',
+        summary: 'Bỏ 2 tab thừa (Nhân Viên, Đối Tác) trong Báo cáo tài chính; thêm nút xuất PDF/In A4 chi tiết Chi phí nội bộ 4 nhóm (STT 1–229); nâng cấp Báo cáo công nợ đối tác lọc theo từng Đối tác × từng Công trình và tự động gộp công nợ chuẩn xác.',
+        features: { v162Suite: true }
+      };
+      ACTIVE_VERSION = 'v1.62';
+      try {
+        localStorage.setItem('tgka_active_version', 'v1.62');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.62');
+      } catch (e) {}
+    }
+
+    function escHtml(str) {
+      return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    function fmtMoney(n) {
+      return Number(n || 0).toLocaleString('vi-VN') + ' ₫';
+    }
+    function formatDisplayDate(raw) {
+      var s = String(raw || '').trim();
+      var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+      if (iso) return iso[3].padStart(2, '0') + '/' + iso[2].padStart(2, '0') + '/' + iso[1];
+      return s;
+    }
+
+    // Phân loại 4 nhóm chi phí nội bộ (STT 1–229)
+    function classifyInternalGroupV162(tx) {
+      if (!tx) return '';
+      var rawGrp = String(tx.internalGroup || '').trim();
+      var text = (rawGrp + ' ' + (tx.category || '') + ' ' + (tx.note || '')).toLowerCase();
+      if (rawGrp.indexOf('Văn phòng') !== -1 || text.indexOf('trả lương') !== -1 || text.indexOf('tiền bảo hiểm') !== -1 || text.indexOf('tiền vp') !== -1 || text.indexOf('văn phòng') !== -1 || text.indexOf('thưởng') !== -1 || text.indexOf('khám sk') !== -1 || text.indexOf('đồng phục') !== -1 || text.indexOf('máy photo') !== -1) return 'Văn phòng';
+      if (rawGrp.indexOf('Máy móc') !== -1 || rawGrp.indexOf('Dụng cụ') !== -1 || text.indexOf('cây chống') !== -1 || text.indexOf('ván sàn') !== -1 || text.indexOf('cốt pha') !== -1 || text.indexOf('que hàn') !== -1 || text.indexOf('mũi khoan') !== -1 || text.indexOf('thước') !== -1 || text.indexOf('dây xây') !== -1 || text.indexOf('máy đầm') !== -1 || text.indexOf('quấn mô tơ') !== -1 || text.indexOf('lưới') !== -1 || text.indexOf('xẻng') !== -1 || text.indexOf('máy cắt') !== -1 || text.indexOf('máy bơm') !== -1 || text.indexOf('bắn ghim') !== -1 || text.indexOf('ốc vít') !== -1 || text.indexOf('xe rùa') !== -1 || text.indexOf('xốp') !== -1 || text.indexOf('đinh bt') !== -1) return 'Dụng cụ xây dựng';
+      if (rawGrp.indexOf('Xăng xe') !== -1 || rawGrp.indexOf('Xe bán tải') !== -1 || text.indexOf('xe bán tải') !== -1 || text.indexOf('đổ dầu') !== -1 || text.indexOf('đăng kiểm') !== -1 || text.indexOf('bảo dưỡng xe') !== -1) return 'Xe bán tải';
+      if (rawGrp.indexOf('Nuôi ăn') !== -1 || rawGrp.indexOf('Nhà thợ') !== -1 || text.indexOf('ứng công thợ') !== -1 || text.indexOf('lương thợ') !== -1 || text.indexOf('tiền ăn') !== -1 || text.indexOf('mua gạo') !== -1 || text.indexOf('thuốc lá') !== -1 || text.indexOf('gia vị') !== -1 || text.indexOf('đổi ga') !== -1 || text.indexOf('đổi nước') !== -1 || text.indexOf('liên hoan') !== -1 || text.indexOf('tiền nhà') !== -1 || text.indexOf('tiền điện') !== -1 || text.indexOf('tiền nước') !== -1 || text.indexOf('sửa xe máy') !== -1 || text.indexOf('mua chè') !== -1 || text.indexOf('lễ cúng') !== -1 || text.indexOf('tạm trú') !== -1) return 'Nhà thợ';
+      return '';
+    }
+
+    function getInternalCostReportData() {
+      var activeList = (typeof getFilteredTransactions === 'function')
+        ? getFilteredTransactions()
+        : ((typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : []);
+
+      var groups = {
+        'Văn phòng':        { label: '1. Văn phòng (STT 1–47)', total: 0, items: {}, txs: [] },
+        'Dụng cụ xây dựng': { label: '2. Dụng cụ xây dựng (STT 48–187)', total: 0, items: {}, txs: [] },
+        'Xe bán tải':       { label: '3. Xe bán tải (STT 188–203)', total: 0, items: {}, txs: [] },
+        'Nhà thợ':          { label: '4. Nhà thợ (STT 204–229)', total: 0, items: {}, txs: [] }
+      };
+      var workerWageSub = 0, workerLivingSub = 0;
+
+      (activeList || []).forEach(function(tx) {
+        if (!tx) return;
+        var amt = Number(tx.amount) || 0;
+        if (amt <= 0) return;
+        var noteLower = String(tx.note || '').toLowerCase();
+
+        if (tx.type === 'ChuyenQuy' && noteLower.indexOf('ứng công thợ') !== -1) {
+          groups['Nhà thợ'].total += amt;
+          groups['Nhà thợ'].items['Ứng / Trả công thợ'] = (groups['Nhà thợ'].items['Ứng / Trả công thợ'] || 0) + amt;
+          groups['Nhà thợ'].txs.push(tx);
+          workerWageSub += amt;
+          return;
+        }
+        if (tx.type !== 'Chi') return;
+        var grp = classifyInternalGroupV162(tx);
+        if (!grp || !groups[grp]) return;
+
+        groups[grp].total += amt;
+        var itemName = String(tx.note || tx.category || 'Khoản chi khác').trim();
+        groups[grp].items[itemName] = (groups[grp].items[itemName] || 0) + amt;
+        groups[grp].txs.push(tx);
+
+        if (grp === 'Nhà thợ') {
+          if (noteLower.indexOf('công thợ') !== -1 || noteLower.indexOf('lương thợ') !== -1) workerWageSub += amt;
+          else workerLivingSub += amt;
+        }
+      });
+
+      var grandTotal = groups['Văn phòng'].total + groups['Dụng cụ xây dựng'].total + groups['Xe bán tải'].total + groups['Nhà thợ'].total;
+      return { groups: groups, grandTotal: grandTotal, workerWageSub: workerWageSub, workerLivingSub: workerLivingSub };
+    }
+
+    // =====================================================================
+    // 1. XUẤT PDF / IN A4 CHI TIẾT CHI PHÍ NỘI BỘ VẬN HÀNH (4 NHÓM STT 1–229)
+    // =====================================================================
+    window.exportInternalCostPrintA4 = function() {
+      var d = getInternalCostReportData();
+      var periodEl = document.getElementById('period-label');
+      var periodTxt = periodEl ? periodEl.textContent.trim() : 'Toàn bộ 2026';
+      var groupKeys = ['Văn phòng', 'Dụng cụ xây dựng', 'Xe bán tải', 'Nhà thợ'];
+
+      var summaryRows = groupKeys.map(function(k, idx) {
+        var g = d.groups[k];
+        var pct = d.grandTotal > 0 ? ((g.total / d.grandTotal) * 100).toFixed(1) : '0.0';
+        var extra = (k === 'Nhà thợ')
+          ? '<br/><small style="color:#6d28d9;">• Ứng/Lương thợ: ' + fmtMoney(d.workerWageSub) + ' &nbsp;|&nbsp; • Sinh hoạt, ăn ở thợ: ' + fmtMoney(d.workerLivingSub) + '</small>'
+          : '';
+        return '<tr><td style="text-align:center;">' + (idx + 1) + '</td><td><b>' + escHtml(g.label) + '</b>' + extra + '</td><td style="text-align:right;font-weight:bold;">' + fmtMoney(g.total) + '</td><td style="text-align:center;">' + pct + '%</td></tr>';
+      }).join('');
+
+      var detailBlocks = groupKeys.map(function(k) {
+        var g = d.groups[k];
+        var itemNames = Object.keys(g.items).sort(function(a, b) { return g.items[b] - g.items[a]; });
+        var rows = itemNames.map(function(name, i) {
+          return '<tr><td style="text-align:center;width:36px;">' + (i + 1) + '</td><td>' + escHtml(name) + '</td><td style="text-align:right;font-weight:600;width:140px;">' + fmtMoney(g.items[name]) + '</td></tr>';
+        }).join('') || '<tr><td colspan="3" style="text-align:center;color:#94a3b8;">Không phát sinh trong kỳ</td></tr>';
+
+        return '<h3 style="margin:14px 0 4px;font-size:13px;color:#9A3412;">' + escHtml(g.label) + ' — Tổng: ' + fmtMoney(g.total) + '</h3>' +
+          '<table><thead><tr><th style="text-align:center;">STT</th><th>Nội dung khoản chi nội bộ</th><th style="text-align:right;">Thành tiền</th></tr></thead><tbody>' + rows + '</tbody></table>';
+      }).join('');
+
+      var w = window.open('', '_blank');
+      if (!w) { alert('Vui lòng cho phép trình duyệt mở cửa sổ in PDF!'); return; }
+      w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Báo Cáo Chi Phí Nội Bộ Vận Hành - TGKA Khởi An</title>' +
+        '<style>@page{size:A4 portrait;margin:14mm;}body{font-family:"Segoe UI",Arial,sans-serif;color:#1e293b;font-size:12px;line-height:1.4;}' +
+        '.hdr{border-bottom:2px solid #EA580C;padding-bottom:8px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-end;}' +
+        'table{width:100%;border-collapse:collapse;margin-top:4px;}th,td{border:1px solid #cbd5e1;padding:5px 8px;}' +
+        'th{background:#f8fafc;font-weight:700;text-align:left;}' +
+        '.sign{margin-top:26px;display:flex;justify-content:space-between;text-align:center;}' +
+        '@media print{.no-print{display:none;}}</style></head><body>' +
+        '<div class="no-print" style="background:#FFF7ED;border:1px solid #FDBA74;padding:8px 12px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">' +
+          '<span>Bấm <b>In / Lưu PDF</b> để xuất báo cáo Chi Phí Nội Bộ chuẩn khổ A4</span>' +
+          '<button onclick="window.print()" style="background:#EA580C;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-weight:bold;cursor:pointer;">🖨️ In / Lưu PDF A4</button>' +
+        '</div>' +
+        '<div class="hdr"><div><div style="font-size:16px;font-weight:800;color:#EA580C;">CÔNG TY XÂY DỰNG TRỌN GÓI KHỞI AN</div><div style="font-size:11px;color:#64748b;">Báo Cáo Quản Trị Chi Phí Nội Bộ & Vận Hành</div></div>' +
+        '<div style="text-align:right;font-size:11px;">Kỳ báo cáo: <b>' + escHtml(periodTxt) + '</b><br/>Ngày in: ' + new Date().toLocaleDateString('vi-VN') + '</div></div>' +
+        '<h2 style="text-align:center;margin:6px 0 10px;font-size:15px;">BÁO CÁO CHI PHÍ NỘI BỘ VẬN HÀNH (4 NHÓM STT 1–229)</h2>' +
+        '<table><thead><tr><th style="width:36px;text-align:center;">STT</th><th>Nhóm Chi Phí Nội Bộ</th><th style="text-align:right;width:145px;">Tổng Chi</th><th style="width:65px;text-align:center;">Tỷ trọng</th></tr></thead><tbody>' +
+          summaryRows +
+          '<tr style="background:#FFF7ED;font-weight:800;"><td colspan="2" style="text-align:right;">TỔNG CỘNG CHI PHÍ NỘI BỘ VẬN HÀNH:</td><td style="text-align:right;color:#EA580C;">' + fmtMoney(d.grandTotal) + '</td><td style="text-align:center;">100%</td></tr>' +
+        '</tbody></table>' +
+        detailBlocks +
+        '<div class="sign"><div><b>KẾ TOÁN LẬP BIỂU</b><br/><small>(Ký, ghi rõ họ tên)</small></div><div><b>KIỂM SOÁT NỘI BỘ</b><br/><small>(Ký, ghi rõ họ tên)</small></div><div><b>GIÁM ĐỐC DUYỆT</b><br/><small>(Ký, đóng dấu)</small></div></div>' +
+        '</body></html>');
+      w.document.close();
+    };
+
+    // Gọn Báo cáo tài chính: Bỏ 2 tab thừa ("Nhân Viên", "Đối Tác") & gắn nút Xuất PDF vào thẻ Chi phí nội bộ
+    function cleanFinancialReportLayout() {
+      var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+      var repTitle = headings.find(function(el) {
+        return el.children.length === 0 && el.textContent && el.textContent.indexOf('Báo Cáo Tài Chính') !== -1 && el.offsetParent !== null;
+      });
+      if (!repTitle) return;
+
+      var modal = repTitle.parentElement;
+      while (modal && modal.parentElement && modal.parentElement !== document.body) {
+        if (modal.clientHeight > 260 && modal.clientWidth > 280) break;
+        modal = modal.parentElement;
+      }
+      if (!modal) return;
+
+      // 1. Ẩn 2 nút tab thừa "Nhân Viên" và "Đối Tác" trong Báo cáo tài chính
+      var tabBtns = Array.from(modal.querySelectorAll('button')).filter(function(b) {
+        var t = (b.textContent || '').trim();
+        return t === 'Tổng Hợp' || t === 'Công Trình' || t === 'Nhân Viên' || t === 'Đối Tác';
+      });
+      tabBtns.forEach(function(b) {
+        var t = (b.textContent || '').trim();
+        if (t === 'Nhân Viên' || t === 'Đối Tác') {
+          b.style.display = 'none';
+        }
+      });
+
+      // 2. Gắn nút "Xuất PDF / In Chi Tiết" vào thẻ Chi Phí Nội Bộ Vận Hành
+      var icCard = modal.querySelector('.v161-internal-cost-card');
+      if (icCard && !icCard.querySelector('.v162-ic-pdf-btn')) {
+        var rightBox = icCard.querySelector('.text-right');
+        if (rightBox) {
+          var pdfBtn = document.createElement('button');
+          pdfBtn.type = 'button';
+          pdfBtn.className = 'v162-ic-pdf-btn mt-1 ml-2 px-2 py-0.5 rounded-md bg-[#EA580C] text-white text-[10px] font-bold hover:bg-orange-700 transition inline-flex items-center gap-1';
+          pdfBtn.innerHTML = '🖨️ Xuất PDF A4';
+          pdfBtn.onclick = window.exportInternalCostPrintA4;
+          rightBox.appendChild(pdfBtn);
+        }
+      }
+    }
+
+    // =====================================================================
+    // 2. BÁO CÁO CÔNG NỢ ĐỐI TÁC 2 CHIỀU (ĐỐI TÁC × CÔNG TRÌNH, GỘP DỮ LIỆU CHUẨN)
+    // =====================================================================
+    function buildPartnerDebtModelV162() {
+      var ptList = (typeof partners !== 'undefined' && Array.isArray(partners)) ? partners : [];
+      var txList = (typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : [];
+
+      var normPt = function(s) { return String(s || '').trim().toUpperCase(); };
+      var normPr = function(s) { return String(s || '').trim().toUpperCase(); };
+
+      var allPartnerNamesSet = new Set();
+      var allProjectsSet = new Set();
+      var catByPartner = {};
+
+      ptList.forEach(function(pt) {
+        var name = normPt(pt.name);
+        if (!name) return;
+        allPartnerNamesSet.add(name);
+        if (!catByPartner[name] && pt.category) catByPartner[name] = pt.category;
+        if (pt.project) allProjectsSet.add(normPr(pt.project));
+      });
+
+      txList.forEach(function(tx) {
+        var name = normPt(tx.partner);
+        if (!name) return;
+        allPartnerNamesSet.add(name);
+        if (!catByPartner[name] && tx.category) catByPartner[name] = tx.category;
+        if (tx.project) allProjectsSet.add(normPr(tx.project));
+      });
+
+      var selPartner = (document.querySelector('.v162-pt-partner-filter') || {}).value || '';
+      var selProject = (document.querySelector('.v162-pt-project-filter') || {}).value || '';
+
+      // Gom theo cặp (Đối tác + Công trình), bỏ qua dòng khung 0đ nếu đối tác đó đã có phát sinh ở công trình cụ thể
+      var pairMap = {};
+      var getOrMakePair = function(ptName, projCode, catHint) {
+        var key = ptName + '||' + projCode;
+        if (!pairMap[key]) {
+          pairMap[key] = {
+            key: key,
+            name: ptName,
+            project: projCode,
+            category: catHint || catByPartner[ptName] || 'Đối tác / Thầu phụ',
+            contractVal: 0,
+            openingPaid: 0,
+            periodPaid: 0,
+            txs: []
+          };
+        }
+        return pairMap[key];
+      };
+
+      ptList.forEach(function(pt) {
+        var name = normPt(pt.name);
+        if (!name) return;
+        var proj = normPr(pt.project);
+        var item = getOrMakePair(name, proj, pt.category);
+        item.contractVal += (Number(pt.baseContract) || 0);
+        item.openingPaid += (Number(pt.openingPaidPartner) || 0);
+      });
+
+      txList.forEach(function(tx) {
+        if (!tx || tx.type !== 'Chi') return;
+        var name = normPt(tx.partner);
+        if (!name) return;
+        var amt = Number(tx.amount) || 0;
+        if (amt <= 0) return;
+        var proj = normPr(tx.project);
+        var item = getOrMakePair(name, proj, tx.category);
+        item.periodPaid += amt;
+        item.txs.push(tx);
+      });
+
+      var allPairs = Object.keys(pairMap).map(function(k) {
+        var it = pairMap[k];
+        it.totalPaid = it.openingPaid + it.periodPaid;
+        it.debt = Math.max(0, it.contractVal - it.totalPaid);
+        return it;
+      });
+
+      // Lọc bỏ các dòng "Chi chung (project = '')" có giá trị 0đ nếu đối tác đó đã có dòng ở công trình cụ thể
+      var partnersWithSpecificProj = new Set(allPairs.filter(function(p) { return p.project !== ''; }).map(function(p) { return p.name; }));
+      var cleanPairs = allPairs.filter(function(p) {
+        if (p.project === '' && p.contractVal === 0 && p.totalPaid === 0 && partnersWithSpecificProj.has(p.name)) return false;
+        return true;
+      });
+
+      // Áp dụng bộ lọc Đối tác & Công trình
+      var filtered = cleanPairs.filter(function(p) {
+        if (selPartner && p.name !== selPartner) return false;
+        if (selProject) {
+          if (selProject === '__GENERAL__') return p.project === '';
+          return p.project === selProject;
+        }
+        return true;
+      });
+
+      // Sắp xếp ưu tiên đối tác có phát sinh / công nợ lên trước
+      filtered.sort(function(a, b) {
+        var scoreA = (a.debt * 2) + a.totalPaid + a.contractVal;
+        var scoreB = (b.debt * 2) + b.totalPaid + b.contractVal;
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        return a.name.localeCompare(b.name);
+      });
+
+      var sumContract = filtered.reduce(function(s, p) { return s + p.contractVal; }, 0);
+      var sumPaid = filtered.reduce(function(s, p) { return s + p.totalPaid; }, 0);
+      var sumDebt = filtered.reduce(function(s, p) { return s + p.debt; }, 0);
+
+      return {
+        rows: filtered,
+        partnerNames: Array.from(allPartnerNamesSet).sort(),
+        projectCodes: Array.from(allProjectsSet).sort(),
+        selPartner: selPartner,
+        selProject: selProject,
+        sumContract: sumContract,
+        sumPaid: sumPaid,
+        sumDebt: sumDebt
+      };
+    }
+
+    function renderPartnerDebtReportV162() {
+      var host = document.querySelector('.v162-partner-debt-host');
+      if (!host) return;
+      var m = buildPartnerDebtModelV162();
+
+      var cardsHtml = m.rows.map(function(r, idx) {
+        var projBadge = r.project
+          ? '<span class="px-2 py-0.5 rounded-md bg-orange-50 border border-orange-200 text-[#C2410C] text-[10.5px] font-bold">🏗️ ' + escHtml(r.project) + '</span>'
+          : '<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10.5px] font-semibold">Chi chung / Danh mục</span>';
+
+        var txRowsHtml = r.txs.map(function(t) {
+          return '<div class="flex items-center justify-between py-1 border-b border-slate-100 text-[11px]">' +
+            '<div class="min-w-0 pr-2"><span class="text-slate-400 mr-1.5">' + escHtml(formatDisplayDate(t.date)) + '</span><span class="font-medium text-slate-700">' + escHtml(t.note || t.category || 'Thanh toán') + '</span></div>' +
+            '<div class="font-bold text-rose-600 tabular-nums whitespace-nowrap">-' + fmtMoney(t.amount) + '</div>' +
+          '</div>';
+        }).join('') || '<div class="text-[11px] text-slate-400 py-1">Chưa có phiếu chi trong kỳ' + (r.openingPaid > 0 ? ' (Đã trả năm trước: ' + fmtMoney(r.openingPaid) + ')' : '') + '</div>';
+
+        return '<div class="p-3 rounded-2xl border border-slate-200 bg-white shadow-2xs space-y-2">' +
+          '<div class="flex items-start justify-between gap-2">' +
+            '<div>' +
+              '<div class="font-extrabold text-[13.5px] text-slate-900">' + escHtml(r.name) + '</div>' +
+              '<div class="flex items-center flex-wrap gap-1.5 mt-1">' +
+                '<span class="text-[11px] text-slate-500">Hạng mục: <b>' + escHtml(r.category) + '</b></span>' + projBadge +
+              '</div>' +
+            '</div>' +
+            '<div class="text-right shrink-0">' +
+              '<div class="text-[12px] font-extrabold text-rose-600 tabular-nums">Đã chi: ' + fmtMoney(r.totalPaid) + '</div>' +
+              '<button type="button" onclick="var d=this.closest(\'.rounded-2xl\').querySelector(\'.v162-pt-txs\');d.classList.toggle(\'hidden\');" class="text-[10.5px] font-bold text-sky-700 mt-0.5">Chi tiết (' + r.txs.length + ' phiếu) ▾</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="grid grid-cols-3 gap-1.5 pt-1.5 border-t border-slate-100 text-[11px]">' +
+            '<div class="bg-slate-50 rounded-lg px-2 py-1"><div class="text-slate-400 text-[10px]">Giá trị HĐ</div><div class="font-bold text-slate-800 tabular-nums">' + fmtMoney(r.contractVal) + '</div></div>' +
+            '<div class="bg-emerald-50/70 rounded-lg px-2 py-1"><div class="text-emerald-700 text-[10px]">Đã thanh toán</div><div class="font-bold text-emerald-700 tabular-nums">' + fmtMoney(r.totalPaid) + '</div></div>' +
+            '<div class="bg-amber-50/80 rounded-lg px-2 py-1"><div class="text-amber-800 text-[10px]">Công nợ ĐT</div><div class="font-extrabold text-[#EA580C] tabular-nums">' + fmtMoney(r.debt) + '</div></div>' +
+          '</div>' +
+          '<div class="v162-pt-txs hidden pt-1.5 border-t border-slate-100 space-y-0.5">' + txRowsHtml + '</div>' +
+        '</div>';
+      }).join('') || '<div class="text-center py-6 text-slate-400 text-[12px]">Không có dữ liệu công nợ khớp bộ lọc.</div>';
+
+      host.innerHTML =
+        '<div class="grid grid-cols-3 gap-1.5 p-2.5 rounded-2xl bg-[#FFF7ED] border border-orange-200 text-center">' +
+          '<div><div class="text-[10px] text-slate-500 font-semibold">Tổng HĐ Đối Tác</div><div class="text-[12px] font-extrabold text-slate-900 tabular-nums">' + fmtMoney(m.sumContract) + '</div></div>' +
+          '<div><div class="text-[10px] text-emerald-700 font-semibold">Đã Thanh Toán</div><div class="text-[12px] font-extrabold text-emerald-700 tabular-nums">' + fmtMoney(m.sumPaid) + '</div></div>' +
+          '<div><div class="text-[10px] text-[#C2410C] font-semibold">Công Nợ Còn Lại</div><div class="text-[12px] font-extrabold text-[#EA580C] tabular-nums">' + fmtMoney(m.sumDebt) + '</div></div>' +
+        '</div>' +
+        '<div class="text-[11px] font-bold text-slate-500 px-1">Hiển thị ' + m.rows.length + ' khoản mục đối tác</div>' +
+        '<div class="space-y-2">' + cardsHtml + '</div>';
+    }
+
+    function enhancePartnerDebtReportModal() {
+      var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+      var ptTitle = headings.find(function(el) {
+        return el.children.length === 0 && el.textContent && el.textContent.indexOf('Báo Cáo Công Nợ Đối Tác') !== -1 && el.offsetParent !== null;
+      });
+      if (!ptTitle) return;
+
+      var modal = ptTitle.parentElement;
+      while (modal && modal.parentElement && modal.parentElement !== document.body) {
+        if (modal.clientHeight > 260 && modal.clientWidth > 280) break;
+        modal = modal.parentElement;
+      }
+      if (!modal) return;
+
+      var scrollBody = Array.from(modal.querySelectorAll('div')).find(function(el) {
+        var st = window.getComputedStyle(el);
+        return (st.overflowY === 'auto' || st.overflowY === 'scroll') && el.clientHeight > 140;
+      });
+      if (!scrollBody) return;
+
+      // Ẩn danh sách cũ bị tách rời để thay bằng giao diện lọc 2 chiều Đối tác × Công trình
+      Array.from(scrollBody.children).forEach(function(ch) {
+        if (!ch.classList.contains('v162-pt-filter-bar') && !ch.classList.contains('v162-partner-debt-host')) {
+          ch.style.display = 'none';
+        }
+      });
+
+      if (!scrollBody.querySelector('.v162-pt-filter-bar')) {
+        var initModel = buildPartnerDebtModelV162();
+        var ptOpts = '<option value="">👥 Tất cả đối tác (' + initModel.partnerNames.length + ' ĐT)</option>' +
+          initModel.partnerNames.map(function(n) { return '<option value="' + escHtml(n) + '">' + escHtml(n) + '</option>'; }).join('');
+        var prOpts = '<option value="">🏗️ Tất cả công trình & Chi chung</option>' +
+          initModel.projectCodes.map(function(c) { return '<option value="' + escHtml(c) + '">' + escHtml(c) + '</option>'; }).join('') +
+          '<option value="__GENERAL__">Chi chung / Chưa gắn công trình</option>';
+
+        var bar = document.createElement('div');
+        bar.className = 'v162-pt-filter-bar grid grid-cols-1 sm:grid-cols-2 gap-1.5 mb-2.5';
+        bar.innerHTML =
+          '<select class="v162-pt-partner-filter px-3 py-2 rounded-xl border border-slate-300 bg-white text-[12px] font-bold text-slate-800">' + ptOpts + '</select>' +
+          '<select class="v162-pt-project-filter px-3 py-2 rounded-xl border border-slate-300 bg-white text-[12px] font-bold text-slate-800">' + prOpts + '</select>';
+
+        bar.querySelector('.v162-pt-partner-filter').onchange = renderPartnerDebtReportV162;
+        bar.querySelector('.v162-pt-project-filter').onchange = renderPartnerDebtReportV162;
+        scrollBody.appendChild(bar);
+
+        var host = document.createElement('div');
+        host.className = 'v162-partner-debt-host space-y-2.5';
+        scrollBody.appendChild(host);
+        renderPartnerDebtReportV162();
+      }
+    }
+
+    var _v162Obs = new MutationObserver(function() {
+      _v162Obs.disconnect();
+      try {
+        cleanFinancialReportLayout();
+        enhancePartnerDebtReportModal();
+      } finally {
+        _v162Obs.observe(document.body, { childList: true, subtree: true });
+      }
+    });
+
+    setTimeout(function() {
+      cleanFinancialReportLayout();
+      enhancePartnerDebtReportModal();
+      _v162Obs.observe(document.body, { childList: true, subtree: true });
+    }, 150);
+  })();
+  // === V162_CORE_END ===
+
+  function copyAppsScriptCode() {
         const cfg = resolveVersionConfig(ACTIVE_VERSION);
         const code = cfg.features.twoWaySheetsSync5SheetsV155
           ? `// =========================================================================
