@@ -10986,7 +10986,178 @@
           });
         }, 240);
       })();
-      // === V200_LTS_CORE_END ===
+              // === V200_GOI3_UX_START ===
+        (function initV200Goi3OperationalUX() {
+          if (window.__TGKA_V200_GOI3_INITIALIZED__) return;
+          window.__TGKA_V200_GOI3_INITIALIZED__ = true;
+
+          if (typeof RAW_VERSION_SPECS !== 'undefined' && RAW_VERSION_SPECS['v2.00']) {
+            RAW_VERSION_SPECS['v2.00'].title = 'Kiến Trúc Doanh Nghiệp Hoàn Chỉnh — Gói 1, 2 & 3 (v2.00 LTS)';
+            RAW_VERSION_SPECS['v2.00'].summary = 'Hệ thống hoàn thiện 100%: Backend LockService & BaoMatPIN; Lõi Event-Driven, IndexedDB, phân trang 40 phiếu/lượt, chuẩn ngày iOS; Nút quay nhanh Hôm nay và Ghim ghi hộ quỹ nhân viên.';
+          }
+
+          var _pinnedProxyStaff = '';
+
+          // -------------------------------------------------------------------
+          // 1. NÚT QUAY NHANH VỀ "HÔM NAY" KHI ĐANG XEM KỲ CŨ
+          // -------------------------------------------------------------------
+          function renderQuickTodayButton() {
+            if (typeof periodMode === 'undefined' || periodMode === 'all') {
+              var oldBtn = document.getElementById('v200-btn-jump-today');
+              if (oldBtn) oldBtn.remove();
+              return;
+            }
+            if (typeof periodCursor === 'undefined' || !(periodCursor instanceof Date)) return;
+
+            var now = new Date();
+            var isCurrentPeriod = false;
+            if (periodMode === 'day') {
+              isCurrentPeriod = (periodCursor.getDate() === now.getDate() &&
+                                 periodCursor.getMonth() === now.getMonth() &&
+                                 periodCursor.getFullYear() === now.getFullYear());
+            } else if (periodMode === 'month') {
+              isCurrentPeriod = (periodCursor.getMonth() === now.getMonth() &&
+                                 periodCursor.getFullYear() === now.getFullYear());
+            } else if (periodMode === 'year') {
+              isCurrentPeriod = (periodCursor.getFullYear() === now.getFullYear());
+            }
+
+            // Tìm cụm nút điều hướng ngày/tháng (< 28/11/2026 >)
+            var navBtns = Array.from(document.querySelectorAll('button')).filter(function(b) {
+              var t = (b.textContent || '').trim();
+              return /^<\s*(\d{2}\/\d{2}\/\d{4}|T\d{1,2}\/\d{4}|\d{4})\s*>$/.test(t) ||
+                     (t.indexOf('/') !== -1 && b.closest('.bg-white') && b.clientHeight < 36 && b.clientWidth < 160);
+            });
+            var periodPill = navBtns[0];
+            if (!periodPill || !periodPill.parentElement) return;
+
+            var existing = document.getElementById('v200-btn-jump-today');
+            if (isCurrentPeriod) {
+              if (existing) existing.remove();
+              return;
+            }
+
+            if (!existing) {
+              existing = document.createElement('button');
+              existing.id = 'v200-btn-jump-today';
+              existing.type = 'button';
+              existing.className = 'ml-1.5 px-2.5 py-1 rounded-full bg-[#EA580C] hover:bg-[#C2410C] text-white text-[10.5px] font-extrabold shadow-2xs transition shrink-0';
+              existing.textContent = 'Hôm nay';
+              existing.onclick = function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (typeof periodCursor !== 'undefined') {
+                  periodCursor = new Date();
+                }
+                if (typeof renderDashboard === 'function') renderDashboard();
+                if (typeof showToast === 'function') showToast('📅 Đã quay về thời điểm hiện tại');
+              };
+              periodPill.parentElement.appendChild(existing);
+            }
+          }
+
+          // -------------------------------------------------------------------
+          // 2. CẢNH BÁO TÊN QUỸ TRÊN NÚT LƯU & GHIM NGƯỜI ĐƯỢC GHI HỘ
+          // -------------------------------------------------------------------
+          function enhanceTransactionFormProxyUX() {
+            var txModal = document.getElementById('tx-modal') || Array.from(document.querySelectorAll('.modal-sheet')).find(function(m) {
+              return m.offsetParent !== null && (m.textContent || '').indexOf('Thu Chi') !== -1;
+            });
+            if (!txModal) return;
+
+            var activeUid = (typeof currentUserId !== 'undefined' && currentUserId) ? String(currentUserId).trim() : 'Việt KA';
+            var canProxy = (activeUid === 'Sen KA' || activeUid === 'Việt KA');
+
+            // Tìm select chọn nhân viên / người được ghi hộ trong biểu mẫu
+            var staffSelect = Array.from(txModal.querySelectorAll('select')).find(function(sel) {
+              var opts = Array.from(sel.options || []).map(function(o) { return o.value || o.text; });
+              return opts.some(function(v) { return v.indexOf('Quyển KA') !== -1; }) &&
+                     opts.some(function(v) { return v.indexOf('Sen KA') !== -1 || v.indexOf('Việt KA') !== -1; });
+            });
+
+            // Khôi phục người được ghim nếu kế toán đang bật chế độ ghim ghi hộ
+            if (canProxy && _pinnedProxyStaff && staffSelect && staffSelect.value !== _pinnedProxyStaff) {
+              var hasOpt = Array.from(staffSelect.options).some(function(o) { return o.value === _pinnedProxyStaff; });
+              if (hasOpt) {
+                staffSelect.value = _pinnedProxyStaff;
+                staffSelect.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            }
+
+            // Chèn hộp kiểm "Ghim ghi hộ người này" ngay dưới ô chọn nhân viên
+            if (canProxy && staffSelect && !txModal.querySelector('#v200-pin-proxy-wrap')) {
+              var pinWrap = document.createElement('label');
+              pinWrap.id = 'v200-pin-proxy-wrap';
+              pinWrap.className = 'mt-1.5 flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-amber-50 border border-amber-200 cursor-pointer select-none';
+              pinWrap.innerHTML =
+                '<input type="checkbox" id="v200-pin-proxy-chk" class="w-3.5 h-3.5 accent-[#EA580C] rounded" ' + (_pinnedProxyStaff ? 'checked' : '') + '/>' +
+                '<span class="text-[11px] font-bold text-amber-800">📌 Ghim người thực hiện/ghi hộ này cho các phiếu nhập liên tiếp</span>';
+              staffSelect.parentElement.appendChild(pinWrap);
+
+              var chk = document.getElementById('v200-pin-proxy-chk');
+              chk.onchange = function() {
+                _pinnedProxyStaff = chk.checked ? staffSelect.value : '';
+                updateSubmitButtonFundLabel();
+              };
+            }
+
+            // Tìm nút Lưu chính của biểu mẫu giao dịch
+            var saveBtn = Array.from(txModal.querySelectorAll('button')).find(function(b) {
+              var t = (b.textContent || '').trim();
+              return b.type === 'submit' || t.indexOf('Lưu Giao Dịch') !== -1 || t.indexOf('Lưu Phiếu') !== -1 || (t.indexOf('Lưu') === 0 && b.clientHeight >= 36);
+            });
+
+            function updateSubmitButtonFundLabel() {
+              if (!saveBtn) return;
+              var chosenStaff = staffSelect ? String(staffSelect.value || activeUid).trim() : activeUid;
+              if (!chosenStaff) chosenStaff = activeUid;
+
+              if (document.getElementById('v200-pin-proxy-chk') && document.getElementById('v200-pin-proxy-chk').checked) {
+                _pinnedProxyStaff = chosenStaff;
+              }
+
+              if (chosenStaff !== activeUid) {
+                saveBtn.textContent = '💾 Lưu Phiếu Ghi Hộ (Quỹ ' + chosenStaff + ')';
+                saveBtn.style.background = '#B45309';
+                saveBtn.style.boxShadow = '0 0 0 2px #FDE68A';
+              } else {
+                saveBtn.textContent = '💾 Lưu Phiếu (Quỹ ' + activeUid + ')';
+                saveBtn.style.background = '';
+                saveBtn.style.boxShadow = '';
+              }
+            }
+
+            if (staffSelect && !staffSelect.getAttribute('data-v200-bound')) {
+              staffSelect.setAttribute('data-v200-bound', '1');
+              staffSelect.addEventListener('change', updateSubmitButtonFundLabel);
+            }
+            updateSubmitButtonFundLabel();
+          }
+
+          // Gắn vào luồng renderDashboard và openModal sẵn có của Gói 2
+          if (typeof renderDashboard === 'function') {
+            var _prevRenderGoi3 = renderDashboard;
+            renderDashboard = function() {
+              var r = _prevRenderGoi3.apply(this, arguments);
+              renderQuickTodayButton();
+              return r;
+            };
+          }
+
+          if (typeof openModal === 'function') {
+            var _prevOpenModalGoi3 = openModal;
+            openModal = function(modalId) {
+              var r = _prevOpenModalGoi3.apply(this, arguments);
+              setTimeout(enhanceTransactionFormProxyUX, 40);
+              return r;
+            };
+          }
+
+          setTimeout(renderQuickTodayButton, 350);
+        })();
+        // === V200_GOI3_UX_END ===
+
+        // === V200_LTS_CORE_END ===
 
       function copyAppsScriptCode() {
         const cfg = resolveVersionConfig(ACTIVE_VERSION);
