@@ -487,7 +487,7 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.62</button>
+            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.63</button>
             <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
               <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1741,7 +1741,7 @@
         return { ...top, features: mergedFeatures };
       }
 
-      localStorage.setItem('tgka_active_version', 'v1.62'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
+      localStorage.setItem('tgka_active_version', 'v1.63'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
       if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.59';
       if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
         ACTIVE_VERSION = 'v1.59';
@@ -6540,19 +6540,19 @@
 
             // === V161_CORE_START ===
       (function initV161Suite() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.62']) {
-          RAW_VERSION_SPECS['v1.62'] = {
-            version: 'v1.62',
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.63']) {
+          RAW_VERSION_SPECS['v1.63'] = {
+            version: 'v1.63',
             extends: 'v1.59',
             date: '28/11/2026',
             title: 'Chi Phí Nội Bộ 4 Nhóm (STT 1–229), Thẻ GD Có Đối Tác & Nhật Ký Nhiều Năm A4',
             summary: 'Kế thừa bản khóa chuẩn v1.59: bổ sung khối Chi phí nội bộ 4 nhóm vào Báo cáo tài chính (tách rõ Lương thợ & Sinh hoạt trong Nhà thợ), thiết kế lại thẻ Lịch sử giao dịch hiện đầy đủ Đối tác không lặp tên công trình, ẩn công trình hoàn thành khi ghi nhật ký mới và tìm kiếm/xuất báo cáo A4 (Ảnh/Excel/PDF).',
             features: { v161Suite: true }
           };
-          ACTIVE_VERSION = 'v1.62';
+          ACTIVE_VERSION = 'v1.63';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.62');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.62');
+            localStorage.setItem('tgka_active_version', 'v1.63');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.63');
           } catch (e) {}
         }
 
@@ -7642,19 +7642,19 @@
 
         // === V162_CORE_START ===
   (function initV162Suite() {
-    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.62']) {
-      RAW_VERSION_SPECS['v1.62'] = {
-        version: 'v1.62',
+    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.63']) {
+      RAW_VERSION_SPECS['v1.63'] = {
+        version: 'v1.63',
         extends: 'v1.61',
         date: '28/11/2026',
         title: 'Gọn Báo Cáo Tài Chính, Xuất PDF A4 Chi Phí Nội Bộ & Công Nợ Đối Tác 2 Chiều',
         summary: 'Bỏ 2 tab thừa (Nhân Viên, Đối Tác) trong Báo cáo tài chính; thêm nút xuất PDF/In A4 chi tiết Chi phí nội bộ 4 nhóm (STT 1–229); nâng cấp Báo cáo công nợ đối tác lọc theo từng Đối tác × từng Công trình và tự động gộp công nợ chuẩn xác.',
         features: { v162Suite: true }
       };
-      ACTIVE_VERSION = 'v1.62';
+      ACTIVE_VERSION = 'v1.63';
       try {
-        localStorage.setItem('tgka_active_version', 'v1.62');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.62');
+        localStorage.setItem('tgka_active_version', 'v1.63');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.63');
       } catch (e) {}
     }
 
@@ -8064,6 +8064,352 @@
     }, 150);
   })();
   // === V162_CORE_END ===
+
+    // === V163_CORE_START ===
+  (function initV163OfficialSyncSuite() {
+    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.63']) {
+      RAW_VERSION_SPECS['v1.63'] = {
+        version: 'v1.63',
+        extends: 'v1.62',
+        date: '28/11/2026',
+        title: 'Bảo Toàn Dữ Liệu Chính Thức, Giữ Trạng Thái Nghiệm Thu, Tự Điền Hạng Mục ĐT & Đồng Bộ 2 Chiều ĐT',
+        summary: 'Khóa bảo vệ trạng thái Nghiệm thu / Chốt HĐ công trình không bị ghi đè khi đồng bộ; tự động điền Hạng mục khi chọn Đối tác/Thầu phụ; đồng bộ 2 chiều thêm/sửa Đối tác giữa App và Sheets và bảo toàn toàn bộ dữ liệu chính thức.',
+        features: { v163Suite: true }
+      };
+      ACTIVE_VERSION = 'v1.63';
+      try {
+        localStorage.setItem('tgka_active_version', 'v1.63');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.63');
+      } catch (e) {}
+    }
+
+    var PROJ_OVERRIDES_KEY = 'tgka_proj_official_overrides_v163';
+    var PARTNER_OVERRIDES_KEY = 'tgka_partner_official_overrides_v163';
+
+    function loadMap(key) {
+      try { return JSON.parse(localStorage.getItem(key) || '{}'); }
+      catch (e) { return {}; }
+    }
+    function saveMap(key, obj) {
+      try { localStorage.setItem(key, JSON.stringify(obj)); } catch (e) {}
+    }
+
+    // Bảng ánh xạ mặc định Đối tác -> Hạng mục chuẩn theo DS ĐỐI TÁC
+    var DEFAULT_PARTNER_CATEGORY_MAP = {
+      'KAHOME': 'Thiết kế',
+      'ĐIỆP QY': 'Cấp phép',
+      'PHƯỜNG': 'Thuế xây dựng',
+      'QUANG': 'Cắm mốc toạ độ',
+      'THANH KN': 'Khoan nhồi',
+      'HỮU BẰNG': 'Bê tông',
+      'HÀ NAM': 'Vật liệu xây dựng',
+      'VLKA': 'Vật liệu xây dựng',
+      'ĐNKA': 'Điện nước - Gạch ốp lát',
+      'THỐNG ĐÁ': 'Đá Granite',
+      'VIỆT HƯỜNG': 'Công thợ điện nước',
+      'THỢ KA': 'Công thợ xây',
+      'VÂN QY': 'Thuê cốpha sắt',
+      'ĐĂNG THƯƠNG': 'Trần thạch cao',
+      'TỘC CK': 'Cơ khí',
+      'KIẾN TẠO': 'Cơ khí',
+      'NTKA': 'Nội thất',
+      'TÍN NGHĨA': 'Chống thấm',
+      'CHUYÊN ĐẦM': 'Đầm nền',
+      'K-STORE': 'Camera'
+    };
+
+    // =====================================================================
+    // 1. BẢO VỆ TRẠNG THÁI NGHIỆM THU / CHỐT HĐ CÔNG TRÌNH & ĐẨY LÊN SHEETS
+    // =====================================================================
+    function snapshotProjectOverrides() {
+      if (typeof projects === 'undefined' || !Array.isArray(projects)) return;
+      var map = loadMap(PROJ_OVERRIDES_KEY);
+      var changed = false;
+      projects.forEach(function(p) {
+        if (!p || !p.code) return;
+        var code = String(p.code).trim();
+        var st = String(p.status || '');
+        var isLockedStatus = st && st !== 'Đang thi công';
+        if (isLockedStatus || Number(p.finalContractValue) > 0 || p.handoverDate || p.settlementNote) {
+          var prev = map[code] || {};
+          if (prev.status !== st || prev.finalContractValue !== p.finalContractValue || prev.handoverDate !== p.handoverDate || prev.settlementNote !== p.settlementNote) {
+            map[code] = {
+              status: st,
+              finalContractValue: Number(p.finalContractValue) || 0,
+              handoverDate: p.handoverDate || '',
+              settlementNote: p.settlementNote || ''
+            };
+            changed = true;
+          }
+        }
+      });
+      if (changed) saveMap(PROJ_OVERRIDES_KEY, map);
+    }
+
+    function applyProjectOverrides() {
+      if (typeof projects === 'undefined' || !Array.isArray(projects)) return;
+      var map = loadMap(PROJ_OVERRIDES_KEY);
+      projects.forEach(function(p) {
+        if (!p || !p.code) return;
+        var ov = map[String(p.code).trim()];
+        if (!ov) return;
+        if (ov.status) p.status = ov.status;
+        if (ov.finalContractValue > 0) p.finalContractValue = ov.finalContractValue;
+        if (ov.handoverDate) p.handoverDate = ov.handoverDate;
+        if (ov.settlementNote) p.settlementNote = ov.settlementNote;
+      });
+    }
+
+    function pushMasterListsToSheets(pushProjects, pushPartners, pushTxs, showNotify) {
+      if (typeof execUrl === 'undefined' || !execUrl || String(execUrl).indexOf('http') !== 0) return;
+      var payload = {};
+      if (pushProjects && typeof projects !== 'undefined' && Array.isArray(projects)) payload.projects = projects;
+      if (pushPartners && typeof partners !== 'undefined' && Array.isArray(partners)) payload.partners = partners;
+      if (pushTxs && typeof transactions !== 'undefined' && Array.isArray(transactions)) payload.transactions = transactions;
+      if (!Object.keys(payload).length) return;
+
+      fetch(execUrl, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).then(function() {
+        if (showNotify && typeof showToast === 'function') {
+          showToast('☁️ Đã lưu đồng bộ thay đổi chính thức lên Google Sheets');
+        }
+      }).catch(function() {});
+    }
+
+    // Bọc hàm lưu quyết toán / trạng thái công trình để đẩy thẳng lên tab CongTrinh của Sheets
+    var fnNamesToWrapProj = ['saveProjectSettlement', 'confirmProjectSettlement', 'saveProjectItem', 'saveProject'];
+    fnNamesToWrapProj.forEach(function(fnName) {
+      if (typeof window[fnName] === 'function') {
+        var origFn = window[fnName];
+        window[fnName] = function() {
+          var res = origFn.apply(this, arguments);
+          snapshotProjectOverrides();
+          if (typeof saveAllLocal === 'function') saveAllLocal();
+          pushMasterListsToSheets(true, false, false, true);
+          return res;
+        };
+      }
+    });
+
+    // =====================================================================
+    // 2. TỰ ĐỘNG ĐIỀN HẠNG MỤC KHI CHỌN ĐỐI TÁC / THẦU PHỤ TRONG THU CHI
+    // =====================================================================
+    function resolveCategoryForPartner(partnerName) {
+      var up = String(partnerName || '').trim().toUpperCase();
+      if (!up) return '';
+      // 1. Ưu tiên tìm trong danh mục partners hiện có trên app
+      if (typeof partners !== 'undefined' && Array.isArray(partners)) {
+        var foundPt = partners.find(function(pt) {
+          return String(pt.name || '').trim().toUpperCase() === up && pt.category && pt.category !== 'Đối tác / Thầu phụ';
+        });
+        if (foundPt) return String(foundPt.category).trim();
+      }
+      // 2. Tìm trong lịch sử giao dịch gần nhất của đối tác đó
+      if (typeof transactions !== 'undefined' && Array.isArray(transactions)) {
+        var foundTx = transactions.find(function(t) {
+          return String(t.partner || '').trim().toUpperCase() === up && t.category && t.category !== 'Chi phí công trình';
+        });
+        if (foundTx) return String(foundTx.category).trim();
+      }
+      // 3. Tra cứu bảng chuẩn DS ĐỐI TÁC
+      return DEFAULT_PARTNER_CATEGORY_MAP[up] || '';
+    }
+
+    function bindAutoPartnerCategoryInTxModal() {
+      var partSel = document.getElementById('manual-partner');
+      var catSel = document.getElementById('manual-category');
+      if (!partSel || !catSel || partSel.getAttribute('data-v163-bound') === '1') return;
+
+      partSel.setAttribute('data-v163-bound', '1');
+      partSel.addEventListener('change', function() {
+        var ptName = String(partSel.value || '').trim();
+        if (!ptName) return;
+        var autoCat = resolveCategoryForPartner(ptName);
+        if (!autoCat) return;
+
+        // Thêm option nếu hạng mục chưa có sẵn trong danh sách chọn
+        var hasOpt = Array.from(catSel.options).some(function(o) { return o.value === autoCat; });
+        if (!hasOpt) {
+          var opt = document.createElement('option');
+          opt.value = autoCat;
+          opt.textContent = autoCat;
+          catSel.appendChild(opt);
+        }
+        catSel.value = autoCat;
+        catSel.dispatchEvent(new Event('change'));
+
+        // Tự gợi ý nội dung chi tiết nếu ô nội dung đang trống
+        var noteInp = document.getElementById('manual-note');
+        if (noteInp && !String(noteInp.value || '').trim()) {
+          noteInp.value = autoCat + ' (' + ptName + ')';
+        }
+      });
+    }
+
+    // =====================================================================
+    // 3. ĐỒNG BỘ 2 CHIỀU DANH SÁCH ĐỐI TÁC (THÊM / SỬA / XÓA GIỮA APP & SHEETS)
+    // =====================================================================
+    var _lastPartnersSig = '';
+    function computePartnersSig() {
+      if (typeof partners === 'undefined' || !Array.isArray(partners)) return '';
+      return JSON.stringify(partners.map(function(p) {
+        return [p.id, p.name, p.project, p.category, p.baseContract, p.openingPaidPartner];
+      }));
+    }
+
+    // Theo dõi chỉnh sửa / thêm / xóa Đối tác trong modal Danh Mục Quản Lý
+    var _prevPartnerNamesSnapshot = {};
+    function capturePartnerSnapshot() {
+      if (typeof partners === 'undefined' || !Array.isArray(partners)) return;
+      var snap = {};
+      partners.forEach(function(p) { if (p && p.id) snap[String(p.id)] = String(p.name || '').trim().toUpperCase(); });
+      _prevPartnerNamesSnapshot = snap;
+    }
+
+    function handlePartnerListMutationAndSync() {
+      if (typeof partners === 'undefined' || !Array.isArray(partners)) return;
+      var sig = computePartnersSig();
+      if (sig === _lastPartnersSig) return;
+
+      // Kiểm tra xem có đối tác nào vừa được đổi tên không -> tự động cập nhật đồng bộ sang toàn bộ GiaoDich
+      var renamedPairs = [];
+      partners.forEach(function(p) {
+        if (!p || !p.id) return;
+        var oldName = _prevPartnerNamesSnapshot[String(p.id)];
+        var newName = String(p.name || '').trim().toUpperCase();
+        if (oldName && newName && oldName !== newName) {
+          renamedPairs.push({ oldName: oldName, newName: newName });
+        }
+      });
+
+      var txUpdated = false;
+      if (renamedPairs.length && typeof transactions !== 'undefined' && Array.isArray(transactions)) {
+        renamedPairs.forEach(function(pair) {
+          transactions.forEach(function(t) {
+            if (String(t.partner || '').trim().toUpperCase() === pair.oldName) {
+              t.partner = pair.newName;
+              txUpdated = true;
+            }
+          });
+        });
+      }
+
+      _lastPartnersSig = sig;
+      capturePartnerSnapshot();
+      if (typeof populateSelects === 'function') populateSelects();
+      pushMasterListsToSheets(false, true, txUpdated, true);
+    }
+
+    // Bọc hàm saveAllLocal để tự động bảo vệ dữ liệu chính thức và đẩy thay đổi Công trình / Đối tác lên Sheets
+    var _lastProjSig = '';
+    function computeProjectsSig() {
+      if (typeof projects === 'undefined' || !Array.isArray(projects)) return '';
+      return JSON.stringify(projects.map(function(p) {
+        return [p.code, p.customer, p.status, p.contractValue, p.finalContractValue, p.openingPaid, p.handoverDate, p.settlementNote];
+      }));
+    }
+
+    if (typeof saveAllLocal === 'function') {
+      var _origSaveAllLocal163 = saveAllLocal;
+      saveAllLocal = function() {
+        snapshotProjectOverrides();
+        _origSaveAllLocal163.apply(this, arguments);
+
+        var pSig = computeProjectsSig();
+        if (_lastProjSig && pSig !== _lastProjSig) {
+          pushMasterListsToSheets(true, false, false, false);
+        }
+        _lastProjSig = pSig;
+
+        handlePartnerListMutationAndSync();
+      };
+    }
+
+    // Bọc hàm renderDashboard để luôn giữ trạng thái Nghiệm thu / Chốt HĐ đã lưu trên máy
+    if (typeof renderDashboard === 'function') {
+      var _origRenderDash163 = renderDashboard;
+      renderDashboard = function() {
+        applyProjectOverrides();
+        return _origRenderDash163.apply(this, arguments);
+      };
+    }
+
+    // Cập nhật bộ đồng bộ ngầm 15 giây để gộp thông minh (không ghi đè trạng thái công trình đã chốt)
+    window.silentBackgroundPullFromSheets = function() {
+      if (window._v163Syncing) return;
+      if (typeof execUrl === 'undefined' || !execUrl || String(execUrl).indexOf('http') !== 0) return;
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) return;
+      if (document.visibilityState === 'hidden') return;
+      var act = document.activeElement;
+      if (act && (act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.tagName === 'SELECT')) return;
+
+      window._v163Syncing = true;
+      var sep = execUrl.indexOf('?') === -1 ? '?' : '&';
+      fetch(execUrl + sep + 'action=loadAll&t=' + Date.now(), { method: 'GET', redirect: 'follow' })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (!data || !data.ok || !Array.isArray(data.transactions) || data.transactions.length === 0) return;
+
+          var oldTxCount = transactions.length;
+          var oldTxSum = transactions.reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+          var newTxSum = data.transactions.reduce(function(s, t) { return s + (Number(t.amount) || 0); }, 0);
+          var oldPtCount = Array.isArray(partners) ? partners.length : 0;
+          var newPtCount = Array.isArray(data.partners) ? data.partners.length : 0;
+
+          if (oldTxCount === data.transactions.length && oldTxSum === newTxSum && oldPtCount === newPtCount) return;
+
+          transactions = data.transactions;
+          if (Array.isArray(data.projects) && data.projects.length) {
+            projects = data.projects;
+            applyProjectOverrides(); // Giữ nguyên toàn bộ trạng thái Nghiệm thu / Chốt HĐ đã chỉnh trên App
+          }
+          if (Array.isArray(data.partners) && data.partners.length) {
+            // Giữ lại các đối tác mới tạo trên App nếu Sheets chưa kịp nhận
+            var sheetPtKeys = new Set(data.partners.map(function(p) { return String(p.name || '').trim().toUpperCase() + '__' + String(p.project || '').trim().toUpperCase(); }));
+            var localExtraPts = (partners || []).filter(function(p) {
+              var k = String(p.name || '').trim().toUpperCase() + '__' + String(p.project || '').trim().toUpperCase();
+              return p.name && !sheetPtKeys.has(k);
+            });
+            partners = data.partners.concat(localExtraPts);
+            _lastPartnersSig = computePartnersSig();
+            capturePartnerSnapshot();
+          }
+          if (Array.isArray(data.workers) && data.workers.length) workers = data.workers;
+          if (Array.isArray(data.siteLogs) && data.siteLogs.length) siteLogs = data.siteLogs;
+
+          if (typeof window.sortTransactionsNewestFirst === 'function') window.sortTransactionsNewestFirst(true);
+          if (typeof populateSelects === 'function') populateSelects();
+          if (typeof _origSaveAllLocal163 === 'function') _origSaveAllLocal163();
+          if (typeof renderDashboard === 'function') renderDashboard();
+
+          var diff = transactions.length - oldTxCount;
+          if (diff > 0 && typeof showToast === 'function') {
+            showToast('🔄 Vừa cập nhật thêm ' + diff + ' giao dịch mới từ Sheets (giữ nguyên dữ liệu đã chỉnh)');
+          }
+        })
+        .catch(function() {})
+        .finally(function() { window._v163Syncing = false; });
+    };
+
+    var _v163Obs = new MutationObserver(function() {
+      bindAutoPartnerCategoryInTxModal();
+    });
+
+    setTimeout(function() {
+      applyProjectOverrides();
+      _lastProjSig = computeProjectsSig();
+      _lastPartnersSig = computePartnersSig();
+      capturePartnerSnapshot();
+      bindAutoPartnerCategoryInTxModal();
+      if (typeof renderDashboard === 'function') renderDashboard();
+      _v163Obs.observe(document.body, { childList: true, subtree: true });
+    }, 180);
+  })();
+  // === V163_CORE_END ===
 
   function copyAppsScriptCode() {
         const cfg = resolveVersionConfig(ACTIVE_VERSION);
