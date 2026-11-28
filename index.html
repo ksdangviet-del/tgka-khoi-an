@@ -7188,11 +7188,12 @@ window.recordMonthlyOfficePayrollToCashbook = function() {
 
 function injectVpAndBhxhPanel() {
   var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
-  var titleEl = headings.find(function(el) {
-    return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Bảng Chấm Công & Lương Thợ';
+  var otherTitle = headings.find(function(el) {
+    if (el.children.length > 0 || !el.textContent || el.offsetParent === null) return false;
+    var t = el.textContent.trim();
+    return t === 'Danh Sách Công Trình & Công Nợ' || t === 'Báo Cáo Sổ Quỹ Nhân Viên' || t === 'Báo Cáo Công Nợ Đối Tác';
   });
-
-  if (!titleEl || titleEl.offsetParent === null) {
+  if (otherTitle) {
     document.querySelectorAll('.v159-extra-panel').forEach(function(el) { el.remove(); });
     document.querySelectorAll('.v159-hidden-worker-node').forEach(function(el) {
       el.style.display = '';
@@ -7200,6 +7201,11 @@ function injectVpAndBhxhPanel() {
     });
     return;
   }
+
+  var titleEl = headings.find(function(el) {
+    return el.children.length === 0 && el.textContent && el.textContent.trim() === 'Bảng Chấm Công & Lương Thợ';
+  });
+  if (!titleEl) return;
 
   var modal = titleEl.parentElement;
   while (modal && modal.parentElement && modal.parentElement !== document.body) {
@@ -7235,7 +7241,7 @@ function injectVpAndBhxhPanel() {
   Array.from(hostContainer.children).forEach(function(child) {
     if (child === panel) return;
     var txt = child.textContent || '';
-    if (txt.indexOf('Lưu/Chia sẻ Ảnh') !== -1 || txt.indexOf('Tổng Công') !== -1) return;
+    if (txt.indexOf('Bảng Chấm Công & Lương Thợ') !== -1 || txt.indexOf('Lưu/Chia sẻ Ảnh') !== -1 || txt.indexOf('Tổng Công') !== -1) return;
     if (isVpTab) {
       if (child.style.display !== 'none') {
         child.style.display = 'none';
@@ -7255,6 +7261,10 @@ function injectVpAndBhxhPanel() {
   var vpList = window.officeStaff || [];
   var ym = window.officePayrollMonth || '2026-11';
   var alreadyRecorded = window.isMonthPayrollRecorded(ym);
+  var stateKey = [isVpTab, ym, duanBhxh, alreadyRecorded, JSON.stringify(vpList)].join('|');
+  if (panel.getAttribute('data-state-key') === stateKey) return;
+  panel.setAttribute('data-state-key', stateKey);
+
   var totalSal = vpList.reduce(function(s, st) { return s + window.computeOfficeSalaryForMonth(st, ym); }, 0);
   var totalVpBhxh = vpList.reduce(function(s, st) { return s + (st.hasBhxh ? (Number(st.bhxhAmount) || 0) : 0); }, 0);
 
