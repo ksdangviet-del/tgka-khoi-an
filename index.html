@@ -487,7 +487,7 @@
           </div>
 
           <div class="flex items-center gap-1.5 flex-shrink-0">
-            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.64</button>
+            <button id="header-version-pill" onclick="openVersionModal()" class="glass-pill h-7 px-2.5 rounded-full text-white text-[11px] font-semibold">v1.65</button>
             <button onclick="toggleSound()" title="Bật / Tắt âm thanh" class="glass-pill w-7 h-7 rounded-full text-white flex items-center justify-center">
               <svg class="svg-duo" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="rgba(255,255,255,0.2)"/>
@@ -1741,7 +1741,7 @@
         return { ...top, features: mergedFeatures };
       }
 
-      localStorage.setItem('tgka_active_version', 'v1.64'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
+      localStorage.setItem('tgka_active_version', 'v1.65'); localStorage.setItem('tgka_latest_seen_ver', 'v1.59'); let ACTIVE_VERSION = 'v1.59';
       if (!RAW_VERSION_SPECS[ACTIVE_VERSION]) ACTIVE_VERSION = 'v1.59';
       if (localStorage.getItem('tgka_latest_seen_ver') !== 'v1.56') {
         ACTIVE_VERSION = 'v1.59';
@@ -6540,19 +6540,19 @@
 
             // === V161_CORE_START ===
       (function initV161Suite() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.64']) {
-          RAW_VERSION_SPECS['v1.64'] = {
-            version: 'v1.64',
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.65']) {
+          RAW_VERSION_SPECS['v1.65'] = {
+            version: 'v1.65',
             extends: 'v1.59',
             date: '28/11/2026',
             title: 'Chi Phí Nội Bộ 4 Nhóm (STT 1–229), Thẻ GD Có Đối Tác & Nhật Ký Nhiều Năm A4',
             summary: 'Kế thừa bản khóa chuẩn v1.59: bổ sung khối Chi phí nội bộ 4 nhóm vào Báo cáo tài chính (tách rõ Lương thợ & Sinh hoạt trong Nhà thợ), thiết kế lại thẻ Lịch sử giao dịch hiện đầy đủ Đối tác không lặp tên công trình, ẩn công trình hoàn thành khi ghi nhật ký mới và tìm kiếm/xuất báo cáo A4 (Ảnh/Excel/PDF).',
             features: { v161Suite: true }
           };
-          ACTIVE_VERSION = 'v1.64';
+          ACTIVE_VERSION = 'v1.65';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.64');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.64');
+            localStorage.setItem('tgka_active_version', 'v1.65');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.65');
           } catch (e) {}
         }
 
@@ -7642,19 +7642,19 @@
 
         // === V162_CORE_START ===
   (function initV162Suite() {
-    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.64']) {
-      RAW_VERSION_SPECS['v1.64'] = {
-        version: 'v1.64',
+    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.65']) {
+      RAW_VERSION_SPECS['v1.65'] = {
+        version: 'v1.65',
         extends: 'v1.61',
         date: '28/11/2026',
         title: 'Gọn Báo Cáo Tài Chính, Xuất PDF A4 Chi Phí Nội Bộ & Công Nợ Đối Tác 2 Chiều',
         summary: 'Bỏ 2 tab thừa (Nhân Viên, Đối Tác) trong Báo cáo tài chính; thêm nút xuất PDF/In A4 chi tiết Chi phí nội bộ 4 nhóm (STT 1–229); nâng cấp Báo cáo công nợ đối tác lọc theo từng Đối tác × từng Công trình và tự động gộp công nợ chuẩn xác.',
         features: { v162Suite: true }
       };
-      ACTIVE_VERSION = 'v1.64';
+      ACTIVE_VERSION = 'v1.65';
       try {
-        localStorage.setItem('tgka_active_version', 'v1.64');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.64');
+        localStorage.setItem('tgka_active_version', 'v1.65');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.65');
       } catch (e) {}
     }
 
@@ -8067,19 +8067,19 @@
 
     // === V163_CORE_START ===
   (function initV163OfficialSyncSuite() {
-    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.64']) {
-      RAW_VERSION_SPECS['v1.64'] = {
-        version: 'v1.64',
+    if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.65']) {
+      RAW_VERSION_SPECS['v1.65'] = {
+        version: 'v1.65',
         extends: 'v1.62',
         date: '28/11/2026',
         title: 'Bảo Toàn Dữ Liệu Chính Thức, Giữ Trạng Thái Nghiệm Thu, Tự Điền Hạng Mục ĐT & Đồng Bộ 2 Chiều ĐT',
         summary: 'Khóa bảo vệ trạng thái Nghiệm thu / Chốt HĐ công trình không bị ghi đè khi đồng bộ; tự động điền Hạng mục khi chọn Đối tác/Thầu phụ; đồng bộ 2 chiều thêm/sửa Đối tác giữa App và Sheets và bảo toàn toàn bộ dữ liệu chính thức.',
         features: { v163Suite: true }
       };
-      ACTIVE_VERSION = 'v1.64';
+      ACTIVE_VERSION = 'v1.65';
       try {
-        localStorage.setItem('tgka_active_version', 'v1.64');
-        localStorage.setItem('tgka_latest_seen_ver', 'v1.64');
+        localStorage.setItem('tgka_active_version', 'v1.65');
+        localStorage.setItem('tgka_latest_seen_ver', 'v1.65');
       } catch (e) {}
     }
 
@@ -8413,19 +8413,19 @@
 
         // === V164_CORE_START ===
       (function initV164PartnerExportSuite() {
-        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.64']) {
-          RAW_VERSION_SPECS['v1.64'] = {
-            version: 'v1.64',
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.65']) {
+          RAW_VERSION_SPECS['v1.65'] = {
+            version: 'v1.65',
             extends: 'v1.63',
             date: '28/11/2026',
             title: 'Xuất PDF A4 & Excel Riêng Cho Từng Đối Tác Trong Báo Cáo Công Nợ',
             summary: 'Bổ sung thanh 2 nút Xuất Excel (.xls) và Xuất PDF / In A4 ngay trong Báo cáo công nợ đối tác, xuất đầy đủ bảng tổng hợp hợp đồng, công nợ còn lại và bảng kê chi tiết từng phiếu chi đúng theo đối tác và công trình đang chọn lọc.',
             features: { v164Suite: true }
           };
-          ACTIVE_VERSION = 'v1.64';
+          ACTIVE_VERSION = 'v1.65';
           try {
-            localStorage.setItem('tgka_active_version', 'v1.64');
-            localStorage.setItem('tgka_latest_seen_ver', 'v1.64');
+            localStorage.setItem('tgka_active_version', 'v1.65');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.65');
           } catch (e) {}
         }
 
@@ -8706,6 +8706,256 @@
         }, 200);
       })();
       // === V164_CORE_END ===
+
+            // === V165_CORE_START ===
+      (function initV165PartnerReportUiFix() {
+        if (typeof RAW_VERSION_SPECS !== 'undefined' && !RAW_VERSION_SPECS['v1.65']) {
+          RAW_VERSION_SPECS['v1.65'] = {
+            version: 'v1.65',
+            extends: 'v1.64',
+            date: '28/11/2026',
+            title: 'Khóa Khung Chống Co Giãn & Chuẩn Hóa Phông Chữ Báo Cáo Công Nợ Đối Tác',
+            summary: 'Khóa cứng chiều rộng khung hộp thoại và bộ lọc tìm kiếm của Báo Cáo Công Nợ Đối Tác để không bị co giãn khi chọn đối tác/công trình; đồng bộ phông chữ, nét chữ và bố cục thẻ report-card chuẩn với Danh Sách Công Trình & Công Nợ.',
+            features: { v165Suite: true }
+          };
+          ACTIVE_VERSION = 'v1.65';
+          try {
+            localStorage.setItem('tgka_active_version', 'v1.65');
+            localStorage.setItem('tgka_latest_seen_ver', 'v1.65');
+          } catch (e) {}
+        }
+
+        // Bơm CSS khóa cứng bố cục & phông chữ chuẩn đồng nhất với bảng Danh Sách Công Trình & Công Nợ
+        if (!document.getElementById('v165-partner-ui-style')) {
+          var st = document.createElement('style');
+          st.id = 'v165-partner-ui-style';
+          st.textContent = [
+            '.v165-pt-modal-sheet { width: min(440px, calc(100vw - 24px)) !important; max-width: 440px !important; box-sizing: border-box !important; }',
+            '.v165-pt-scroll-body { width: 100% !important; box-sizing: border-box !important; overflow-x: hidden !important; scrollbar-gutter: stable; }',
+            '.v162-pt-filter-bar { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; width: 100% !important; box-sizing: border-box !important; }',
+            '.v162-pt-filter-bar select { width: 100% !important; min-width: 0 !important; max-width: 100% !important; height: 36px !important; padding: 0 24px 0 10px !important; font-size: 11.5px !important; font-weight: 600 !important; color: #1E293B !important; border: 1px solid #E2E8F0 !important; border-radius: 12px !important; background-color: #FFFFFF !important; text-overflow: ellipsis !important; white-space: nowrap !important; overflow: hidden !important; box-sizing: border-box !important; }',
+            '.v164-pt-export-bar { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; width: 100% !important; box-sizing: border-box !important; }',
+            '.v164-pt-export-bar button { width: 100% !important; min-width: 0 !important; height: 34px !important; font-size: 11.5px !important; font-weight: 700 !important; border-radius: 11px !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }',
+            '.v162-partner-debt-host { width: 100% !important; box-sizing: border-box !important; }',
+            '.v165-pt-summary-box { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 6px !important; width: 100% !important; box-sizing: border-box !important; padding: 10px 8px !important; border-radius: 16px !important; background: #FFF7ED !important; border: 1px solid #FED7AA !important; }',
+            '.v165-pt-summary-cell { min-width: 0 !important; text-align: center !important; }',
+            '.v165-pt-summary-lbl { font-size: 10px !important; font-weight: 600 !important; color: #64748B !important; line-height: 1.25 !important; }',
+            '.v165-pt-summary-val { font-size: 11.5px !important; font-weight: 800 !important; line-height: 1.3 !important; margin-top: 2px !important; font-variant-numeric: tabular-nums !important; white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; }',
+            '.v165-pt-card { width: 100% !important; box-sizing: border-box !important; background: #FFFFFF !important; border: 1px solid #F1F5F9 !important; border-radius: 18px !important; padding: 12px 13px !important; box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03) !important; }',
+            '.v165-pt-name { font-size: 13px !important; font-weight: 700 !important; color: #0F172A !important; letter-spacing: -0.01em !important; line-height: 1.3 !important; word-break: break-word !important; }',
+            '.v165-pt-sub { font-size: 11px !important; font-weight: 500 !important; color: #64748B !important; line-height: 1.35 !important; }',
+            '.v165-pt-row { display: flex !important; align-items: center !important; justify-content: space-between !important; gap: 8px !important; font-size: 11.5px !important; line-height: 1.45 !important; }',
+            '.v165-pt-row-lbl { color: #64748B !important; font-weight: 500 !important; }',
+            '.v165-pt-row-val { font-weight: 700 !important; font-variant-numeric: tabular-nums !important; white-space: nowrap !important; }'
+          ].join('\n');
+          document.head.appendChild(st);
+        }
+
+        function escHtml(str) {
+          return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+        function fmtMoney(n) {
+          return Number(n || 0).toLocaleString('vi-VN') + ' ₫';
+        }
+        function formatDisplayDate(raw) {
+          var s = String(raw || '').trim();
+          var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+          if (iso) return iso[3].padStart(2, '0') + '/' + iso[2].padStart(2, '0') + '/' + iso[1];
+          return s;
+        }
+
+        function buildPartnerModelV165() {
+          var ptList = (typeof partners !== 'undefined' && Array.isArray(partners)) ? partners : [];
+          var txList = (typeof transactions !== 'undefined' && Array.isArray(transactions)) ? transactions : [];
+          var normPt = function(s) { return String(s || '').trim().toUpperCase(); };
+          var normPr = function(s) { return String(s || '').trim().toUpperCase(); };
+
+          var selPartner = normPt((document.querySelector('.v162-pt-partner-filter') || {}).value || '');
+          var selProject = normPr((document.querySelector('.v162-pt-project-filter') || {}).value || '');
+
+          var catByPartner = {};
+          ptList.forEach(function(pt) {
+            var name = normPt(pt.name);
+            if (name && !catByPartner[name] && pt.category) catByPartner[name] = pt.category;
+          });
+          txList.forEach(function(tx) {
+            var name = normPt(tx.partner);
+            if (name && !catByPartner[name] && tx.category) catByPartner[name] = tx.category;
+          });
+
+          var pairMap = {};
+          var getOrMakePair = function(ptName, projCode, catHint) {
+            var key = ptName + '||' + projCode;
+            if (!pairMap[key]) {
+              pairMap[key] = {
+                name: ptName,
+                project: projCode,
+                category: catHint || catByPartner[ptName] || 'Đối tác / Thầu phụ',
+                contractVal: 0,
+                openingPaid: 0,
+                periodPaid: 0,
+                txs: []
+              };
+            }
+            return pairMap[key];
+          };
+
+          ptList.forEach(function(pt) {
+            var name = normPt(pt.name);
+            if (!name) return;
+            var proj = normPr(pt.project);
+            var item = getOrMakePair(name, proj, pt.category);
+            item.contractVal += (Number(pt.baseContract) || 0);
+            item.openingPaid += (Number(pt.openingPaidPartner) || 0);
+          });
+
+          txList.forEach(function(tx) {
+            if (!tx || tx.type !== 'Chi') return;
+            var name = normPt(tx.partner);
+            if (!name) return;
+            var amt = Number(tx.amount) || 0;
+            if (amt <= 0) return;
+            var proj = normPr(tx.project);
+            var item = getOrMakePair(name, proj, tx.category);
+            item.periodPaid += amt;
+            item.txs.push(tx);
+          });
+
+          var allPairs = Object.keys(pairMap).map(function(k) {
+            var it = pairMap[k];
+            it.totalPaid = it.openingPaid + it.periodPaid;
+            it.debt = Math.max(0, it.contractVal - it.totalPaid);
+            return it;
+          });
+
+          var partnersWithSpecificProj = new Set(allPairs.filter(function(p) { return p.project !== ''; }).map(function(p) { return p.name; }));
+          var cleanPairs = allPairs.filter(function(p) {
+            if (p.project === '' && p.contractVal === 0 && p.totalPaid === 0 && partnersWithSpecificProj.has(p.name)) return false;
+            return true;
+          });
+
+          var filtered = cleanPairs.filter(function(p) {
+            if (selPartner && p.name !== selPartner) return false;
+            if (selProject) {
+              if (selProject === '__GENERAL__') return p.project === '';
+              return p.project === selProject;
+            }
+            return true;
+          });
+
+          filtered.sort(function(a, b) {
+            var scoreA = (a.debt * 2) + a.totalPaid + a.contractVal;
+            var scoreB = (b.debt * 2) + b.totalPaid + b.contractVal;
+            if (scoreB !== scoreA) return scoreB - scoreA;
+            return a.name.localeCompare(b.name);
+          });
+
+          return {
+            rows: filtered,
+            sumContract: filtered.reduce(function(s, p) { return s + p.contractVal; }, 0),
+            sumPaid: filtered.reduce(function(s, p) { return s + p.totalPaid; }, 0),
+            sumDebt: filtered.reduce(function(s, p) { return s + p.debt; }, 0)
+          };
+        }
+
+        // Vẽ lại thẻ đối tác theo đúng phông chữ, nét chữ của bảng Danh Sách Công Trình & Công Nợ (không co giãn)
+        window.renderUnifiedPartnerDebtCardsV165 = function() {
+          var host = document.querySelector('.v162-partner-debt-host');
+          if (!host) return;
+          var m = buildPartnerModelV165();
+
+          var cardsHtml = m.rows.map(function(r) {
+            var subLine = 'Hạng mục: ' + escHtml(r.category) + ' • ' + (r.project ? escHtml(r.project) : 'Chi chung');
+            var txRowsHtml = r.txs.map(function(t) {
+              return '<div class="flex items-center justify-between py-1 border-b border-slate-100 text-[11px]">' +
+                '<div class="min-w-0 pr-2 truncate"><span class="text-slate-400 mr-1.5">' + escHtml(formatDisplayDate(t.date)) + '</span><span class="font-medium text-slate-700">' + escHtml(t.note || t.category || 'Thanh toán') + '</span></div>' +
+                '<div class="font-bold text-rose-600 tabular-nums whitespace-nowrap shrink-0">-' + fmtMoney(t.amount) + '</div>' +
+              '</div>';
+            }).join('') || '<div class="text-[11px] text-slate-400 py-1">Chưa có phiếu chi trong kỳ' + (r.openingPaid > 0 ? ' (Đã trả năm trước: ' + fmtMoney(r.openingPaid) + ')' : '') + '</div>';
+
+            return '<div class="v165-pt-card space-y-2">' +
+              '<div class="flex items-start justify-between gap-2">' +
+                '<div class="min-w-0 flex-1">' +
+                  '<div class="v165-pt-name">' + escHtml(r.name) + '</div>' +
+                  '<div class="v165-pt-sub mt-0.5">' + subLine + '</div>' +
+                '</div>' +
+                '<div class="text-right shrink-0">' +
+                  '<div class="text-[11.5px] font-bold text-rose-600 tabular-nums whitespace-nowrap">Đã chi: ' + fmtMoney(r.totalPaid) + '</div>' +
+                  '<button type="button" onclick="var d=this.closest(\'.v165-pt-card\').querySelector(\'.v165-pt-txs\');d.classList.toggle(\'hidden\');" class="text-[10.5px] font-semibold text-slate-500 hover:text-slate-800 mt-0.5 whitespace-nowrap">Chi tiết (' + r.txs.length + ') ▾</button>' +
+                '</div>' +
+              '</div>' +
+              '<div class="pt-2 border-t border-slate-100 space-y-1">' +
+                '<div class="v165-pt-row"><span class="v165-pt-row-lbl">Giá trị HĐ:</span><span class="v165-pt-row-val text-slate-800">' + fmtMoney(r.contractVal) + '</span></div>' +
+                '<div class="v165-pt-row"><span class="v165-pt-row-lbl">Đã thanh toán:</span><span class="v165-pt-row-val text-[#059669]">' + fmtMoney(r.totalPaid) + '</span></div>' +
+                '<div class="v165-pt-row"><span class="v165-pt-row-lbl">Công nợ đối tác:</span><span class="v165-pt-row-val text-[#EA580C]">' + fmtMoney(r.debt) + '</span></div>' +
+              '</div>' +
+              '<div class="v165-pt-txs hidden pt-1.5 border-t border-slate-100 space-y-0.5">' + txRowsHtml + '</div>' +
+            '</div>';
+          }).join('') || '<div class="text-center py-6 text-slate-400 text-[12px]">Không có dữ liệu công nợ khớp bộ lọc.</div>';
+
+          host.innerHTML =
+            '<div class="v165-pt-summary-box">' +
+              '<div class="v165-pt-summary-cell"><div class="v165-pt-summary-lbl">Tổng HĐ Đối Tác</div><div class="v165-pt-summary-val text-slate-900">' + fmtMoney(m.sumContract) + '</div></div>' +
+              '<div class="v165-pt-summary-cell"><div class="v165-pt-summary-lbl">Đã Thanh Toán</div><div class="v165-pt-summary-val text-[#059669]">' + fmtMoney(m.sumPaid) + '</div></div>' +
+              '<div class="v165-pt-summary-cell"><div class="v165-pt-summary-lbl">Công Nợ ĐT</div><div class="v165-pt-summary-val text-[#EA580C]">' + fmtMoney(m.sumDebt) + '</div></div>' +
+            '</div>' +
+            '<div class="text-[11px] font-semibold text-slate-500 px-0.5">Hiển thị ' + m.rows.length + ' khoản mục đối tác</div>' +
+            '<div class="space-y-2.5">' + cardsHtml + '</div>';
+        };
+
+        function lockPartnerModalGeometry() {
+          var headings = Array.from(document.querySelectorAll('h1,h2,h3,div,span'));
+          var ptTitle = headings.find(function(el) {
+            return el.children.length === 0 && el.textContent && el.textContent.indexOf('Báo Cáo Công Nợ Đối Tác') !== -1 && el.offsetParent !== null;
+          });
+          if (!ptTitle) return;
+
+          var sheet = ptTitle.closest('.modal-sheet') || ptTitle.parentElement;
+          while (sheet && sheet.parentElement && sheet.parentElement !== document.body) {
+            if (sheet.classList && sheet.classList.contains('modal-sheet')) break;
+            if (sheet.clientHeight > 260 && sheet.clientWidth > 280) break;
+            sheet = sheet.parentElement;
+          }
+          if (sheet) sheet.classList.add('v165-pt-modal-sheet');
+
+          var scrollBody = Array.from(sheet.querySelectorAll('div')).find(function(el) {
+            var st = window.getComputedStyle(el);
+            return (st.overflowY === 'auto' || st.overflowY === 'scroll') && el.clientHeight > 140;
+          });
+          if (scrollBody) scrollBody.classList.add('v165-pt-scroll-body');
+
+          var ptSel = document.querySelector('.v162-pt-partner-filter');
+          var prSel = document.querySelector('.v162-pt-project-filter');
+          if (ptSel && ptSel.getAttribute('data-v165-bound') !== '1') {
+            ptSel.setAttribute('data-v165-bound', '1');
+            ptSel.onchange = window.renderUnifiedPartnerDebtCardsV165;
+          }
+          if (prSel && prSel.getAttribute('data-v165-bound') !== '1') {
+            prSel.setAttribute('data-v165-bound', '1');
+            prSel.onchange = window.renderUnifiedPartnerDebtCardsV165;
+          }
+
+          var host = document.querySelector('.v162-partner-debt-host');
+          if (host && !host.querySelector('.v165-pt-summary-box')) {
+            window.renderUnifiedPartnerDebtCardsV165();
+          }
+        }
+
+        var _v165Obs = new MutationObserver(function() {
+          _v165Obs.disconnect();
+          try {
+            lockPartnerModalGeometry();
+          } finally {
+            _v165Obs.observe(document.body, { childList: true, subtree: true });
+          }
+        });
+
+        setTimeout(function() {
+          lockPartnerModalGeometry();
+          _v165Obs.observe(document.body, { childList: true, subtree: true });
+        }, 220);
+      })();
+      // === V165_CORE_END ===
 
       function copyAppsScriptCode() {
         const cfg = resolveVersionConfig(ACTIVE_VERSION);
